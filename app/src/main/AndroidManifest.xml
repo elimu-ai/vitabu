@@ -3,7 +3,7 @@
     package="ai.elimu.vitabu">
 
     <!-- elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider/blob/master/app/src/main/AndroidManifest.xml) -->
-    <uses-permission android:name="ai.elimu.content_provider.debug.provider.READ" />
+    <uses-permission android:name="${contentProviderApplicationId}.provider.READ" />
 
     <application
         android:allowBackup="true"
