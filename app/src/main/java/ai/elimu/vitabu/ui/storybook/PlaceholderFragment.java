@@ -1,6 +1,7 @@
 package ai.elimu.vitabu.ui.storybook;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,9 @@ public class PlaceholderFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
+
         chapterViewModel = ViewModelProviders.of(this).get(ChapterViewModel.class);
         int index = 1;
         if (getArguments() != null) {
@@ -43,10 +46,9 @@ public class PlaceholderFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(getClass().getName(), "onCreateView");
+
         View root = inflater.inflate(R.layout.fragment_storybook, container, false);
         final TextView textView = root.findViewById(R.id.chapter_label);
         chapterViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {

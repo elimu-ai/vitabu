@@ -1,5 +1,7 @@
 package ai.elimu.vitabu.ui.storybook;
 
+import android.util.Log;
+
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,6 +15,8 @@ public class ChapterViewModel extends ViewModel {
     private LiveData<String> text = Transformations.map(index, new Function<Integer, String>() {
         @Override
         public String apply(Integer input) {
+            Log.i(getClass().getName(), "apply");
+
             return "Hello world from chapter: " + input;
         }
     });

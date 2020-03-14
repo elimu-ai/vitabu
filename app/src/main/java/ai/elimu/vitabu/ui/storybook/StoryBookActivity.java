@@ -1,6 +1,7 @@
 package ai.elimu.vitabu.ui.storybook;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +17,9 @@ public class StoryBookActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_storybook);
 
         ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(this, getSupportFragmentManager());
