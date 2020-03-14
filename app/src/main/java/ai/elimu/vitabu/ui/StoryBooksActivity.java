@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.GridLayout;
 import android.widget.Toast;
 
@@ -29,6 +31,12 @@ public class StoryBooksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_storybooks);
 
         storyBooksGridLayout = findViewById(R.id.storyBooksGridLayout);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         List<StoryBookGson> storyBooks = new ArrayList<>();
@@ -59,5 +67,13 @@ public class StoryBooksActivity extends AppCompatActivity {
             }
         }
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
+
+        for (StoryBookGson storyBook : storyBooks) {
+            Log.i(getClass().getName(), "storyBook.getTitle(): \"" + storyBook.getTitle() + "\"");
+            Log.i(getClass().getName(), "storyBook.getDescription(): \"" + storyBook.getDescription() + "\"");
+
+//            View storyBookView = LayoutInflater.from(this).inflate(R.layout.activity_storybooks_cover_view, storyBooksGridLayout, false);
+
+        }
     }
 }
