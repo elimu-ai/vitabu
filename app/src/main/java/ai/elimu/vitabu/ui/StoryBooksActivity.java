@@ -73,6 +73,7 @@ public class StoryBooksActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
 
         for (final StoryBookGson storyBook : storyBooks) {
+            Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
             Log.i(getClass().getName(), "storyBook.getTitle(): \"" + storyBook.getTitle() + "\"");
             Log.i(getClass().getName(), "storyBook.getDescription(): \"" + storyBook.getDescription() + "\"");
 
@@ -97,7 +98,12 @@ public class StoryBooksActivity extends AppCompatActivity {
                     Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
                     Log.i(getClass().getName(), "storyBook.getTitle(): " + storyBook.getTitle());
 
-                    // TODO: StoryBookLearningEvent
+                    // Report StoryBookLearningEvent to the Analytics application
+                    Intent broadcastIntent = new Intent();
+                    broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
+                    broadcastIntent.setAction("ai.elimu.intent.action.STORYBOOK_LEARNING_EVENT");
+                    broadcastIntent.putExtra("storyBookId", storyBook.getId());
+                    getApplicationContext().sendBroadcast(broadcastIntent);
 
                     Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
                     intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, storyBook.getId());

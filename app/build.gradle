@@ -17,11 +17,13 @@ android {
             versionNameSuffix "-debug"
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider.debug"]
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider.debug"')
+            buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics.debug"')
         }
         release {
             minifyEnabled false
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider"]
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider"')
+            buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics"')
         }
     }
 }
