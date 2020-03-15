@@ -15,6 +15,8 @@ import ai.elimu.vitabu.R;
 
 public class StoryBookActivity extends AppCompatActivity {
 
+    public static final String EXTRA_KEY_STORYBOOK_ID = "EXTRA_KEY_STORYBOOK_ID";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
