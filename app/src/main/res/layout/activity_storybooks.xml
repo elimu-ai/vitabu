@@ -3,19 +3,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
     tools:context=".ui.StoryBooksActivity">
 
-    <GridLayout
-        android:id="@+id/storyBooksGridLayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnCount="@integer/gridlayout_column_count"
-        android:useDefaultMargins="true">
+        android:fillViewport="true">
 
-        <!-- Programmatically add activity_storybooks_cover_view.xml -->
-    </GridLayout>
+        <GridLayout
+            android:id="@+id/storyBooksGridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:columnCount="@integer/gridlayout_column_count"
+            android:useDefaultMargins="true">
+
+            <!-- Programmatically add activity_storybooks_cover_view.xml -->
+        </GridLayout>
+    </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
