@@ -102,6 +102,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                     Intent broadcastIntent = new Intent();
                     broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
                     broadcastIntent.setAction("ai.elimu.intent.action.STORYBOOK_LEARNING_EVENT");
+                    broadcastIntent.putExtra("packageName", BuildConfig.APPLICATION_ID);
                     broadcastIntent.putExtra("storyBookId", storyBook.getId());
                     getApplicationContext().sendBroadcast(broadcastIntent);
 
