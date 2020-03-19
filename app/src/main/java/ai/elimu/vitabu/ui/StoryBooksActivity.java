@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.gson.content.StoryBookGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
@@ -104,6 +105,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                     broadcastIntent.setAction("ai.elimu.intent.action.STORYBOOK_LEARNING_EVENT");
                     broadcastIntent.putExtra("packageName", BuildConfig.APPLICATION_ID);
                     broadcastIntent.putExtra("storyBookId", storyBook.getId());
+                    broadcastIntent.putExtra("learningEventType", LearningEventType.STORYBOOK_OPENED.toString());
                     getApplicationContext().sendBroadcast(broadcastIntent);
 
                     Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
