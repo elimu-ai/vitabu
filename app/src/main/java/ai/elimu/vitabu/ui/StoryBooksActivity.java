@@ -28,6 +28,8 @@ public class StoryBooksActivity extends AppCompatActivity {
 
     private GridLayout storyBooksGridLayout;
 
+    private List<StoryBookGson> storyBooks;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
@@ -36,15 +38,9 @@ public class StoryBooksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_storybooks);
 
         storyBooksGridLayout = findViewById(R.id.storyBooksGridLayout);
-    }
-
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        List<StoryBookGson> storyBooks = new ArrayList<>();
+        storyBooks = new ArrayList<>();
         Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybook");
         Log.i(getClass().getName(), "uri: " + uri);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -72,7 +68,17 @@ public class StoryBooksActivity extends AppCompatActivity {
             }
         }
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
+    }
 
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+        // Reset the state of the GridLayout
+        storyBooksGridLayout.removeAllViews();
+
+        // Create a View for each StoryBook in the list
         for (final StoryBookGson storyBook : storyBooks) {
             Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
             Log.i(getClass().getName(), "storyBook.getTitle(): \"" + storyBook.getTitle() + "\"");
