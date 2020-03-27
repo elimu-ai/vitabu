@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/grace_in_space_39e5eb1614ea195e9e377f63f561aa8c"
+            android:src="@color/colorAccent"
             android:contentDescription="Grace in Space" />
 
         <TextView
