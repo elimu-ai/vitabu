@@ -112,8 +112,8 @@ public class StoryBooksActivity extends AppCompatActivity {
                     coverImageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());
 
-//                    String coverImageFilename = coverImageGson.getId() + "_" + coverImageGson.getRevisionNumber() + "." + coverImageGson.getImageFormat().toString().toLowerCase();
-//                    Log.i(getClass().getName(), "coverImageFilename: " + coverImageFilename);
+                    String coverImageFilename = coverImageGson.getId() + "_" + coverImageGson.getRevisionNumber() + "." + coverImageGson.getImageFormat().toString().toLowerCase();
+                    Log.i(getClass().getName(), "coverImageFilename: " + coverImageFilename);
 
 //                    File storyBookCoverFile = MultimediaHelper.getFile(storyBook.getCoverImage());
 //                    Log.i(getClass().getName(), "storyBookCoverFile: " + storyBookCoverFile);

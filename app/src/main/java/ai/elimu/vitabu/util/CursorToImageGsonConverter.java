@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.util.Arrays;
 
+import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.gson.content.multimedia.ImageGson;
 
 public class CursorToImageGsonConverter {
@@ -26,10 +27,17 @@ public class CursorToImageGsonConverter {
         String title = cursor.getString(columnTitle);
         Log.i(CursorToImageGsonConverter.class.getName(), "title: \"" + title + "\"");
 
+        int columnImageFormat = cursor.getColumnIndex("imageFormat");
+        String imageFormatAsString = cursor.getString(columnImageFormat);
+        Log.i(CursorToImageGsonConverter.class.getName(), "imageFormatAsString: " + imageFormatAsString);
+        ImageFormat imageFormat = ImageFormat.valueOf(imageFormatAsString);
+        Log.i(CursorToImageGsonConverter.class.getName(), "imageFormat: " + imageFormat);
+
         ImageGson image = new ImageGson();
         image.setId(id);
         image.setRevisionNumber(revisionNumber);
         image.setTitle(title);
+        image.setImageFormat(imageFormat);
 
         return image;
     }
