@@ -19,9 +19,11 @@ import java.util.List;
 
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.gson.content.StoryBookGson;
+import ai.elimu.model.gson.content.multimedia.ImageGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
+import ai.elimu.vitabu.util.CursorToImageGsonConverter;
 import ai.elimu.vitabu.util.CursorToStoryBookGsonConverter;
 
 public class StoryBooksActivity extends AppCompatActivity {
@@ -63,8 +65,8 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     isLast = cursor.isLast();
                 }
-                Log.i(getClass().getName(), "cursor.isClosed(): " + cursor.isClosed());
                 cursor.close();
+                Log.i(getClass().getName(), "cursor.isClosed(): " + cursor.isClosed());
             }
         }
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
@@ -86,13 +88,42 @@ public class StoryBooksActivity extends AppCompatActivity {
 
             View storyBookView = LayoutInflater.from(this).inflate(R.layout.activity_storybooks_cover_view, storyBooksGridLayout, false);
 
-//            File storyBookCoverFile = MultimediaHelper.getFile(storyBook.getCoverImage());
-//            Log.i(getClass().getName(), "storyBookCoverFile: " + storyBookCoverFile);
-//            if (storyBookCoverFile.exists()) {
-//                ImageView storyBookImageView = (ImageView) storyBookView.findViewById(R.id.storyBookCoverImageView);
-//                Bitmap bitmap = BitmapFactory.decodeFile(storyBookCoverFile.getAbsolutePath());
-//                storyBookImageView.setImageBitmap(bitmap);
-//            }
+            // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
+            Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
+            ImageGson coverImage = storyBook.getCoverImage();
+            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/image/" + coverImage.getId());
+            Log.i(getClass().getName(), "uri: " + uri);
+            Cursor coverImageCursor = getContentResolver().query(uri, null, null, null, null);
+            if (coverImageCursor == null) {
+                Log.e(getClass().getName(), "coverImageCursor == null");
+                Toast.makeText(getApplicationContext(), "√ == null", Toast.LENGTH_LONG).show();
+            } else {
+                Log.i(getClass().getName(), "√.getCount(): " + coverImageCursor.getCount());
+                if (coverImageCursor.getCount() == 0) {
+                    Log.e(getClass().getName(), "coverImageCursor.getCount() == 0");
+                } else {
+                    Log.i(getClass().getName(), "coverImageCursor.getCount(): " + coverImageCursor.getCount());
+
+                    coverImageCursor.moveToFirst();
+
+                    // Convert from database row to ImageGson object
+                    ImageGson coverImageGson = CursorToImageGsonConverter.getImage(coverImageCursor);
+
+                    coverImageCursor.close();
+                    Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());
+
+//                    String coverImageFilename = coverImageGson.getId() + "_" + coverImageGson.getRevisionNumber() + "." + coverImageGson.getImageFormat().toString().toLowerCase();
+//                    Log.i(getClass().getName(), "coverImageFilename: " + coverImageFilename);
+
+//                    File storyBookCoverFile = MultimediaHelper.getFile(storyBook.getCoverImage());
+//                    Log.i(getClass().getName(), "storyBookCoverFile: " + storyBookCoverFile);
+//                    if (storyBookCoverFile.exists()) {
+//                        ImageView storyBookImageView = (ImageView) storyBookView.findViewById(R.id.storyBookCoverImageView);
+//                        Bitmap bitmap = BitmapFactory.decodeFile(storyBookCoverFile.getAbsolutePath());
+//                        storyBookImageView.setImageBitmap(bitmap);
+//                    }
+                }
+            }
 
             TextView storyBookCoverTitleTextView = storyBookView.findViewById(R.id.storyBookCoverTitleTextView);
             storyBookCoverTitleTextView.setText(storyBook.getTitle());

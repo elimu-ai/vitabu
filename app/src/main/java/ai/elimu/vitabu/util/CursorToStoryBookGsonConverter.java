@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.Arrays;
 
 import ai.elimu.model.gson.content.StoryBookGson;
+import ai.elimu.model.gson.content.multimedia.ImageGson;
 
 public class CursorToStoryBookGsonConverter {
 
@@ -26,10 +27,17 @@ public class CursorToStoryBookGsonConverter {
         String description = cursor.getString(columnDescription);
         Log.i(CursorToStoryBookGsonConverter.class.getName(), "description: \"" + description + "\"");
 
+        int columnCoverImageId = cursor.getColumnIndex("coverImageId");
+        Long coverImageId = cursor.getLong(columnCoverImageId);
+        Log.i(CursorToImageGsonConverter.class.getName(), "coverImageId: " + coverImageId);
+        ImageGson coverImage = new ImageGson();
+        coverImage.setId(coverImageId);
+
         StoryBookGson storyBook = new StoryBookGson();
         storyBook.setId(id);
         storyBook.setTitle(title);
         storyBook.setDescription(description);
+        storyBook.setCoverImage(coverImage);
 
         return storyBook;
     }
