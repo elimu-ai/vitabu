@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,16 +114,10 @@ public class StoryBooksActivity extends AppCompatActivity {
                     coverImageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());
 
-                    String coverImageFilename = coverImageGson.getId() + "_" + coverImageGson.getRevisionNumber() + "." + coverImageGson.getImageFormat().toString().toLowerCase();
-                    Log.i(getClass().getName(), "coverImageFilename: " + coverImageFilename);
-
-//                    File storyBookCoverFile = MultimediaHelper.getFile(storyBook.getCoverImage());
-//                    Log.i(getClass().getName(), "storyBookCoverFile: " + storyBookCoverFile);
-//                    if (storyBookCoverFile.exists()) {
-//                        ImageView storyBookImageView = (ImageView) storyBookView.findViewById(R.id.storyBookCoverImageView);
-//                        Bitmap bitmap = BitmapFactory.decodeFile(storyBookCoverFile.getAbsolutePath());
-//                        storyBookImageView.setImageBitmap(bitmap);
-//                    }
+                    byte[] bytes = coverImageGson.getBytes();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    ImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
+                    storyBookImageView.setImageBitmap(bitmap);
                 }
             }
 
