@@ -98,9 +98,9 @@ public class StoryBooksActivity extends AppCompatActivity {
             Cursor coverImageCursor = getContentResolver().query(uri, null, null, null, null);
             if (coverImageCursor == null) {
                 Log.e(getClass().getName(), "coverImageCursor == null");
-                Toast.makeText(getApplicationContext(), "√ == null", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "coverImageCursor == null", Toast.LENGTH_LONG).show();
             } else {
-                Log.i(getClass().getName(), "√.getCount(): " + coverImageCursor.getCount());
+                Log.i(getClass().getName(), "coverImageCursor.getCount(): " + coverImageCursor.getCount());
                 if (coverImageCursor.getCount() == 0) {
                     Log.e(getClass().getName(), "coverImageCursor.getCount() == 0");
                 } else {

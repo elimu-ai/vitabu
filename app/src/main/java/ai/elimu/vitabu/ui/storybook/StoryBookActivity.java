@@ -19,6 +19,10 @@ public class StoryBookActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_storybook);
 
+        Long storyBookId = getIntent().getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0);
+        Log.i(getClass().getName(), "storyBookId: " + storyBookId);
+        // TODO: fetch chapters from content provider
+
         ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(chapterPagerAdapter);
