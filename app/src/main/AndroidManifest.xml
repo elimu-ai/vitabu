@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".ui.StoryBooksActivity" />
-        <activity android:name=".ui.storybook.StoryBookActivity" />
+        <activity android:name=".ui.storybook.StoryBookActivity"
+            android:parentActivityName=".ui.StoryBooksActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
