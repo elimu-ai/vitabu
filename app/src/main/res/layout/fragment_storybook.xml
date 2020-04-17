@@ -15,18 +15,23 @@
         android:scaleType="centerCrop"
         android:src="@color/colorAccent" />
 
-    <TextView
-        android:id="@+id/chapter_text"
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chapter_image"
-        android:layout_marginTop="32sp"
-        android:text="Chapter text... Chapter text... Chapter text... Chapter text..."
-        android:textColor="#000"
-        android:textSize="32sp"
-        android:lineSpacingMultiplier="2.0"
-        android:letterSpacing="0.2" />
+        android:layout_marginTop="32sp">
+
+        <TextView
+            android:id="@+id/chapter_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            android:textColor="#000"
+            android:textSize="32sp"
+            android:lineSpacingMultiplier="2.0"
+            android:letterSpacing="0.2" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
