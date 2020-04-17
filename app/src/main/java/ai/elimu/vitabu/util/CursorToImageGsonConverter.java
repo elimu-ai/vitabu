@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.Arrays;
 
 import ai.elimu.model.enums.content.ImageFormat;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
 
 public class CursorToImageGsonConverter {
 

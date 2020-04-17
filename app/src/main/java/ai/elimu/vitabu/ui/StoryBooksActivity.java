@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.model.enums.analytics.LearningEventType;
-import ai.elimu.model.gson.content.StoryBookGson;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
+import ai.elimu.model.gson.v2.content.StoryBookGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;

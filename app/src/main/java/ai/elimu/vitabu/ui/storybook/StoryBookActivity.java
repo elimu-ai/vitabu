@@ -12,7 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
-import ai.elimu.model.gson.content.StoryBookChapterGson;
+import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.util.CursorToStoryBookChapterGsonConverter;

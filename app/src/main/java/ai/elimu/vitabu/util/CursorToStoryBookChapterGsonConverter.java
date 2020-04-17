@@ -5,8 +5,8 @@ import android.util.Log;
 
 import java.util.Arrays;
 
-import ai.elimu.model.gson.content.StoryBookChapterGson;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
+import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
 
 public class CursorToStoryBookChapterGsonConverter {
 

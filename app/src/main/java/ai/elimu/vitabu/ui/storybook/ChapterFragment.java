@@ -15,8 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import ai.elimu.model.gson.content.StoryBookChapterGson;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
+import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.util.CursorToImageGsonConverter;
@@ -43,9 +43,11 @@ public class ChapterFragment extends Fragment {
         Integer chapterIndex = getArguments().getInt(ARG_CHAPTER_INDEX);
         Log.i(getClass().getName(), "chapterIndex: " + chapterIndex);
 
+        // Fetch the StoryBookChapter
         storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(chapterIndex);
         Log.i(getClass().getName(), "storyBookChapter: " + storyBookChapter);
 
+        // If the Image id is not empty, fetch the complete ImageGson from the content provider
         Log.i(getClass().getName(), "storyBookChapter.getImage(): " + storyBookChapter.getImage());
         if (storyBookChapter.getImage() != null) {
             Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/images/" + storyBookChapter.getImage().getId());
@@ -73,8 +75,11 @@ public class ChapterFragment extends Fragment {
             }
         }
 
-        Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookChapter.getStoryBookParagraphs());
-        // TODO: set paragraphs
+//        // Fetch StoryBookParagraphGsons from the content provider
+//        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybooks_provider/storybooks/#" + storyBookChapter.getStoryBook().getId() + "/chapters/#" + storyBookChapter.getId() + "/paragraphs");
+//        Log.i(getClass().getName(), "uri: " + uri);
+//        Cursor paragraphsCursor = getContext().getContentResolver().query(uri, null, null, null, null);
+//        // TODO
     }
 
     @Override

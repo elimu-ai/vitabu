@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
-import ai.elimu.model.gson.content.StoryBookChapterGson;
+import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
 
 public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
