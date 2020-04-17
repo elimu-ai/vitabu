@@ -1,25 +1,19 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import ai.elimu.model.gson.v2.content.ImageGson;
 import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
-import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
-import ai.elimu.vitabu.util.CursorToImageGsonConverter;
 
 public class ChapterFragment extends Fragment {
 
@@ -46,12 +40,6 @@ public class ChapterFragment extends Fragment {
         // Fetch the StoryBookChapter
         storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(chapterIndex);
         Log.i(getClass().getName(), "storyBookChapter: " + storyBookChapter);
-
-//        // Fetch StoryBookParagraphGsons from the content provider
-//        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybooks_provider/storybooks/#" + storyBookChapter.getStoryBook().getId() + "/chapters/#" + storyBookChapter.getId() + "/paragraphs");
-//        Log.i(getClass().getName(), "uri: " + uri);
-//        Cursor paragraphsCursor = getContext().getContentResolver().query(uri, null, null, null, null);
-//        // TODO
     }
 
     @Override
@@ -67,9 +55,12 @@ public class ChapterFragment extends Fragment {
             imageView.setImageBitmap(bitmap);
         }
 
-        // TODO
-//        TextView textView = root.findViewById(R.id.chapter_text);
-//        textView.setText(chapterText);
+        Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookChapter.getStoryBookParagraphs());
+        if (storyBookChapter.getStoryBookParagraphs() != null) {
+            // TODO
+//            TextView textView = root.findViewById(R.id.chapter_text);
+//            textView.setText(chapterText);
+        }
 
         return root;
     }

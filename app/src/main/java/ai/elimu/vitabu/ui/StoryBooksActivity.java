@@ -61,7 +61,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                     cursor.moveToNext();
 
                     // Convert from Cursor to Gson
-                    StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBook(cursor);
+                    StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBookGson(cursor);
 
                     storyBooks.add(storyBook);
 
@@ -109,7 +109,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                     coverImageCursor.moveToFirst();
 
                     // Convert from Cursor to Gson
-                    ImageGson coverImageGson = CursorToImageGsonConverter.getImage(coverImageCursor);
+                    ImageGson coverImageGson = CursorToImageGsonConverter.getImageGson(coverImageCursor);
 
                     coverImageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());

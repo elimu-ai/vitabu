@@ -10,8 +10,8 @@ import ai.elimu.model.gson.v2.content.ImageGson;
 
 public class CursorToImageGsonConverter {
 
-    public static ImageGson getImage(Cursor cursor) {
-        Log.i(CursorToImageGsonConverter.class.getName(), "getImage");
+    public static ImageGson getImageGson(Cursor cursor) {
+        Log.i(CursorToImageGsonConverter.class.getName(), "getImageGson");
 
         Log.i(CursorToImageGsonConverter.class.getName(), "Arrays.toString(cursor.getColumnNames()): " + Arrays.toString(cursor.getColumnNames()));
 
