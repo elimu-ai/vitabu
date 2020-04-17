@@ -45,7 +45,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         storyBooks = new ArrayList<>();
-        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybook");
+        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybooks");
         Log.i(getClass().getName(), "uri: " + uri);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor == null) {
@@ -60,7 +60,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                 while (!isLast) {
                     cursor.moveToNext();
 
-                    // Convert from database row to StoryBookGson object
+                    // Convert from Cursor to Gson
                     StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBook(cursor);
 
                     storyBooks.add(storyBook);
@@ -93,7 +93,7 @@ public class StoryBooksActivity extends AppCompatActivity {
             // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
             Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
             ImageGson coverImage = storyBook.getCoverImage();
-            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/image/" + coverImage.getId());
+            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/images/" + coverImage.getId());
             Log.i(getClass().getName(), "uri: " + uri);
             Cursor coverImageCursor = getContentResolver().query(uri, null, null, null, null);
             if (coverImageCursor == null) {
@@ -108,7 +108,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     coverImageCursor.moveToFirst();
 
-                    // Convert from database row to ImageGson object
+                    // Convert from Cursor to Gson
                     ImageGson coverImageGson = CursorToImageGsonConverter.getImage(coverImageCursor);
 
                     coverImageCursor.close();

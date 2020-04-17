@@ -10,11 +10,10 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import ai.elimu.model.gson.content.StoryBookChapterGson;
 import ai.elimu.model.gson.content.multimedia.ImageGson;
 
 public class ChapterViewModel extends ViewModel {
-
-    private List<ImageGson> images;
 
     private MutableLiveData<Integer> index = new MutableLiveData<>();
 
@@ -25,9 +24,8 @@ public class ChapterViewModel extends ViewModel {
 
             Log.i(getClass().getName(), "input: " + input);
 
-            // Lookup image based on chapter index
-            // TODO: use "input" variable to get the corresponding chapter
-            ImageGson imageGson = images.get(0);
+            StoryBookChapterGson storyBookChapterGson = ChapterPagerAdapter.storyBookChapters.get(input - 1);
+            ImageGson imageGson = storyBookChapterGson.getImage();
 
             return imageGson;
         }
@@ -43,10 +41,6 @@ public class ChapterViewModel extends ViewModel {
             return "Hello world from chapter: " + input;
         }
     });
-
-    public void setImages(List<ImageGson> images) {
-        this.images = images;
-    }
 
     public void setIndex(int index) {
         this.index.setValue(index);
