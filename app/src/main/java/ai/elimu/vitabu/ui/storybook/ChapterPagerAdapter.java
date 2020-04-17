@@ -11,10 +11,6 @@ import java.util.List;
 
 import ai.elimu.model.gson.content.StoryBookChapterGson;
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
     private final Context context;
@@ -29,9 +25,7 @@ public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a ChapterFragment (defined as a static inner class below).
-        return ChapterFragment.newInstance(position + 1);
+        return ChapterFragment.newInstance(position);
     }
 
     @Nullable

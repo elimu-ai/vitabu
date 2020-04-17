@@ -10,17 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import ai.elimu.model.gson.content.StoryBookChapterGson;
 import ai.elimu.model.gson.content.multimedia.ImageGson;
@@ -28,19 +21,16 @@ import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.util.CursorToImageGsonConverter;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class ChapterFragment extends Fragment {
 
-    private static final String ARG_CHAPTER_NUMBER = "chapter_number";
+    private static final String ARG_CHAPTER_INDEX = "chapter_index";
 
-    private ChapterViewModel chapterViewModel;
+    private StoryBookChapterGson storyBookChapter;
 
-    public static ChapterFragment newInstance(int index) {
+    public static ChapterFragment newInstance(int chapterIndex) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle bundle = new Bundle();
-        bundle.putInt(ARG_CHAPTER_NUMBER, index);
+        bundle.putInt(ARG_CHAPTER_INDEX, chapterIndex);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -50,14 +40,10 @@ public class ChapterFragment extends Fragment {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        chapterViewModel = ViewModelProviders.of(this).get(ChapterViewModel.class);
-        int index = 1;
-        if (getArguments() != null) {
-            index = getArguments().getInt(ARG_CHAPTER_NUMBER);
-        }
-        chapterViewModel.setIndex(index);
+        Integer chapterIndex = getArguments().getInt(ARG_CHAPTER_INDEX);
+        Log.i(getClass().getName(), "chapterIndex: " + chapterIndex);
 
-        StoryBookChapterGson storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(index - 1);
+        storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(chapterIndex);
         Log.i(getClass().getName(), "storyBookChapter: " + storyBookChapter);
 
         Log.i(getClass().getName(), "storyBookChapter.getImage(): " + storyBookChapter.getImage());
@@ -79,7 +65,7 @@ public class ChapterFragment extends Fragment {
 
                     // Convert from Room to Gson
                     ImageGson imageGson = CursorToImageGsonConverter.getImage(imageCursor);
-//                    chapterViewModel.setImage(imageGson);
+                    storyBookChapter.setImage(imageGson);
 
                     imageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + imageCursor.isClosed());
@@ -97,25 +83,16 @@ public class ChapterFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_storybook, container, false);
 
-//        final ImageView imageView = root.findViewById(R.id.chapter_image);
-//        chapterViewModel.getImage().observe(getViewLifecycleOwner(), new Observer<ImageGson>() {
-//            @Override
-//            public void onChanged(ImageGson imageGson) {
-//                Log.i(getClass().getName(), "onChanged");
-//                byte[] bytes = imageGson.getBytes();
-//                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                imageView.setImageBitmap(bitmap);
-//            }
-//        });
+        if (storyBookChapter.getImage() != null) {
+            ImageView imageView = root.findViewById(R.id.chapter_image);
+            byte[] bytes = storyBookChapter.getImage().getBytes();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            imageView.setImageBitmap(bitmap);
+        }
 
-        final TextView textView = root.findViewById(R.id.chapter_text);
-        chapterViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String text) {
-                Log.i(getClass().getName(), "onChanged");
-                textView.setText(text);
-            }
-        });
+        // TODO
+//        TextView textView = root.findViewById(R.id.chapter_text);
+//        textView.setText(chapterText);
 
         return root;
     }
