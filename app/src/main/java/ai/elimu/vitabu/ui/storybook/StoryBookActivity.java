@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
+import ai.elimu.model.gson.v2.content.StoryBookParagraphGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.util.CursorToStoryBookChapterGsonConverter;
@@ -31,8 +32,19 @@ public class StoryBookActivity extends AppCompatActivity {
         Long storyBookId = getIntent().getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0);
         Log.i(getClass().getName(), "storyBookId: " + storyBookId);
 
-        // Fetch the StoryBook's chapters from the content provider
         List<StoryBookChapterGson> storyBookChapters = new ArrayList<>();
+
+        // Prepend cover image and book title as its own chapter
+        StoryBookChapterGson coverChapterGson = new StoryBookChapterGson();
+//        coverChapterGson.setImage(TODO);
+        List<StoryBookParagraphGson> coverParagraphGsons = new ArrayList<>();
+        StoryBookParagraphGson coverTitleParagraphGson = new StoryBookParagraphGson();
+        coverTitleParagraphGson.setOriginalText("Book title..."); // TODO
+        coverParagraphGsons.add(coverTitleParagraphGson);
+        coverChapterGson.setStoryBookParagraphs(coverParagraphGsons);
+        storyBookChapters.add(coverChapterGson);
+
+        // Fetch the StoryBook's chapters from the content provider
         Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybooks/" + storyBookId + "/chapters");
         Log.i(getClass().getName(), "uri: " + uri);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
@@ -60,8 +72,6 @@ public class StoryBookActivity extends AppCompatActivity {
             }
         }
         Log.i(getClass().getName(), "storyBookChapters.size(): " + storyBookChapters.size());
-
-        // TODO: prepend cover image and book title (and book description?) as its own chapter
 
         ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters);
 
