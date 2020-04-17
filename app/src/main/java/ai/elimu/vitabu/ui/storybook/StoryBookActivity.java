@@ -49,7 +49,7 @@ public class StoryBookActivity extends AppCompatActivity {
                     cursor.moveToNext();
 
                     // Convert from Cursor to Gson
-                    StoryBookChapterGson storyBookChapter = CursorToStoryBookChapterGsonConverter.getStoryBookChapter(cursor);
+                    StoryBookChapterGson storyBookChapter = CursorToStoryBookChapterGsonConverter.getStoryBookChapter(cursor, getApplicationContext());
 
                     storyBookChapters.add(storyBookChapter);
 

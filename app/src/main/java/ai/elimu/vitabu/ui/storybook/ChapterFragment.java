@@ -47,34 +47,6 @@ public class ChapterFragment extends Fragment {
         storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(chapterIndex);
         Log.i(getClass().getName(), "storyBookChapter: " + storyBookChapter);
 
-        // If the Image id is not empty, fetch the complete ImageGson from the content provider
-        Log.i(getClass().getName(), "storyBookChapter.getImage(): " + storyBookChapter.getImage());
-        if (storyBookChapter.getImage() != null) {
-            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/images/" + storyBookChapter.getImage().getId());
-            Log.i(getClass().getName(), "uri: " + uri);
-            Cursor imageCursor = getContext().getContentResolver().query(uri, null, null, null, null);
-            if (imageCursor == null) {
-                Log.e(getClass().getName(), "imageCursor == null");
-                Toast.makeText(getContext(), "imageCursor == null", Toast.LENGTH_LONG).show();
-            } else {
-                Log.i(getClass().getName(), "imageCursor.getCount(): " + imageCursor.getCount());
-                if (imageCursor.getCount() == 0) {
-                    Log.e(getClass().getName(), "imageCursor.getCount() == 0");
-                } else {
-                    Log.i(getClass().getName(), "imageCursor.getCount(): " + imageCursor.getCount());
-
-                    imageCursor.moveToFirst();
-
-                    // Convert from Room to Gson
-                    ImageGson imageGson = CursorToImageGsonConverter.getImage(imageCursor);
-                    storyBookChapter.setImage(imageGson);
-
-                    imageCursor.close();
-                    Log.i(getClass().getName(), "cursor.isClosed(): " + imageCursor.isClosed());
-                }
-            }
-        }
-
 //        // Fetch StoryBookParagraphGsons from the content provider
 //        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybooks_provider/storybooks/#" + storyBookChapter.getStoryBook().getId() + "/chapters/#" + storyBookChapter.getId() + "/paragraphs");
 //        Log.i(getClass().getName(), "uri: " + uri);
