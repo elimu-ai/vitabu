@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.model.enums.analytics.LearningEventType;
-import ai.elimu.model.gson.content.StoryBookGson;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
+import ai.elimu.model.gson.v2.content.StoryBookGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
@@ -45,7 +45,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         storyBooks = new ArrayList<>();
-        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybook");
+        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybooks");
         Log.i(getClass().getName(), "uri: " + uri);
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         if (cursor == null) {
@@ -60,8 +60,8 @@ public class StoryBooksActivity extends AppCompatActivity {
                 while (!isLast) {
                     cursor.moveToNext();
 
-                    // Convert from database row to StoryBookGson object
-                    StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBook(cursor);
+                    // Convert from Cursor to Gson
+                    StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBookGson(cursor);
 
                     storyBooks.add(storyBook);
 
@@ -93,7 +93,7 @@ public class StoryBooksActivity extends AppCompatActivity {
             // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
             Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
             ImageGson coverImage = storyBook.getCoverImage();
-            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/image/" + coverImage.getId());
+            Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/images/" + coverImage.getId());
             Log.i(getClass().getName(), "uri: " + uri);
             Cursor coverImageCursor = getContentResolver().query(uri, null, null, null, null);
             if (coverImageCursor == null) {
@@ -108,8 +108,8 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     coverImageCursor.moveToFirst();
 
-                    // Convert from database row to ImageGson object
-                    ImageGson coverImageGson = CursorToImageGsonConverter.getImage(coverImageCursor);
+                    // Convert from Cursor to Gson
+                    ImageGson coverImageGson = CursorToImageGsonConverter.getImageGson(coverImageCursor);
 
                     coverImageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());

@@ -5,13 +5,13 @@ import android.util.Log;
 
 import java.util.Arrays;
 
-import ai.elimu.model.gson.content.StoryBookGson;
-import ai.elimu.model.gson.content.multimedia.ImageGson;
+import ai.elimu.model.gson.v2.content.ImageGson;
+import ai.elimu.model.gson.v2.content.StoryBookGson;
 
 public class CursorToStoryBookGsonConverter {
 
-    public static StoryBookGson getStoryBook(Cursor cursor) {
-        Log.i(CursorToStoryBookGsonConverter.class.getName(), "getStoryBook");
+    public static StoryBookGson getStoryBookGson(Cursor cursor) {
+        Log.i(CursorToStoryBookGsonConverter.class.getName(), "getStoryBookGson");
 
         Log.i(CursorToStoryBookGsonConverter.class.getName(), "Arrays.toString(cursor.getColumnNames()): " + Arrays.toString(cursor.getColumnNames()));
 
