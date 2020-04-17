@@ -69,6 +69,8 @@ public class ChapterFragment extends Fragment {
                 chapterText += storyBookParagraphGson.getOriginalText();
             }
 
+            chapterText = chapterText.toLowerCase();
+
             TextView textView = root.findViewById(R.id.chapter_text);
             textView.setText(chapterText);
         }
