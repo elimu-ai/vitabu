@@ -4,7 +4,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Locale;
 
@@ -68,7 +71,7 @@ public class ChapterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreateView");
 
-        View root = inflater.inflate(R.layout.fragment_storybook, container, false);
+        final View root = inflater.inflate(R.layout.fragment_storybook, container, false);
 
         if (storyBookChapter.getImage() != null) {
             ImageView imageView = root.findViewById(R.id.chapter_image);
@@ -101,8 +104,44 @@ public class ChapterFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
+                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                    @Override
+                    public void onStart(String utteranceId) {
+                        Log.i(getClass().getName(), "onStart");
+                    }
+
+                    @Override
+                    public void onRangeStart(String utteranceId, int start, int end, int frame) {
+                        Log.i(getClass().getName(), "onRangeStart");
+                        super.onRangeStart(utteranceId, start, end, frame);
+
+                        Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
+
+                        // Highlight the word being spoken
+                        Spannable spannable = new SpannableString(chapterText);
+                        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
+                        spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        final TextView textView = root.findViewById(R.id.chapter_text);
+                        textView.setText(spannable);
+                    }
+
+                    @Override
+                    public void onDone(String utteranceId) {
+                        Log.i(getClass().getName(), "onDone");
+
+                        // Remove highlighting of the last spoken word
+                        final TextView textView = root.findViewById(R.id.chapter_text);
+                        textView.setText(chapterText);
+                    }
+
+                    @Override
+                    public void onError(String utteranceId) {
+                        Log.i(getClass().getName(), "onError");
+                    }
+                });
+
                 Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
-                tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, null);
+                tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
             }
         });
 
