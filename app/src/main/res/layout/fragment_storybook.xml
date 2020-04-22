@@ -13,6 +13,10 @@
         android:id="@+id/chapter_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         android:src="@color/colorAccent" />
 
     <ScrollView
@@ -22,7 +26,9 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chapter_image"
-        android:layout_marginTop="32sp">
+        android:layout_marginTop="32sp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <TextView
             android:id="@+id/chapter_text"
