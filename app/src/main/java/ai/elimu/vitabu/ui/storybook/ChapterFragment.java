@@ -62,7 +62,6 @@ public class ChapterFragment extends Fragment {
             @Override
             public void onInit(int status) {
                 Log.i(getClass().getName(), "onInit");
-                tts.setLanguage(new Locale("hin"));
             }
         });
     }
