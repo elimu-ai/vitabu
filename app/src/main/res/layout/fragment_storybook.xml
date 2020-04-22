@@ -6,32 +6,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
+    android:background="#FFF"
     tools:context=".ui.storybook.ChapterFragment">
 
     <ImageView
         android:id="@+id/chapter_image"
-        android:layout_width="match_parent"
-        android:layout_height="320dp"
-        android:scaleType="centerCrop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         android:src="@color/colorAccent" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chapter_image"
-        android:layout_marginTop="32sp">
+        android:layout_marginTop="32sp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin">
 
         <TextView
             android:id="@+id/chapter_text"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             android:textColor="#000"
             android:textSize="32sp"
             android:lineSpacingMultiplier="2.0"
-            android:letterSpacing="0.2" />
+            android:letterSpacing="0.2"
+            android:textIsSelectable="true" />
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
