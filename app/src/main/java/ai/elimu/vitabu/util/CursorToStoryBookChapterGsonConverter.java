@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import ai.elimu.model.gson.v2.content.ImageGson;
-import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
-import ai.elimu.model.gson.v2.content.StoryBookParagraphGson;
+import ai.elimu.model.v2.gson.content.ImageGson;
+import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
+import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.vitabu.BuildConfig;
 
 public class CursorToStoryBookChapterGsonConverter {
@@ -80,7 +80,7 @@ public class CursorToStoryBookChapterGsonConverter {
                     paragraphsCursor.moveToNext();
 
                     // Convert from Room to Gson
-                    StoryBookParagraphGson storyBookParagraphGson = CursorToStoryBookParagraphGsonConverter.getStoryBookParagraphGson(paragraphsCursor);
+                    StoryBookParagraphGson storyBookParagraphGson = CursorToStoryBookParagraphGsonConverter.getStoryBookParagraphGson(paragraphsCursor, context);
                     paragraphGsons.add(storyBookParagraphGson);
 
                     isLast = paragraphsCursor.isLast();
