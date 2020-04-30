@@ -21,10 +21,11 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Arrays;
 import java.util.Locale;
 
-import ai.elimu.model.gson.v2.content.StoryBookChapterGson;
-import ai.elimu.model.gson.v2.content.StoryBookParagraphGson;
+import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
+import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.vitabu.R;
 
 public class ChapterFragment extends Fragment {
@@ -73,6 +74,7 @@ public class ChapterFragment extends Fragment {
 
         final View root = inflater.inflate(R.layout.fragment_storybook, container, false);
 
+        // Set cover image
         if (storyBookChapter.getImage() != null) {
             ImageView imageView = root.findViewById(R.id.chapter_image);
             byte[] bytes = storyBookChapter.getImage().getBytes();
@@ -80,6 +82,7 @@ public class ChapterFragment extends Fragment {
             imageView.setImageBitmap(bitmap);
         }
 
+        // Set paragraph(s)
         Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookChapter.getStoryBookParagraphs());
         if (storyBookChapter.getStoryBookParagraphs() != null) {
             chapterText = "";
@@ -98,6 +101,21 @@ public class ChapterFragment extends Fragment {
             textView.setVisibility(View.VISIBLE);
         }
 
+        // Underline clickable Words
+        if (storyBookChapter.getStoryBookParagraphs() != null) {
+            for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
+                Log.i(getClass().getName(), "storyBookParagraphGson.getWords(): " + storyBookParagraphGson.getWords());
+                if (storyBookParagraphGson.getWords() != null) {
+                    Log.i(getClass().getName(), "storyBookParagraphGson.getWords().size(): " + storyBookParagraphGson.getWords().size());
+                    String[] wordsInOriginalText = storyBookParagraphGson.getOriginalText().trim().split(" ");
+                    Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
+                    Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
+
+                }
+            }
+        }
+
+        // Add button for initializing Text-to-Speech (TTS)
         FloatingActionButton fab = root.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
