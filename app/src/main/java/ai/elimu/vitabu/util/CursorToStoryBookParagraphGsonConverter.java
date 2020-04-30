@@ -34,7 +34,7 @@ public class CursorToStoryBookParagraphGsonConverter {
         Log.i(CursorToStoryBookParagraphGsonConverter.class.getName(), "originalText: " + originalText);
 
         List<WordGson> wordGsons = null;
-        Uri wordsUri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.word_provider/words-in-paragraph/" + id);
+        Uri wordsUri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.word_provider/words/by-paragraph-id/" + id);
         Log.i(CursorToImageGsonConverter.class.getName(), "wordsUri: " + wordsUri);
         Cursor wordsCursor = context.getContentResolver().query(wordsUri, null, null, null, null);
         if (wordsCursor == null) {
@@ -65,11 +65,48 @@ public class CursorToStoryBookParagraphGsonConverter {
             }
         }
 
+        List<WordGson> wordGsonsWithNullObjects = null;
+        if (wordGsons != null) {
+            // Look for a Word match in the original text, and add null if none was found
+            wordGsonsWithNullObjects = new ArrayList<>();
+            String[] wordsInOriginalText = originalText.trim().split(" ");
+            Log.i(CursorToImageGsonConverter.class.getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
+            Log.i(CursorToImageGsonConverter.class.getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
+            for (String wordInOriginalText : wordsInOriginalText) {
+                Log.i(CursorToImageGsonConverter.class.getName(), "wordInOriginalText (before cleaning): \"" + wordInOriginalText + "\"");
+                wordInOriginalText = wordInOriginalText
+                        .replace(",", "")
+                        .replace("\"", "")
+                        .replace("“", "")
+                        .replace("”", "")
+                        .replace(".", "")
+                        .replace("!", "")
+                        .replace("?", "")
+                        .replace(":", "")
+                        .replace("(", "")
+                        .replace(")", "");
+                wordInOriginalText = wordInOriginalText.trim();
+                wordInOriginalText = wordInOriginalText.toLowerCase();
+                Log.i(CursorToImageGsonConverter.class.getName(), "wordInOriginalText (after cleaning): \"" + wordInOriginalText + "\"");
+
+                WordGson wordGsonMatch = null;
+                for (WordGson wordGson : wordGsons) {
+                    Log.i(CursorToImageGsonConverter.class.getName(), "wordGson.getText(): \"" + wordGson.getText() + "\"");
+                    if (wordGson.getText().equals(wordInOriginalText)) {
+                        wordGsonMatch = wordGson;
+                        break;
+                    }
+                }
+                wordGsonsWithNullObjects.add(wordGsonMatch);
+            }
+            Log.i(CursorToImageGsonConverter.class.getName(), "wordGsonsWithNullObjects.size(): " + wordGsonsWithNullObjects.size());
+        }
+
         StoryBookParagraphGson storyBookParagraph = new StoryBookParagraphGson();
         storyBookParagraph.setId(id);
         storyBookParagraph.setSortOrder(sortOrder);
         storyBookParagraph.setOriginalText(originalText);
-        storyBookParagraph.setWords(wordGsons);
+        storyBookParagraph.setWords(wordGsonsWithNullObjects);
 
         return storyBookParagraph;
     }
