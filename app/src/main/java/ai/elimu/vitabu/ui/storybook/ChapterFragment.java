@@ -1,5 +1,6 @@
 package ai.elimu.vitabu.ui.storybook;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -29,9 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.model.v2.gson.content.WordGson;
+import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 
 public class ChapterFragment extends Fragment {
@@ -141,7 +144,15 @@ public class ChapterFragment extends Fragment {
                                     Toast.makeText(getContext(), wordGson.getText(), Toast.LENGTH_LONG).show();
                                     tts.speak(wordGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordGson.getId());
 
-                                    // TODO:WordLearningEvent
+                                    // Report WordBookLearningEvent to the Analytics application
+                                    Intent broadcastIntent = new Intent();
+                                    broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
+                                    broadcastIntent.setAction("ai.elimu.intent.action.WORD_LEARNING_EVENT");
+                                    broadcastIntent.putExtra("packageName", BuildConfig.APPLICATION_ID);
+                                    broadcastIntent.putExtra("wordId", wordGson.getId());
+                                    broadcastIntent.putExtra("wordText", wordGson.getText());
+                                    broadcastIntent.putExtra("learningEventType", LearningEventType.WORD_PRESSED.toString());
+                                    getActivity().sendBroadcast(broadcastIntent);
                                 }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
