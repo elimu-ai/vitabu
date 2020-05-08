@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,16 +25,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import ai.elimu.model.enums.analytics.LearningEventType;
+import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 public class ChapterFragment extends Fragment {
 
@@ -85,10 +87,19 @@ public class ChapterFragment extends Fragment {
 
         // Set cover image
         if (storyBookChapter.getImage() != null) {
-            ImageView imageView = root.findViewById(R.id.chapter_image);
-            byte[] bytes = storyBookChapter.getImage().getBytes();
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            imageView.setImageBitmap(bitmap);
+            GifImageView gifImageView = root.findViewById(R.id.chapter_image);
+            byte[] imageBytes = storyBookChapter.getImage().getBytes();
+            if (storyBookChapter.getImage().getImageFormat() == ImageFormat.GIF) {
+                try {
+                    GifDrawable gifDrawable = new GifDrawable(imageBytes);
+                    gifImageView.setImageDrawable(gifDrawable);
+                } catch (IOException e) {
+                    Log.e(getClass().getName(), null, e);
+                }
+            } else {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                gifImageView.setImageBitmap(bitmap);
+            }
         }
 
         // Set paragraph(s)
