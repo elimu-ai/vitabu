@@ -155,7 +155,7 @@ public class ChapterFragment extends Fragment {
                                     Toast.makeText(getContext(), wordGson.getText(), Toast.LENGTH_LONG).show();
                                     tts.speak(wordGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordGson.getId());
 
-                                    // Report WordBookLearningEvent to the Analytics application
+                                    // Report WordLearningEvent to the Analytics application
                                     Intent broadcastIntent = new Intent();
                                     broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
                                     broadcastIntent.setAction("ai.elimu.intent.action.WORD_LEARNING_EVENT");
