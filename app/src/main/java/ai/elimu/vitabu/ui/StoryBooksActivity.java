@@ -16,10 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.model.enums.analytics.LearningEventType;
+import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.ImageGson;
 import ai.elimu.model.v2.gson.content.StoryBookGson;
 import ai.elimu.vitabu.BuildConfig;
@@ -27,6 +29,8 @@ import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
 import ai.elimu.vitabu.util.CursorToImageGsonConverter;
 import ai.elimu.vitabu.util.CursorToStoryBookGsonConverter;
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 public class StoryBooksActivity extends AppCompatActivity {
 
@@ -114,10 +118,19 @@ public class StoryBooksActivity extends AppCompatActivity {
                     coverImageCursor.close();
                     Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());
 
-                    byte[] bytes = coverImageGson.getBytes();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    ImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
-                    storyBookImageView.setImageBitmap(bitmap);
+                    GifImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
+                    byte[] imageBytes = coverImageGson.getBytes();
+                    if (coverImageGson.getImageFormat() == ImageFormat.GIF) {
+                        try {
+                            GifDrawable gifDrawable = new GifDrawable(imageBytes);
+                            storyBookImageView.setImageDrawable(gifDrawable);
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
+                        }
+                    } else {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        storyBookImageView.setImageBitmap(bitmap);
+                    }
                 }
             }
 
