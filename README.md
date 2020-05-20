@@ -2,7 +2,7 @@
 
 Android application for reading storybooks.
 
-![device-2020-04-22-100038](https://user-images.githubusercontent.com/15718174/79932579-685fa380-8480-11ea-952d-9d3c457b7156.png)
+![device-2020-05-20-140515](https://user-images.githubusercontent.com/15718174/82410793-1cb21100-9aa3-11ea-9256-fcd5267ac492.png)
 
 ---
 
