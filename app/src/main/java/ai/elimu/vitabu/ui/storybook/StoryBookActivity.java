@@ -16,6 +16,7 @@ import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
+import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer;
 import ai.elimu.vitabu.util.CursorToStoryBookChapterGsonConverter;
 
 public class StoryBookActivity extends AppCompatActivity {
@@ -73,9 +74,12 @@ public class StoryBookActivity extends AppCompatActivity {
         }
         Log.i(getClass().getName(), "storyBookChapters.size(): " + storyBookChapters.size());
 
-        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters);
-
         ViewPager viewPager = findViewById(R.id.view_pager);
+
+        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters);
         viewPager.setAdapter(chapterPagerAdapter);
+
+        ZoomOutPageTransformer zoomOutPageTransformer = new ZoomOutPageTransformer();
+        viewPager.setPageTransformer(true, zoomOutPageTransformer);
     }
 }
