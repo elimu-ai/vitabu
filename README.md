@@ -6,9 +6,6 @@ Android application for reading storybooks.
 
 <img width="320" alt="device-2020-06-10-152302" src="https://user-images.githubusercontent.com/15718174/84238987-6e900900-ab2e-11ea-82d5-c41a510473dd.png">
 
-## Continuous Integration
-Travis CI: [![Build Status](https://travis-ci.com/elimu-ai/vitabu.svg?branch=master)](https://travis-ci.com/elimu-ai/vitabu)
-
 ---
 
 ## About the elimu.ai Community
