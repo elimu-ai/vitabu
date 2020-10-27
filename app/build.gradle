@@ -43,7 +43,7 @@ dependencies {
     implementation 'ai.elimu:model:2.0.24'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.21'
 
     testImplementation 'junit:junit:4.13.1'
