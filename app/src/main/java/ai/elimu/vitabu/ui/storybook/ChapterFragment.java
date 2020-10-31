@@ -34,6 +34,7 @@ import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.model.v2.gson.content.WordGson;
+import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import pl.droidsonroids.gif.GifDrawable;
@@ -45,9 +46,9 @@ public class ChapterFragment extends Fragment {
 
     private StoryBookChapterGson storyBookChapter;
 
-    private TextToSpeech tts;
-
     private String chapterText;
+
+    private TextToSpeech tts;
 
     public static ChapterFragment newInstance(int chapterIndex) {
         ChapterFragment fragment = new ChapterFragment();
@@ -69,14 +70,9 @@ public class ChapterFragment extends Fragment {
         storyBookChapter = ChapterPagerAdapter.storyBookChapters.get(chapterIndex);
         Log.i(getClass().getName(), "storyBookChapter: " + storyBookChapter);
 
-        // Initialize Text-to-Speech
-        tts = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                Log.i(getClass().getName(), "onInit");
-//                tts.setLanguage(new Locale("hin"));
-            }
-        });
+        // Fetch the Text-to-Speech (TTS) engine which has already been initialized
+        BaseApplication baseApplication = (BaseApplication) getActivity().getApplication();
+        tts = baseApplication.getTTS();
     }
 
     @Override
