@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +28,7 @@ import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
 import ai.elimu.vitabu.util.CursorToImageGsonConverter;
 import ai.elimu.vitabu.util.CursorToStoryBookGsonConverter;
+import ai.elimu.vitabu.util.SingleClickListener;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -137,9 +137,9 @@ public class StoryBooksActivity extends AppCompatActivity {
             TextView storyBookCoverTitleTextView = storyBookView.findViewById(R.id.storyBookCoverTitleTextView);
             storyBookCoverTitleTextView.setText(storyBook.getTitle());
 
-            storyBookView.setOnClickListener(new View.OnClickListener() {
+            storyBookView.setOnClickListener(new SingleClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onSingleClick(View v) {
                     Log.i(getClass().getName(), "onClick");
 
                     Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
