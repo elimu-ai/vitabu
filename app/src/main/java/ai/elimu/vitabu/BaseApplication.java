@@ -4,7 +4,12 @@ import android.app.Application;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class BaseApplication extends Application {
+
+    Executor executorService = Executors.newSingleThreadExecutor();
 
     private TextToSpeech tts;
 
@@ -28,5 +33,9 @@ public class BaseApplication extends Application {
 
     public TextToSpeech getTTS() {
         return tts;
+    }
+
+    public Executor getExecutor() {
+        return executorService;
     }
 }
