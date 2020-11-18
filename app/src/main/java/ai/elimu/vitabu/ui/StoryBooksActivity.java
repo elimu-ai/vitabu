@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.io.IOException;
 import java.util.List;
 
+import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.enums.content.ImageFormat;
@@ -74,10 +75,10 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                     Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
-                    ImageGson coverImageGson = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    ImageGson coverImage = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                     final GifImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
-                    byte[] imageBytes = coverImageGson.getBytes();
-                    if (coverImageGson.getImageFormat() == ImageFormat.GIF) {
+                    byte[] imageBytes = coverImage.getBytes();
+                    if (coverImage.getImageFormat() == ImageFormat.GIF) {
                         try {
                             final GifDrawable gifDrawable = new GifDrawable(imageBytes);
                             runOnUiThread(new Runnable() {
@@ -105,19 +106,13 @@ public class StoryBooksActivity extends AppCompatActivity {
                     storyBookView.setOnClickListener(new SingleClickListener() {
                         @Override
                         public void onSingleClick(View v) {
-                        Log.i(getClass().getName(), "onClick");
+                            Log.i(getClass().getName(), "onClick");
 
-                        Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
-                        Log.i(getClass().getName(), "storyBook.getTitle(): " + storyBook.getTitle());
+                            Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
+                            Log.i(getClass().getName(), "storyBook.getTitle(): " + storyBook.getTitle());
 
-                            // Report StoryBookLearningEvent to the Analytics application
-                            Intent broadcastIntent = new Intent();
-                            broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
-                            broadcastIntent.setAction("ai.elimu.intent.action.STORYBOOK_LEARNING_EVENT");
-                            broadcastIntent.putExtra("packageName", BuildConfig.APPLICATION_ID);
-                            broadcastIntent.putExtra("storyBookId", storyBook.getId());
-                            broadcastIntent.putExtra("learningEventType", LearningEventType.STORYBOOK_OPENED.toString());
-                            getApplicationContext().sendBroadcast(broadcastIntent);
+                            // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                            LearningEventUtil.reportStoryBookLearningEvent(storyBook, LearningEventType.STORYBOOK_OPENED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
 
                             Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
                             intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, storyBook.getId());
