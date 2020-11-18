@@ -1,12 +1,8 @@
 package ai.elimu.vitabu.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,12 +10,13 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import ai.elimu.content_provider.utils.ContentProviderHelper;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.ImageGson;
@@ -28,8 +25,6 @@ import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
-import ai.elimu.vitabu.util.CursorToImageGsonConverter;
-import ai.elimu.vitabu.util.CursorToStoryBookGsonConverter;
 import ai.elimu.vitabu.util.SingleClickListener;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -52,33 +47,7 @@ public class StoryBooksActivity extends AppCompatActivity {
         storyBooksProgressBar = findViewById(R.id.storybooks_progress_bar);
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        storyBooks = new ArrayList<>();
-        Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.storybook_provider/storybooks");
-        Log.i(getClass().getName(), "uri: " + uri);
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        if (cursor == null) {
-            Log.e(getClass().getName(), "cursor == null");
-            Toast.makeText(getApplicationContext(), "cursor == null", Toast.LENGTH_LONG).show();
-        } else {
-            Log.i(getClass().getName(), "cursor.getCount(): " + cursor.getCount());
-            if (cursor.getCount() == 0) {
-                Log.e(getClass().getName(), "cursor.getCount() == 0");
-            } else {
-                boolean isLast = false;
-                while (!isLast) {
-                    cursor.moveToNext();
-
-                    // Convert from Cursor to Gson
-                    StoryBookGson storyBook = CursorToStoryBookGsonConverter.getStoryBookGson(cursor);
-
-                    storyBooks.add(storyBook);
-
-                    isLast = cursor.isLast();
-                }
-                cursor.close();
-                Log.i(getClass().getName(), "cursor.isClosed(): " + cursor.isClosed());
-            }
-        }
+        storyBooks = ContentProviderHelper.getStoryBookGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
     }
 
@@ -105,52 +74,29 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                     Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
-                    ImageGson coverImage = storyBook.getCoverImage();
-                    Uri uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID + ".provider.image_provider/images/" + coverImage.getId());
-                    Log.i(getClass().getName(), "uri: " + uri);
-                    Cursor coverImageCursor = getContentResolver().query(uri, null, null, null, null);
-                    if (coverImageCursor == null) {
-                        Log.e(getClass().getName(), "coverImageCursor == null");
-                        Toast.makeText(getApplicationContext(), "coverImageCursor == null", Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.i(getClass().getName(), "coverImageCursor.getCount(): " + coverImageCursor.getCount());
-                        if (coverImageCursor.getCount() == 0) {
-                            Log.e(getClass().getName(), "coverImageCursor.getCount() == 0");
-                        } else {
-                            Log.i(getClass().getName(), "coverImageCursor.getCount(): " + coverImageCursor.getCount());
-
-                            coverImageCursor.moveToFirst();
-
-                            // Convert from Cursor to Gson
-                            ImageGson coverImageGson = CursorToImageGsonConverter.getImageGson(coverImageCursor);
-
-                            coverImageCursor.close();
-                            Log.i(getClass().getName(), "cursor.isClosed(): " + coverImageCursor.isClosed());
-
-                            final GifImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
-                            byte[] imageBytes = coverImageGson.getBytes();
-                            if (coverImageGson.getImageFormat() == ImageFormat.GIF) {
-                                try {
-                                    final GifDrawable gifDrawable = new GifDrawable(imageBytes);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            storyBookImageView.setImageDrawable(gifDrawable);
-                                        }
-                                    });
-                                } catch (IOException e) {
-                                    Log.e(getClass().getName(), null, e);
+                    ImageGson coverImageGson = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    final GifImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
+                    byte[] imageBytes = coverImageGson.getBytes();
+                    if (coverImageGson.getImageFormat() == ImageFormat.GIF) {
+                        try {
+                            final GifDrawable gifDrawable = new GifDrawable(imageBytes);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    storyBookImageView.setImageDrawable(gifDrawable);
                                 }
-                            } else {
-                                final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        storyBookImageView.setImageBitmap(bitmap);
-                                    }
-                                });
-                            }
+                            });
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
                         }
+                    } else {
+                        final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                storyBookImageView.setImageBitmap(bitmap);
+                            }
+                        });
                     }
 
                     TextView storyBookCoverTitleTextView = storyBookView.findViewById(R.id.storyBookCoverTitleTextView);
