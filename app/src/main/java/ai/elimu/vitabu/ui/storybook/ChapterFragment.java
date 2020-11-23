@@ -1,6 +1,5 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
@@ -118,10 +118,10 @@ public class ChapterFragment extends Fragment {
         // Underline clickable Words
         if (storyBookChapter.getStoryBookParagraphs() != null) {
             for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
-                List<WordGson> wordGsons = storyBookParagraphGson.getWords();
-                Log.i(getClass().getName(), "wordGsons: " + wordGsons);
-                if (wordGsons != null) {
-                    Log.i(getClass().getName(), "wordGsons.size(): " + wordGsons.size());
+                List<WordGson> words = storyBookParagraphGson.getWords();
+                Log.i(getClass().getName(), "words: " + words);
+                if (words != null) {
+                    Log.i(getClass().getName(), "words.size(): " + words.size());
                     String[] wordsInOriginalText = storyBookParagraphGson.getOriginalText().trim().split(" ");
                     Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
                     Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
@@ -135,29 +135,22 @@ public class ChapterFragment extends Fragment {
                         String wordInOriginalText = wordsInOriginalText[i];
                         spannableEnd += wordInOriginalText.length();
 
-                        final WordGson wordGson = wordGsons.get(i);
-                        if (wordGson != null) {
-                            Log.i(getClass().getName(), "Adding UnderlineSpan for \"" + wordGson.getText() + "\"");
+                        final WordGson word = words.get(i);
+                        if (word != null) {
+                            Log.i(getClass().getName(), "Adding UnderlineSpan for \"" + word.getText() + "\"");
                             Log.i(getClass().getName(), "chapterText.substring(spannableStart, spannableEnd): \"" + chapterText.substring(spannableStart, spannableEnd) + "\"");
 
                             ClickableSpan clickableSpan = new ClickableSpan() {
                                 @Override
                                 public void onClick(@NonNull View widget) {
                                     Log.i(getClass().getName(), "onClick");
-                                    Log.i(getClass().getName(), "wordGson.getText(): \"" + wordGson.getText() + "\"");
+                                    Log.i(getClass().getName(), "word.getText(): \"" + word.getText() + "\"");
 
-                                    Toast.makeText(getContext(), wordGson.getText(), Toast.LENGTH_LONG).show();
-                                    tts.speak(wordGson.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordGson.getId());
+                                    Toast.makeText(getContext(), word.getText(), Toast.LENGTH_LONG).show();
+                                    tts.speak(word.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + word.getId());
 
-                                    // Report WordLearningEvent to the Analytics application
-                                    Intent broadcastIntent = new Intent();
-                                    broadcastIntent.setPackage(BuildConfig.ANALYTICS_APPLICATION_ID);
-                                    broadcastIntent.setAction("ai.elimu.intent.action.WORD_LEARNING_EVENT");
-                                    broadcastIntent.putExtra("packageName", BuildConfig.APPLICATION_ID);
-                                    broadcastIntent.putExtra("wordId", wordGson.getId());
-                                    broadcastIntent.putExtra("wordText", wordGson.getText());
-                                    broadcastIntent.putExtra("learningEventType", LearningEventType.WORD_PRESSED.toString());
-                                    getActivity().sendBroadcast(broadcastIntent);
+                                    // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                                    LearningEventUtil.reportWordLearningEvent(word, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                                 }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
