@@ -9,7 +9,7 @@
     android:background="#FFF"
     tools:context=".ui.storybook.ChapterFragment">
 
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:id="@+id/chapter_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

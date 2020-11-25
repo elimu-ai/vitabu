@@ -1,25 +1,25 @@
 package ai.elimu.vitabu.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
 import ai.elimu.model.enums.analytics.LearningEventType;
-import ai.elimu.model.enums.content.ImageFormat;
 import ai.elimu.model.v2.gson.content.ImageGson;
 import ai.elimu.model.v2.gson.content.StoryBookGson;
 import ai.elimu.vitabu.BaseApplication;
@@ -27,8 +27,6 @@ import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
 import ai.elimu.vitabu.util.SingleClickListener;
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 public class StoryBooksActivity extends AppCompatActivity {
 
@@ -75,33 +73,24 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                     Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
-                    ImageGson coverImage = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-                    final GifImageView storyBookImageView = storyBookView.findViewById(R.id.storyBookCoverImageView);
-                    byte[] imageBytes = coverImage.getBytes();
-                    if (coverImage.getImageFormat() == ImageFormat.GIF) {
-                        try {
-                            final GifDrawable gifDrawable = new GifDrawable(imageBytes);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    storyBookImageView.setImageDrawable(gifDrawable);
-                                }
-                            });
-                        } catch (IOException e) {
-                            Log.e(getClass().getName(), null, e);
+                    final ImageGson coverImage = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    final ImageView coverImageView = storyBookView.findViewById(R.id.coverImageView);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            File imageFile = new File(Environment.getExternalStorageDirectory() +
+                                    "/Android/data/" +
+                                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+                                    "/files/" + Environment.DIRECTORY_PICTURES + "/" +
+                                    coverImage.getId() + "_r" + coverImage.getRevisionNumber() + "." + coverImage.getImageFormat().toString().toLowerCase());
+                            Uri imageFileUri = Uri.fromFile(imageFile);
+                            Log.i(getClass().getName(), "imageFileUri: " + imageFileUri);
+                            coverImageView.setImageURI(imageFileUri);
                         }
-                    } else {
-                        final Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                storyBookImageView.setImageBitmap(bitmap);
-                            }
-                        });
-                    }
+                    });
 
-                    TextView storyBookCoverTitleTextView = storyBookView.findViewById(R.id.storyBookCoverTitleTextView);
-                    storyBookCoverTitleTextView.setText(storyBook.getTitle());
+                    TextView coverTitleTextView = storyBookView.findViewById(R.id.coverTitleTextView);
+                    coverTitleTextView.setText(storyBook.getTitle());
 
                     storyBookView.setOnClickListener(new SingleClickListener() {
                         @Override

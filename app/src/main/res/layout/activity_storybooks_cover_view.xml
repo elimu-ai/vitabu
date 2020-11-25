@@ -11,7 +11,7 @@
         android:layout_height="250dp">
 
         <pl.droidsonroids.gif.GifImageView
-            android:id="@+id/storyBookCoverImageView"
+            android:id="@+id/coverImageView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -19,7 +19,7 @@
             android:contentDescription="Grace in Space" />
 
         <TextView
-            android:id="@+id/storyBookCoverTitleTextView"
+            android:id="@+id/coverTitleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"

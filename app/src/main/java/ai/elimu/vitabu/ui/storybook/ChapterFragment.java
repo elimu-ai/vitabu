@@ -1,8 +1,8 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.text.Spannable;
@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,21 +25,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.model.enums.analytics.LearningEventType;
-import ai.elimu.model.enums.content.ImageFormat;
+import ai.elimu.model.v2.gson.content.ImageGson;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
 import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 public class ChapterFragment extends Fragment {
 
@@ -81,21 +80,18 @@ public class ChapterFragment extends Fragment {
 
         final View root = inflater.inflate(R.layout.fragment_storybook, container, false);
 
-        // Set cover image
-        if (storyBookChapter.getImage() != null) {
-            GifImageView gifImageView = root.findViewById(R.id.chapter_image);
-            byte[] imageBytes = storyBookChapter.getImage().getBytes();
-            if (storyBookChapter.getImage().getImageFormat() == ImageFormat.GIF) {
-                try {
-                    GifDrawable gifDrawable = new GifDrawable(imageBytes);
-                    gifImageView.setImageDrawable(gifDrawable);
-                } catch (IOException e) {
-                    Log.e(getClass().getName(), null, e);
-                }
-            } else {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                gifImageView.setImageBitmap(bitmap);
-            }
+        // Set chapter image
+        ImageGson chapterImage  = storyBookChapter.getImage();
+        if (chapterImage != null) {
+            ImageView imageView = root.findViewById(R.id.chapter_image);
+            File imageFile = new File(Environment.getExternalStorageDirectory() +
+                    "/Android/data/" +
+                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+                    "/files/" + Environment.DIRECTORY_PICTURES + "/" +
+                    chapterImage.getId() + "_r" + chapterImage.getRevisionNumber() + "." + chapterImage.getImageFormat().toString().toLowerCase());
+            Uri imageFileUri = Uri.fromFile(imageFile);
+            Log.i(getClass().getName(), "imageFileUri: " + imageFileUri);
+            imageView.setImageURI(imageFileUri);
         }
 
         // Set paragraph(s)
