@@ -1,7 +1,6 @@
 package ai.elimu.vitabu.ui;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.File;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
@@ -28,7 +26,14 @@ import ai.elimu.vitabu.R;
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity;
 import ai.elimu.vitabu.util.SingleClickListener;
 
+import static ai.elimu.vitabu.util.BitmapDecoder.decodeSampledBitmap;
+
 public class StoryBooksActivity extends AppCompatActivity {
+
+    final static String PICTURES_PATH = Environment.getExternalStorageDirectory() +
+            "/Android/data/" +
+            BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+            "/files/" + Environment.DIRECTORY_PICTURES + "/";
 
     private GridLayout storyBooksGridLayout;
     private ProgressBar storyBooksProgressBar;
@@ -78,14 +83,9 @@ public class StoryBooksActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            File imageFile = new File(Environment.getExternalStorageDirectory() +
-                                    "/Android/data/" +
-                                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
-                                    "/files/" + Environment.DIRECTORY_PICTURES + "/" +
-                                    coverImage.getId() + "_r" + coverImage.getRevisionNumber() + "." + coverImage.getImageFormat().toString().toLowerCase());
-                            Uri imageFileUri = Uri.fromFile(imageFile);
-                            Log.i(getClass().getName(), "imageFileUri: " + imageFileUri);
-                            coverImageView.setImageURI(imageFileUri);
+                            String imageFilePath = PICTURES_PATH + coverImage.getId() + "_r" + coverImage.getRevisionNumber() + "." + coverImage.getImageFormat().toString().toLowerCase();
+                            Log.i(getClass().getName(), "imageFile: " + imageFilePath);
+                            coverImageView.setImageBitmap(decodeSampledBitmap(imageFilePath, 100, 100));
                         }
                     });
 
