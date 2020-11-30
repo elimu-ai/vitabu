@@ -7,8 +7,8 @@ android {
         applicationId "ai.elimu.vitabu"
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1000006
-        versionName "1.0.6-SNAPSHOT"
+        versionCode 1000007
+        versionName "1.0.7-SNAPSHOT"
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -40,7 +40,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'ai.elimu:model:2.0.26'
+    implementation 'ai.elimu:model:2.0.27'
     implementation 'ai.elimu:content-provider-utils:1.1.1@aar'
     implementation 'ai.elimu.analytics:utils:1.0.7@aar'
     implementation 'androidx.appcompat:appcompat:1.2.0'
