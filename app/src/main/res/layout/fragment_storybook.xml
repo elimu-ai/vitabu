@@ -21,8 +21,9 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/chapter_image"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -34,14 +35,15 @@
             android:id="@+id/chapter_text"
             android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            android:layout_height="wrap_content"
             android:textColor="#000"
             android:textSize="32sp"
             android:textAlignment="center"
             android:lineSpacingMultiplier="1.5"
             android:letterSpacing="0.2"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            tools:visibility="visible"/>
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
