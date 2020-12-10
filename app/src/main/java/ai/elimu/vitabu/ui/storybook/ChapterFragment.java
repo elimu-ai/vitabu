@@ -1,7 +1,5 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.content.Context;
-import android.database.Cursor;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,10 +31,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import ai.elimu.analytics.utils.ContentProviderUtil;
 import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
-import ai.elimu.content_provider.utils.converter.CursorToAudioGsonConverter;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.AudioGson;
 import ai.elimu.model.v2.gson.content.ImageGson;
@@ -89,7 +85,7 @@ public class ChapterFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_storybook, container, false);
 
         // Set chapter image
-        ImageGson chapterImage  = storyBookChapter.getImage();
+        ImageGson chapterImage = storyBookChapter.getImage();
         if (chapterImage != null) {
             ImageView imageView = root.findViewById(R.id.chapter_image);
             File imageFile = new File(Environment.getExternalStorageDirectory() +
@@ -152,7 +148,7 @@ public class ChapterFragment extends Fragment {
 
                                     Toast.makeText(getContext(), word.getText(), Toast.LENGTH_LONG).show();
 
-                                    AudioGson audioGson = getAudioGsonByTranscription(word.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(word.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                                     Log.i(getClass().getName(), "audioGson: " + audioGson);
                                     if (audioGson != null) {
                                         // Play audio file
@@ -205,7 +201,7 @@ public class ChapterFragment extends Fragment {
                 StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
                 String transcription = storyBookParagraphGson.getOriginalText();
                 Log.i(getClass().getName(), "transcription: \"" + transcription + "\"");
-                AudioGson audioGson = getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                 Log.i(getClass().getName(), "audioGson: " + audioGson);
                 if (audioGson != null) {
                     // Play audio file
@@ -270,70 +266,5 @@ public class ChapterFragment extends Fragment {
         });
 
         return root;
-    }
-
-
-    // TODO: Move to content-provider library
-    public static AudioGson getAudioGsonByTitle(String title, Context context, String contentProviderApplicationId) {
-        Log.i(ChapterFragment.class.getName(), "getAudioGson");
-
-        AudioGson audioGson = null;
-
-        Uri audioUri = Uri.parse("content://" + contentProviderApplicationId + ".provider.audio_provider/audios/by-title/" + title);
-        Log.i(ChapterFragment.class.getName(), "audioUri: " + audioUri);
-        Cursor audioCursor = context.getContentResolver().query(audioUri, null, null, null, null);
-        Log.i(ChapterFragment.class.getName(), "audioCursor: " + audioCursor);
-        if (audioCursor == null) {
-            Log.e(ChapterFragment.class.getName(), "audioCursor == null");
-            Toast.makeText(context, "audioCursor == null", Toast.LENGTH_LONG).show();
-        } else {
-            Log.i(ChapterFragment.class.getName(), "audioCursor.getCount(): " + audioCursor.getCount());
-            if (audioCursor.getCount() == 0) {
-                Log.e(ChapterFragment.class.getName(), "audioCursor.getCount() == 0");
-            } else {
-                audioCursor.moveToFirst();
-
-                // Convert from Room to Gson
-                audioGson = CursorToAudioGsonConverter.getAudioGson(audioCursor);
-
-                audioCursor.close();
-                Log.i(ChapterFragment.class.getName(), "audioCursor.isClosed(): " + audioCursor.isClosed());
-            }
-        }
-        Log.i(ChapterFragment.class.getName(), "audioGson: " + audioGson);
-
-        return audioGson;
-    }
-
-    // TODO: Move to content-provider library
-    public static AudioGson getAudioGsonByTranscription(String transcription, Context context, String contentProviderApplicationId) {
-        Log.i(ChapterFragment.class.getName(), "getAudioGson");
-
-        AudioGson audioGson = null;
-
-        Uri audioUri = Uri.parse("content://" + contentProviderApplicationId + ".provider.audio_provider/audios/by-transcription/" + transcription);
-        Log.i(ChapterFragment.class.getName(), "audioUri: " + audioUri);
-        Cursor audioCursor = context.getContentResolver().query(audioUri, null, null, null, null);
-        Log.i(ChapterFragment.class.getName(), "audioCursor: " + audioCursor);
-        if (audioCursor == null) {
-            Log.e(ChapterFragment.class.getName(), "audioCursor == null");
-            Toast.makeText(context, "audioCursor == null", Toast.LENGTH_LONG).show();
-        } else {
-            Log.i(ChapterFragment.class.getName(), "audioCursor.getCount(): " + audioCursor.getCount());
-            if (audioCursor.getCount() == 0) {
-                Log.e(ChapterFragment.class.getName(), "audioCursor.getCount() == 0");
-            } else {
-                audioCursor.moveToFirst();
-
-                // Convert from Room to Gson
-                audioGson = CursorToAudioGsonConverter.getAudioGson(audioCursor);
-
-                audioCursor.close();
-                Log.i(ChapterFragment.class.getName(), "audioCursor.isClosed(): " + audioCursor.isClosed());
-            }
-        }
-        Log.i(ChapterFragment.class.getName(), "audioGson: " + audioGson);
-
-        return audioGson;
     }
 }
