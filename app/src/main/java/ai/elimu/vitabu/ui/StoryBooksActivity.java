@@ -79,15 +79,17 @@ public class StoryBooksActivity extends AppCompatActivity {
                     // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                     Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
                     final ImageGson coverImage = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-                    final ImageView coverImageView = storyBookView.findViewById(R.id.coverImageView);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            String imageFilePath = PICTURES_PATH + coverImage.getId() + "_r" + coverImage.getRevisionNumber() + "." + coverImage.getImageFormat().toString().toLowerCase();
-                            Log.i(getClass().getName(), "imageFile: " + imageFilePath);
-                            coverImageView.setImageBitmap(decodeSampledBitmap(imageFilePath, 100, 100));
-                        }
-                    });
+                    if (coverImage != null) {
+                        final ImageView coverImageView = storyBookView.findViewById(R.id.coverImageView);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                String imageFilePath = PICTURES_PATH + coverImage.getId() + "_r" + coverImage.getRevisionNumber() + "." + coverImage.getImageFormat().toString().toLowerCase();
+                                Log.i(getClass().getName(), "imageFile: " + imageFilePath);
+                                coverImageView.setImageBitmap(decodeSampledBitmap(imageFilePath, 100, 100));
+                            }
+                        });
+                    }
 
                     TextView coverTitleTextView = storyBookView.findViewById(R.id.coverTitleTextView);
                     coverTitleTextView.setText(storyBook.getTitle());
