@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Vitabu</string>
+    <string name="level">LEVEL %d</string>
 </resources>
