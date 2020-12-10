@@ -1,5 +1,8 @@
 package ai.elimu.vitabu.ui.storybook;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,11 +29,16 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import ai.elimu.analytics.utils.ContentProviderUtil;
 import ai.elimu.analytics.utils.LearningEventUtil;
+import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.converter.CursorToAudioGsonConverter;
 import ai.elimu.model.enums.analytics.LearningEventType;
+import ai.elimu.model.v2.gson.content.AudioGson;
 import ai.elimu.model.v2.gson.content.ImageGson;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.model.v2.gson.content.StoryBookParagraphGson;
@@ -143,7 +151,30 @@ public class ChapterFragment extends Fragment {
                                     Log.i(getClass().getName(), "word.getText(): \"" + word.getText() + "\"");
 
                                     Toast.makeText(getContext(), word.getText(), Toast.LENGTH_LONG).show();
-                                    tts.speak(word.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + word.getId());
+
+                                    AudioGson audioGson = getAudioGsonByTranscription(word.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                                    Log.i(getClass().getName(), "audioGson: " + audioGson);
+                                    if (audioGson != null) {
+                                        // Play audio file
+                                        File audioFile = new File(Environment.getExternalStorageDirectory() +
+                                                "/Android/data/" +
+                                                BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+                                                "/files/" + Environment.DIRECTORY_MUSIC + "/" +
+                                                audioGson.getId() + "_r" + audioGson.getRevisionNumber() + "." + audioGson.getAudioFormat().toString().toLowerCase());
+                                        Log.i(getClass().getName(), "audioFile: " + audioFile);
+                                        Log.i(getClass().getName(), "audioFile.exists(): " + audioFile.exists());
+                                        MediaPlayer mediaPlayer = new MediaPlayer();
+                                        try {
+                                            mediaPlayer.setDataSource(audioFile.getPath());
+                                            mediaPlayer.prepare();
+                                            mediaPlayer.start();
+                                        } catch (IOException e) {
+                                            Log.e(getClass().getName(), null, e);
+                                        }
+                                    } else {
+                                        // Fall back to TTS
+                                        tts.speak(word.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + word.getId());
+                                    }
 
                                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                                     LearningEventUtil.reportWordLearningEvent(word, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
@@ -170,47 +201,139 @@ public class ChapterFragment extends Fragment {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                    @Override
-                    public void onStart(String utteranceId) {
-                        Log.i(getClass().getName(), "onStart");
+                List<StoryBookParagraphGson> storyBookParagraphs = storyBookChapter.getStoryBookParagraphs();
+                StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
+                String transcription = storyBookParagraphGson.getOriginalText();
+                Log.i(getClass().getName(), "transcription: \"" + transcription + "\"");
+                AudioGson audioGson = getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                Log.i(getClass().getName(), "audioGson: " + audioGson);
+                if (audioGson != null) {
+                    // Play audio file
+                    File audioFile = new File(Environment.getExternalStorageDirectory() +
+                            "/Android/data/" +
+                            BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+                            "/files/" + Environment.DIRECTORY_MUSIC + "/" +
+                            audioGson.getId() + "_r" + audioGson.getRevisionNumber() + "." + audioGson.getAudioFormat().toString().toLowerCase());
+                    Log.i(getClass().getName(), "audioFile: " + audioFile);
+                    Log.i(getClass().getName(), "audioFile.exists(): " + audioFile.exists());
+                    MediaPlayer mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(audioFile.getPath());
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    } catch (IOException e) {
+                        Log.e(getClass().getName(), null, e);
                     }
+                } else {
+                    // Fall back to TTS
 
-                    @Override
-                    public void onRangeStart(String utteranceId, int start, int end, int frame) {
-                        Log.i(getClass().getName(), "onRangeStart");
-                        super.onRangeStart(utteranceId, start, end, frame);
+                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+                            Log.i(getClass().getName(), "onStart");
+                        }
 
-                        Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
+                        @Override
+                        public void onRangeStart(String utteranceId, int start, int end, int frame) {
+                            Log.i(getClass().getName(), "onRangeStart");
+                            super.onRangeStart(utteranceId, start, end, frame);
 
-                        // Highlight the word being spoken
-                        Spannable spannable = new SpannableString(chapterText);
-                        BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                        spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                        final TextView textView = root.findViewById(R.id.chapter_text);
-                        textView.setText(spannable);
-                    }
+                            Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
 
-                    @Override
-                    public void onDone(String utteranceId) {
-                        Log.i(getClass().getName(), "onDone");
+                            // Highlight the word being spoken
+                            Spannable spannable = new SpannableString(chapterText);
+                            BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
+                            spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            final TextView textView = root.findViewById(R.id.chapter_text);
+                            textView.setText(spannable);
+                        }
 
-                        // Remove highlighting of the last spoken word
-                        final TextView textView = root.findViewById(R.id.chapter_text);
-                        textView.setText(chapterText);
-                    }
+                        @Override
+                        public void onDone(String utteranceId) {
+                            Log.i(getClass().getName(), "onDone");
 
-                    @Override
-                    public void onError(String utteranceId) {
-                        Log.i(getClass().getName(), "onError");
-                    }
-                });
+                            // Remove highlighting of the last spoken word
+                            final TextView textView = root.findViewById(R.id.chapter_text);
+                            textView.setText(chapterText);
+                        }
 
-                Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
-                tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
+                        @Override
+                        public void onError(String utteranceId) {
+                            Log.i(getClass().getName(), "onError");
+                        }
+                    });
+
+                    Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
+                    tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
+                }
             }
         });
 
         return root;
+    }
+
+
+    // TODO: Move to content-provider library
+    public static AudioGson getAudioGsonByTitle(String title, Context context, String contentProviderApplicationId) {
+        Log.i(ChapterFragment.class.getName(), "getAudioGson");
+
+        AudioGson audioGson = null;
+
+        Uri audioUri = Uri.parse("content://" + contentProviderApplicationId + ".provider.audio_provider/audios/by-title/" + title);
+        Log.i(ChapterFragment.class.getName(), "audioUri: " + audioUri);
+        Cursor audioCursor = context.getContentResolver().query(audioUri, null, null, null, null);
+        Log.i(ChapterFragment.class.getName(), "audioCursor: " + audioCursor);
+        if (audioCursor == null) {
+            Log.e(ChapterFragment.class.getName(), "audioCursor == null");
+            Toast.makeText(context, "audioCursor == null", Toast.LENGTH_LONG).show();
+        } else {
+            Log.i(ChapterFragment.class.getName(), "audioCursor.getCount(): " + audioCursor.getCount());
+            if (audioCursor.getCount() == 0) {
+                Log.e(ChapterFragment.class.getName(), "audioCursor.getCount() == 0");
+            } else {
+                audioCursor.moveToFirst();
+
+                // Convert from Room to Gson
+                audioGson = CursorToAudioGsonConverter.getAudioGson(audioCursor);
+
+                audioCursor.close();
+                Log.i(ChapterFragment.class.getName(), "audioCursor.isClosed(): " + audioCursor.isClosed());
+            }
+        }
+        Log.i(ChapterFragment.class.getName(), "audioGson: " + audioGson);
+
+        return audioGson;
+    }
+
+    // TODO: Move to content-provider library
+    public static AudioGson getAudioGsonByTranscription(String transcription, Context context, String contentProviderApplicationId) {
+        Log.i(ChapterFragment.class.getName(), "getAudioGson");
+
+        AudioGson audioGson = null;
+
+        Uri audioUri = Uri.parse("content://" + contentProviderApplicationId + ".provider.audio_provider/audios/by-transcription/" + transcription);
+        Log.i(ChapterFragment.class.getName(), "audioUri: " + audioUri);
+        Cursor audioCursor = context.getContentResolver().query(audioUri, null, null, null, null);
+        Log.i(ChapterFragment.class.getName(), "audioCursor: " + audioCursor);
+        if (audioCursor == null) {
+            Log.e(ChapterFragment.class.getName(), "audioCursor == null");
+            Toast.makeText(context, "audioCursor == null", Toast.LENGTH_LONG).show();
+        } else {
+            Log.i(ChapterFragment.class.getName(), "audioCursor.getCount(): " + audioCursor.getCount());
+            if (audioCursor.getCount() == 0) {
+                Log.e(ChapterFragment.class.getName(), "audioCursor.getCount() == 0");
+            } else {
+                audioCursor.moveToFirst();
+
+                // Convert from Room to Gson
+                audioGson = CursorToAudioGsonConverter.getAudioGson(audioCursor);
+
+                audioCursor.close();
+                Log.i(ChapterFragment.class.getName(), "audioCursor.isClosed(): " + audioCursor.isClosed());
+            }
+        }
+        Log.i(ChapterFragment.class.getName(), "audioGson: " + audioGson);
+
+        return audioGson;
     }
 }
