@@ -17,6 +17,7 @@ import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.ImageGson;
 import ai.elimu.model.v2.gson.content.StoryBookGson;
@@ -68,11 +69,44 @@ public class StoryBooksActivity extends AppCompatActivity {
         ((BaseApplication) getApplication()).getExecutor().execute(new Runnable() {
             @Override
             public void run() {
+
+                StoryBookGson storyBook;
+                ReadingLevel readingLevel;
+
                 // Create a View for each StoryBook in the list
-                for (final StoryBookGson storyBook : storyBooks) {
+                for (int index = 0; index < storyBooks.size(); index++) {
+                    storyBook = storyBooks.get(index);
+                    readingLevel = storyBook.getReadingLevel();
+
                     Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
                     Log.i(getClass().getName(), "storyBook.getTitle(): \"" + storyBook.getTitle() + "\"");
                     Log.i(getClass().getName(), "storyBook.getDescription(): \"" + storyBook.getDescription() + "\"");
+
+                    if (index == 0 || readingLevel != storyBooks.get(index - 1).getReadingLevel()) {
+                        final View levelLayout = LayoutInflater.from(StoryBooksActivity.this).inflate(R.layout.activity_storybooks_level, storyBooksGridLayout, false);
+
+                        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
+                        layoutParams.columnSpec = GridLayout.spec(0, getResources().getInteger(R.integer.gridlayout_column_count));
+                        levelLayout.setLayoutParams(layoutParams);
+
+                        final TextView levelTextView = levelLayout.findViewById(R.id.levelName);
+                        if (readingLevel == null) {
+                            levelTextView.setVisibility(View.GONE);
+                        } else {
+                            levelTextView.setText(String.format(getResources().getString(R.string.level), readingLevel.ordinal()+1));
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                storyBooksGridLayout.addView(levelLayout);
+                                if (storyBooksGridLayout.getChildCount() == storyBooks.size()) {
+                                    storyBooksProgressBar.setVisibility(View.GONE);
+                                    storyBooksGridLayout.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+                    }
 
                     final View storyBookView = LayoutInflater.from(StoryBooksActivity.this).inflate(R.layout.activity_storybooks_cover_view, storyBooksGridLayout, false);
 
@@ -94,19 +128,20 @@ public class StoryBooksActivity extends AppCompatActivity {
                     TextView coverTitleTextView = storyBookView.findViewById(R.id.coverTitleTextView);
                     coverTitleTextView.setText(storyBook.getTitle());
 
+                    final StoryBookGson finalStoryBook = storyBook;
                     storyBookView.setOnClickListener(new SingleClickListener() {
                         @Override
                         public void onSingleClick(View v) {
                             Log.i(getClass().getName(), "onClick");
 
-                            Log.i(getClass().getName(), "storyBook.getId(): " + storyBook.getId());
-                            Log.i(getClass().getName(), "storyBook.getTitle(): " + storyBook.getTitle());
+                            Log.i(getClass().getName(), "storyBook.getId(): " + finalStoryBook.getId());
+                            Log.i(getClass().getName(), "storyBook.getTitle(): " + finalStoryBook.getTitle());
 
                             // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                            LearningEventUtil.reportStoryBookLearningEvent(storyBook, LearningEventType.STORYBOOK_OPENED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                            LearningEventUtil.reportStoryBookLearningEvent(finalStoryBook, LearningEventType.STORYBOOK_OPENED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
 
                             Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
-                            intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, storyBook.getId());
+                            intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, finalStoryBook.getId());
                             startActivity(intent);
                         }
                     });
