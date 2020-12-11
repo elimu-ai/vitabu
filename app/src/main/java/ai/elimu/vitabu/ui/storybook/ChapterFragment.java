@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,6 +32,7 @@ import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
 import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.AudioGson;
 import ai.elimu.model.v2.gson.content.ImageGson;
@@ -46,6 +46,7 @@ import ai.elimu.vitabu.R;
 public class ChapterFragment extends Fragment {
 
     private static final String ARG_CHAPTER_INDEX = "chapter_index";
+    private static final String ARG_READING_LEVEL = "reading_level";
 
     private StoryBookChapterGson storyBookChapter;
 
@@ -53,10 +54,11 @@ public class ChapterFragment extends Fragment {
 
     private TextToSpeech tts;
 
-    public static ChapterFragment newInstance(int chapterIndex) {
+    public static ChapterFragment newInstance(int chapterIndex, ReadingLevel readingLevel) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_CHAPTER_INDEX, chapterIndex);
+        bundle.putSerializable(ARG_READING_LEVEL, readingLevel);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -110,8 +112,18 @@ public class ChapterFragment extends Fragment {
                 chapterText += storyBookParagraphGson.getOriginalText();
             }
 
+            ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
+            int readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
+
+            int[] fontSize = getResources().getIntArray(R.array.chapter_text_font_size);
+            String[] letterSpacing = getResources().getStringArray(R.array.chapter_text_letter_spacing);
+            String[] lineSpacing = getResources().getStringArray(R.array.chapter_text_line_spacing);
+
             TextView textView = root.findViewById(R.id.chapter_text);
             textView.setText(chapterText);
+            textView.setTextSize(fontSize[readingLevelPosition]);
+            textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
+            textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
             textView.setVisibility(View.VISIBLE);
         }
 
