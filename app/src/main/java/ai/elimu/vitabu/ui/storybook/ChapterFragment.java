@@ -146,7 +146,7 @@ public class ChapterFragment extends Fragment {
                                     Log.i(getClass().getName(), "onClick");
                                     Log.i(getClass().getName(), "word.getText(): \"" + word.getText() + "\"");
 
-                                    Toast.makeText(getContext(), word.getText(), Toast.LENGTH_LONG).show();
+                                    WordDialogFragment.newInstance(word.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
 
                                     AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(word.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                                     Log.i(getClass().getName(), "audioGson: " + audioGson);
