@@ -14,8 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
         android:padding="8dp"
-        android:background="@android:color/darker_gray"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/darker_gray"
         android:textAppearance="?android:attr/textAppearanceMedium"
         tools:text="LEVEL 1"/>
 
