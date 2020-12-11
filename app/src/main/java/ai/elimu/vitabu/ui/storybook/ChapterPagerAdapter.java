@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.List;
 
+import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 
 public class ChapterPagerAdapter extends FragmentPagerAdapter {
@@ -17,15 +18,18 @@ public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
     public static List<StoryBookChapterGson> storyBookChapters;
 
-    public ChapterPagerAdapter(FragmentManager fm, Context context, List<StoryBookChapterGson> storyBookChapters) {
+    private ReadingLevel readingLevel;
+
+    public ChapterPagerAdapter(FragmentManager fm, Context context, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel) {
         super(fm);
         this.context = context;
         this.storyBookChapters = storyBookChapters;
+        this.readingLevel = readingLevel;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ChapterFragment.newInstance(position);
+        return ChapterFragment.newInstance(position, readingLevel);
     }
 
     @Nullable

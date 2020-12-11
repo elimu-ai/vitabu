@@ -142,6 +142,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                             Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
                             intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, finalStoryBook.getId());
+                            intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_LEVEL, finalStoryBook.getReadingLevel());
                             startActivity(intent);
                         }
                     });
