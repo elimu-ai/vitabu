@@ -5,6 +5,13 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
 
+    <array name="cover_title_font_size">
+        <item>36</item>
+        <item>34</item>
+        <item>32</item>
+        <item>30</item>
+    </array>
+
     <array name="chapter_text_font_size">
         <item>32</item>
         <item>30</item>

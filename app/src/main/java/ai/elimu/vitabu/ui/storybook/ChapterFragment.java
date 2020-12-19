@@ -45,14 +45,16 @@ import ai.elimu.vitabu.R;
 
 public class ChapterFragment extends Fragment {
 
-    private static final String ARG_CHAPTER_INDEX = "chapter_index";
-    private static final String ARG_READING_LEVEL = "reading_level";
+    protected static final String ARG_CHAPTER_INDEX = "chapter_index";
+    protected static final String ARG_READING_LEVEL = "reading_level";
 
     private StoryBookChapterGson storyBookChapter;
 
     private String chapterText;
 
     private TextToSpeech tts;
+
+    protected int readingLevelPosition;
 
     public static ChapterFragment newInstance(int chapterIndex, ReadingLevel readingLevel) {
         ChapterFragment fragment = new ChapterFragment();
@@ -80,11 +82,15 @@ public class ChapterFragment extends Fragment {
         tts = baseApplication.getTTS();
     }
 
+    public int getRootLayout() {
+        return R.layout.fragment_storybook;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreateView");
 
-        final View root = inflater.inflate(R.layout.fragment_storybook, container, false);
+        final View root = inflater.inflate(getRootLayout(), container, false);
 
         // Set chapter image
         ImageGson chapterImage = storyBookChapter.getImage();
@@ -113,17 +119,13 @@ public class ChapterFragment extends Fragment {
             }
 
             ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
-            int readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
-
-            int[] fontSize = getResources().getIntArray(R.array.chapter_text_font_size);
-            String[] letterSpacing = getResources().getStringArray(R.array.chapter_text_letter_spacing);
-            String[] lineSpacing = getResources().getStringArray(R.array.chapter_text_line_spacing);
+            readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
 
             TextView textView = root.findViewById(R.id.chapter_text);
             textView.setText(chapterText);
-            textView.setTextSize(fontSize[readingLevelPosition]);
-            textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
-            textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
+
+            setTextSizeByLevel(textView);
+
             textView.setVisibility(View.VISIBLE);
         }
 
@@ -278,5 +280,15 @@ public class ChapterFragment extends Fragment {
         });
 
         return root;
+    }
+
+    public void setTextSizeByLevel(TextView textView) {
+        int[] fontSize = getResources().getIntArray(R.array.chapter_text_font_size);
+        String[] letterSpacing = getResources().getStringArray(R.array.chapter_text_letter_spacing);
+        String[] lineSpacing = getResources().getStringArray(R.array.chapter_text_line_spacing);
+
+        textView.setTextSize(fontSize[readingLevelPosition]);
+        textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
+        textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
     }
 }
