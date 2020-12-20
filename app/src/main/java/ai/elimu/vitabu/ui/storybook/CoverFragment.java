@@ -15,6 +15,9 @@ public class CoverFragment extends ChapterFragment {
 
     private static final String ARG_DESCRIPTION = "description";
 
+    private TextView descriptionTextView;
+    private String description;
+
     public static CoverFragment newInstance(ReadingLevel readingLevel, String description) {
         CoverFragment fragment = new CoverFragment();
         Bundle bundle = new Bundle();
@@ -35,12 +38,11 @@ public class CoverFragment extends ChapterFragment {
         View root = super.onCreateView(inflater, container, savedInstanceState);
 
         TextView chapterTextView = root.findViewById(R.id.chapter_text);
-        TextView descriptionTextView = root.findViewById(R.id.storybook_description);
-
-        String description = (String) getArguments().get(ARG_DESCRIPTION);
-        descriptionTextView.setText(description);
-
         setTitleSizeByLevel(chapterTextView);
+
+        description = (String) getArguments().get(ARG_DESCRIPTION);
+        descriptionTextView = root.findViewById(R.id.storybook_description);
+        descriptionTextView.setText(description);
         setTextSizeByLevel(descriptionTextView);
 
         return root;
@@ -50,5 +52,10 @@ public class CoverFragment extends ChapterFragment {
         super.setTextSizeByLevel(textView);
         int[] fontSize = getResources().getIntArray(R.array.cover_title_font_size);
         textView.setTextSize(fontSize[readingLevelPosition]);
+    }
+
+    @Override
+    public void onAudioDone() {
+        playAudio(descriptionTextView, description,null);
     }
 }

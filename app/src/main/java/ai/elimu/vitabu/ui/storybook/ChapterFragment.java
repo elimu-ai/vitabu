@@ -43,14 +43,14 @@ import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 
-public class ChapterFragment extends Fragment {
+public class ChapterFragment extends Fragment implements AudioListener {
 
     protected static final String ARG_CHAPTER_INDEX = "chapter_index";
     protected static final String ARG_READING_LEVEL = "reading_level";
 
     private StoryBookChapterGson storyBookChapter;
 
-    private String chapterText;
+    private TextView chapterTextView;
 
     private TextToSpeech tts;
 
@@ -108,6 +108,7 @@ public class ChapterFragment extends Fragment {
 
         // Set paragraph(s)
         Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookChapter.getStoryBookParagraphs());
+        String chapterText = "";
         if (storyBookChapter.getStoryBookParagraphs() != null) {
             chapterText = "";
             for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
@@ -121,12 +122,12 @@ public class ChapterFragment extends Fragment {
             ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
             readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
 
-            TextView textView = root.findViewById(R.id.chapter_text);
-            textView.setText(chapterText);
+            chapterTextView = root.findViewById(R.id.chapter_text);
+            chapterTextView.setText(chapterText);
 
-            setTextSizeByLevel(textView);
+            setTextSizeByLevel(chapterTextView);
 
-            textView.setVisibility(View.VISIBLE);
+            chapterTextView.setVisibility(View.VISIBLE);
         }
 
         // Underline clickable Words
@@ -197,85 +198,20 @@ public class ChapterFragment extends Fragment {
                         spannableEnd += 1; // +1 for the whitespace
                     }
 
-                    final TextView textView = root.findViewById(R.id.chapter_text);
-                    textView.setText(spannable);
-                    textView.setMovementMethod(LinkMovementMethod.getInstance());
+                    chapterTextView.setText(spannable);
+                    chapterTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
             }
         }
 
         // Add button for initializing Text-to-Speech (TTS)
+        final String finalChapterText = chapterText;
         FloatingActionButton fab = root.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
-
-                List<StoryBookParagraphGson> storyBookParagraphs = storyBookChapter.getStoryBookParagraphs();
-                StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
-                String transcription = storyBookParagraphGson.getOriginalText();
-                Log.i(getClass().getName(), "transcription: \"" + transcription + "\"");
-                AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-                Log.i(getClass().getName(), "audioGson: " + audioGson);
-                if (audioGson != null) {
-                    // Play audio file
-                    File audioFile = new File(Environment.getExternalStorageDirectory() +
-                            "/Android/data/" +
-                            BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
-                            "/files/" + Environment.DIRECTORY_MUSIC + "/" +
-                            audioGson.getId() + "_r" + audioGson.getRevisionNumber() + "." + audioGson.getAudioFormat().toString().toLowerCase());
-                    Log.i(getClass().getName(), "audioFile: " + audioFile);
-                    Log.i(getClass().getName(), "audioFile.exists(): " + audioFile.exists());
-                    MediaPlayer mediaPlayer = new MediaPlayer();
-                    try {
-                        mediaPlayer.setDataSource(audioFile.getPath());
-                        mediaPlayer.prepare();
-                        mediaPlayer.start();
-                    } catch (IOException e) {
-                        Log.e(getClass().getName(), null, e);
-                    }
-                } else {
-                    // Fall back to TTS
-
-                    tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                        @Override
-                        public void onStart(String utteranceId) {
-                            Log.i(getClass().getName(), "onStart");
-                        }
-
-                        @Override
-                        public void onRangeStart(String utteranceId, int start, int end, int frame) {
-                            Log.i(getClass().getName(), "onRangeStart");
-                            super.onRangeStart(utteranceId, start, end, frame);
-
-                            Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
-
-                            // Highlight the word being spoken
-                            Spannable spannable = new SpannableString(chapterText);
-                            BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                            spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            final TextView textView = root.findViewById(R.id.chapter_text);
-                            textView.setText(spannable);
-                        }
-
-                        @Override
-                        public void onDone(String utteranceId) {
-                            Log.i(getClass().getName(), "onDone");
-
-                            // Remove highlighting of the last spoken word
-                            final TextView textView = root.findViewById(R.id.chapter_text);
-                            textView.setText(chapterText);
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                            Log.i(getClass().getName(), "onError");
-                        }
-                    });
-
-                    Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
-                    tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
-                }
+                playAudio(chapterTextView, finalChapterText, (AudioListener) ChapterFragment.this);
             }
         });
 
@@ -290,5 +226,79 @@ public class ChapterFragment extends Fragment {
         textView.setTextSize(fontSize[readingLevelPosition]);
         textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
         textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
+    }
+
+    public void playAudio(final TextView textView, final String chapterText, final AudioListener audioListener) {
+        List<StoryBookParagraphGson> storyBookParagraphs = storyBookChapter.getStoryBookParagraphs();
+        StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
+        String transcription = storyBookParagraphGson.getOriginalText();
+        Log.i(getClass().getName(), "transcription: \"" + transcription + "\"");
+        AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        Log.i(getClass().getName(), "audioGson: " + audioGson);
+        if (audioGson != null) {
+            // Play audio file
+            File audioFile = new File(Environment.getExternalStorageDirectory() +
+                    "/Android/data/" +
+                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
+                    "/files/" + Environment.DIRECTORY_MUSIC + "/" +
+                    audioGson.getId() + "_r" + audioGson.getRevisionNumber() + "." + audioGson.getAudioFormat().toString().toLowerCase());
+            Log.i(getClass().getName(), "audioFile: " + audioFile);
+            Log.i(getClass().getName(), "audioFile.exists(): " + audioFile.exists());
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            try {
+                mediaPlayer.setDataSource(audioFile.getPath());
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+            } catch (IOException e) {
+                Log.e(getClass().getName(), null, e);
+            }
+        } else {
+            // Fall back to TTS
+
+            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                @Override
+                public void onStart(String utteranceId) {
+                    Log.i(getClass().getName(), "onStart");
+                }
+
+                @Override
+                public void onRangeStart(String utteranceId, int start, int end, int frame) {
+                    Log.i(getClass().getName(), "onRangeStart");
+                    super.onRangeStart(utteranceId, start, end, frame);
+
+                    Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
+
+                    // Highlight the word being spoken
+                    Spannable spannable = new SpannableString(chapterText);
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
+                    spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    textView.setText(spannable);
+                }
+
+                @Override
+                public void onDone(String utteranceId) {
+                    Log.i(getClass().getName(), "onDone");
+
+                    // Remove highlighting of the last spoken word
+                    textView.setText(chapterText);
+
+                    if (audioListener != null) {
+                        audioListener.onAudioDone();
+                    }
+                }
+
+                @Override
+                public void onError(String utteranceId) {
+                    Log.i(getClass().getName(), "onError");
+                }
+            });
+
+            Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
+            tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
+        }
+    }
+
+    @Override
+    public void onAudioDone() {
     }
 }
