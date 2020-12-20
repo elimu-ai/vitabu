@@ -19,9 +19,6 @@ allprojects {
         google()
         jcenter()
         maven {
-            url "https://dl.bintray.com/elimu-ai/maven/"
-        }
-        maven {
             url "https://jitpack.io"
         }
     }
