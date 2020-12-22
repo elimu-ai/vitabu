@@ -19,6 +19,7 @@ public class StoryBookActivity extends AppCompatActivity {
 
     public static final String EXTRA_KEY_STORYBOOK_ID = "EXTRA_KEY_STORYBOOK_ID";
     public static final String EXTRA_KEY_STORYBOOK_LEVEL = "EXTRA_KEY_STORYBOOK_LEVEL";
+    public static final String EXTRA_KEY_STORYBOOK_DESCRIPTION = "EXTRA_KEY_STORYBOOK_DESCRIPTION";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +31,14 @@ public class StoryBookActivity extends AppCompatActivity {
         Long storyBookId = getIntent().getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0);
         Log.i(getClass().getName(), "storyBookId: " + storyBookId);
         ReadingLevel readingLevel = (ReadingLevel) getIntent().getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL);
+        String description = getIntent().getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION);
 
         // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         List<StoryBookChapterGson> storyBookChapters = ContentProviderHelper.getStoryBookChapterGsons(storyBookId, getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
 
         ViewPager viewPager = findViewById(R.id.view_pager);
 
-        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters, readingLevel);
+        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters, readingLevel, description);
         viewPager.setAdapter(chapterPagerAdapter);
 
         ZoomOutPageTransformer zoomOutPageTransformer = new ZoomOutPageTransformer();

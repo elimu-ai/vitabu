@@ -136,6 +136,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                             Log.i(getClass().getName(), "storyBook.getId(): " + finalStoryBook.getId());
                             Log.i(getClass().getName(), "storyBook.getTitle(): " + finalStoryBook.getTitle());
+                            Log.i(getClass().getName(), "storyBook.getDescription(): " + finalStoryBook.getDescription());
 
                             // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                             LearningEventUtil.reportStoryBookLearningEvent(finalStoryBook, LearningEventType.STORYBOOK_OPENED, getApplicationContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
@@ -143,6 +144,7 @@ public class StoryBooksActivity extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), StoryBookActivity.class);
                             intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_ID, finalStoryBook.getId());
                             intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_LEVEL, finalStoryBook.getReadingLevel());
+                            intent.putExtra(StoryBookActivity.EXTRA_KEY_STORYBOOK_DESCRIPTION, finalStoryBook.getDescription());
                             startActivity(intent);
                         }
                     });

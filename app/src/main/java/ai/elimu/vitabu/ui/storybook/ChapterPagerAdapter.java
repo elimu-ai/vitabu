@@ -14,22 +14,29 @@ import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 
 public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
-    private final Context context;
+ //   private final Context context;
 
     public static List<StoryBookChapterGson> storyBookChapters;
 
     private ReadingLevel readingLevel;
 
-    public ChapterPagerAdapter(FragmentManager fm, Context context, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel) {
+    private String description;
+
+    public ChapterPagerAdapter(FragmentManager fm, Context context, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel, String description) {
         super(fm);
-        this.context = context;
+ //       this.context = context;
         this.storyBookChapters = storyBookChapters;
         this.readingLevel = readingLevel;
+        this.description = description;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ChapterFragment.newInstance(position, readingLevel);
+        if (position == 0) {
+            return CoverFragment.newInstance(readingLevel, description);
+        } else {
+            return ChapterFragment.newInstance(position, readingLevel);
+        }
     }
 
     @Nullable
