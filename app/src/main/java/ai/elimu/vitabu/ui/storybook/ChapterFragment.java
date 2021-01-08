@@ -1,5 +1,6 @@
 package ai.elimu.vitabu.ui.storybook;
 
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.speech.tts.UtteranceProgressListener;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
@@ -193,6 +195,12 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
                                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                                     LearningEventUtil.reportWordLearningEvent(word, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                                }
+
+                                @Override
+                                public void updateDrawState(@NonNull TextPaint ds) {
+                                    ds.setColor(Color.BLACK);
+                                    ds.setUnderlineText(true);
                                 }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
