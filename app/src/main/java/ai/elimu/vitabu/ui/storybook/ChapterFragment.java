@@ -92,6 +92,8 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
         final View root = inflater.inflate(getRootLayout(), container, false);
 
+        FloatingActionButton fab = root.findViewById(R.id.fab);
+
         // Set chapter image
         ImageGson chapterImage = storyBookChapter.getImage();
         if (chapterImage != null) {
@@ -128,6 +130,8 @@ public class ChapterFragment extends Fragment implements AudioListener {
             setTextSizeByLevel(chapterTextView);
 
             chapterTextView.setVisibility(View.VISIBLE);
+        } else {
+            fab.setVisibility(View.GONE);
         }
 
         // Underline clickable Words
@@ -206,7 +210,6 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
         // Add button for initializing Text-to-Speech (TTS)
         final String finalChapterText = chapterText;
-        FloatingActionButton fab = root.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
