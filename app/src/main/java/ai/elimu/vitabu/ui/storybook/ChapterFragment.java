@@ -1,6 +1,5 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.speech.tts.UtteranceProgressListener;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.BackgroundColorSpan;
@@ -44,6 +42,7 @@ import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
+import ai.elimu.vitabu.util.ColoredUnderlineSpan;
 
 public class ChapterFragment extends Fragment implements AudioListener {
 
@@ -196,14 +195,11 @@ public class ChapterFragment extends Fragment implements AudioListener {
                                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                                     LearningEventUtil.reportWordLearningEvent(word, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                                 }
-
-                                @Override
-                                public void updateDrawState(@NonNull TextPaint ds) {
-                                    ds.setColor(Color.BLACK);
-                                    ds.setUnderlineText(true);
-                                }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            ColoredUnderlineSpan coloredUnderlineSpan = new ColoredUnderlineSpan(getResources().getColor(R.color.colorAccent), getResources().getDimension(R.dimen.underline_thickness));
+                            spannable.setSpan(coloredUnderlineSpan, spannableStart, spannableEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         }
 
                         spannableStart += wordInOriginalText.length() + 1; // +1 for the whitespace
