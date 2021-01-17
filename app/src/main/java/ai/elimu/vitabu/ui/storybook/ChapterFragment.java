@@ -42,6 +42,7 @@ import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
+import ai.elimu.vitabu.util.ColoredUnderlineSpan;
 
 public class ChapterFragment extends Fragment implements AudioListener {
 
@@ -196,6 +197,9 @@ public class ChapterFragment extends Fragment implements AudioListener {
                                 }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            ColoredUnderlineSpan coloredUnderlineSpan = new ColoredUnderlineSpan(getResources().getColor(R.color.colorAccent), getResources().getDimension(R.dimen.underline_thickness));
+                            spannable.setSpan(coloredUnderlineSpan, spannableStart, spannableEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         }
 
                         spannableStart += wordInOriginalText.length() + 1; // +1 for the whitespace
