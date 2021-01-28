@@ -129,8 +129,6 @@ public class ChapterFragment extends Fragment implements AudioListener {
             chapterTextView.setText(chapterText);
 
             setTextSizeByLevel(chapterTextView);
-
-            chapterTextView.setVisibility(View.VISIBLE);
         } else {
             fab.setVisibility(View.GONE);
         }
@@ -218,7 +216,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
-                playAudio(chapterTextView, finalChapterText, (AudioListener) ChapterFragment.this);
+                playAudio(chapterTextView, finalChapterText, ChapterFragment.this);
             }
         });
 

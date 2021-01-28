@@ -1,7 +1,5 @@
 package ai.elimu.vitabu.ui.storybook;
 
-import android.content.Context;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -14,18 +12,15 @@ import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 
 public class ChapterPagerAdapter extends FragmentPagerAdapter {
 
- //   private final Context context;
-
     public static List<StoryBookChapterGson> storyBookChapters;
 
     private ReadingLevel readingLevel;
 
     private String description;
 
-    public ChapterPagerAdapter(FragmentManager fm, Context context, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel, String description) {
+    public ChapterPagerAdapter(FragmentManager fm, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel, String description) {
         super(fm);
- //       this.context = context;
-        this.storyBookChapters = storyBookChapters;
+        ChapterPagerAdapter.storyBookChapters = storyBookChapters;
         this.readingLevel = readingLevel;
         this.description = description;
     }
