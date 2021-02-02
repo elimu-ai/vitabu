@@ -137,47 +137,47 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
             // Underline clickable Words
             for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
-                List<WordGson> words = storyBookParagraphGson.getWords();
-                Log.i(getClass().getName(), "words: " + words);
-                if (words != null) {
-                    Log.i(getClass().getName(), "words.size(): " + words.size());
-                    String[] wordsInOriginalText = storyBookParagraphGson.getOriginalText().trim().split(" ");
-                    Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
-                    Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
+                List<WordGson> wordsWithAudio = storyBookParagraphGson.getWords();
+                Log.i(getClass().getName(), "words: " + wordsWithAudio);
+                if (wordsWithAudio != null) {
+                    Log.i(getClass().getName(), "words.size(): " + wordsWithAudio.size());
+                    String[] wordsInParagraph = storyBookParagraphGson.getOriginalText().trim().split(" ");
+                    Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInParagraph.length);
+                    Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInParagraph));
 
                     Spannable spannable = new SpannableString(chapterText);
 
                     // Add Spannables
                     int spannableStart = 0;
                     int spannableEnd = 0;
-                    for (int i = 0; i < wordsInOriginalText.length; i++) {
-                        String wordInOriginalText = wordsInOriginalText[i];
-                        spannableEnd += wordInOriginalText.length();
+                    for (int i = 0; i < wordsInParagraph.length; i++) {
+                        String wordInParagraph = wordsInParagraph[i];
+                        spannableEnd += wordInParagraph.length();
 
-                        final WordGson word = words.get(i);
-                        if (word != null) {
-                            Log.i(getClass().getName(), "Adding UnderlineSpan for \"" + word.getText() + "\"");
+                        final WordGson wordWithAudio = wordsWithAudio.get(i);
+                        if (wordWithAudio != null) {
+                            Log.i(getClass().getName(), "Adding UnderlineSpan for \"" + wordWithAudio.getText() + "\"");
                             Log.i(getClass().getName(), "chapterText.substring(spannableStart, spannableEnd): \"" + chapterText.substring(spannableStart, spannableEnd) + "\"");
 
                             ClickableSpan clickableSpan = new ClickableSpan() {
                                 @Override
                                 public void onClick(@NonNull View widget) {
                                     Log.i(getClass().getName(), "onClick");
-                                    Log.i(getClass().getName(), "word.getText(): \"" + word.getText() + "\"");
+                                    Log.i(getClass().getName(), "word.getText(): \"" + wordWithAudio.getText() + "\"");
 
-                                    WordDialogFragment.newInstance(word.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
+                                    WordDialogFragment.newInstance(wordWithAudio.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
 
-                                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(word.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(wordWithAudio.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                                     Log.i(getClass().getName(), "audioGson: " + audioGson);
                                     if (audioGson != null) {
                                         playAudioFile(audioGson);
                                     } else {
                                         // Fall back to TTS
-                                        tts.speak(word.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + word.getId());
+                                        tts.speak(wordWithAudio.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordWithAudio.getId());
                                     }
 
                                     // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                                    LearningEventUtil.reportWordLearningEvent(word, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                                    LearningEventUtil.reportWordLearningEvent(wordWithAudio, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
                                 }
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -186,7 +186,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                             spannable.setSpan(coloredUnderlineSpan, spannableStart, spannableEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         }
 
-                        spannableStart += wordInOriginalText.length() + 1; // +1 for the whitespace
+                        spannableStart += wordInParagraph.length() + 1; // +1 for the whitespace
                         spannableEnd += 1; // +1 for the whitespace
                     }
 
