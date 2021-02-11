@@ -10,8 +10,6 @@ import androidx.annotation.Nullable;
 
 public class ColoredUnderlineSpan extends ReplacementSpan {
 
-
-
     private float thickness;
     private Paint linePaint;
 

@@ -33,7 +33,6 @@
 
         <TextView
             android:id="@+id/chapter_text"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="6dp"
@@ -43,8 +42,7 @@
             android:lineSpacingMultiplier="1.5"
             android:letterSpacing="0.2"
             android:textIsSelectable="true"
-            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-            tools:visibility="visible"/>
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

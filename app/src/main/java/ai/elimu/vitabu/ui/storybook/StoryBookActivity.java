@@ -38,7 +38,7 @@ public class StoryBookActivity extends AppCompatActivity {
 
         ViewPager viewPager = findViewById(R.id.view_pager);
 
-        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), this, storyBookChapters, readingLevel, description);
+        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), storyBookChapters, readingLevel, description);
         viewPager.setAdapter(chapterPagerAdapter);
 
         ZoomOutPageTransformer zoomOutPageTransformer = new ZoomOutPageTransformer();

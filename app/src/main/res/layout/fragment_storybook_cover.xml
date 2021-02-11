@@ -37,7 +37,6 @@
 
             <TextView
                 android:id="@+id/chapter_text"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000"
@@ -48,8 +47,7 @@
                 android:textIsSelectable="true"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Lorem ipsum eiusmod "
-                tools:visibility="visible"/>
+                tools:text="Lorem ipsum eiusmod "/>
 
             <TextView
                 android:id="@+id/storybook_description"
