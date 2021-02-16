@@ -121,10 +121,10 @@ public class ChapterFragment extends Fragment implements AudioListener {
         chapterTextView = root.findViewById(R.id.chapter_text);
 
         if (storyBookParagraphGsons != null) {
-            for (int pargraphIndex = 0; pargraphIndex < storyBookParagraphGsons.size(); pargraphIndex++) {
-                Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(pargraphIndex).getOriginalText() + "\"");
+            for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
+                Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(paragraphIndex).getOriginalText() + "\"");
 
-                String originalText = storyBookParagraphGsons.get(pargraphIndex).getOriginalText();
+                String originalText = storyBookParagraphGsons.get(paragraphIndex).getOriginalText();
                 String[] wordsInOriginalText = originalText.trim().split(" ");
                 Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
                 Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
@@ -136,7 +136,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 paragraphText += originalText;
                 chapterText += paragraphText;
 
-                List<WordGson> wordsWithAudio = storyBookParagraphGsons.get(pargraphIndex).getWords();
+                List<WordGson> wordsWithAudio = storyBookParagraphGsons.get(paragraphIndex).getWords();
                 Log.i(getClass().getName(), "words: " + wordsWithAudio);
                 // Underline clickable Words
                 Spannable spannable = new SpannableString(paragraphText);
@@ -147,7 +147,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                     // Add Spannables
                     int spannableStart = 0;
                     int spannableEnd = 0;
-                    if (pargraphIndex != 0) {
+                    if (paragraphIndex != 0) {
                         spannableStart += 2; // +2 for the 2 new lines
                         spannableEnd += 2;
                     }
