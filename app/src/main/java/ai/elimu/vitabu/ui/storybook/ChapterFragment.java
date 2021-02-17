@@ -115,43 +115,45 @@ public class ChapterFragment extends Fragment implements AudioListener {
         }
 
         // Set paragraph(s)
-        Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookChapter.getStoryBookParagraphs());
+        List<StoryBookParagraphGson> storyBookParagraphGsons = storyBookChapter.getStoryBookParagraphs();
+        Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookParagraphGsons);
         String chapterText = "";
-        if (storyBookChapter.getStoryBookParagraphs() != null) {
-            chapterText = "";
-            for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
-                Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGson.getOriginalText() + "\"");
+        chapterTextView = root.findViewById(R.id.chapter_text);
+
+        if (storyBookParagraphGsons != null) {
+            for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
+                Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(paragraphIndex).getOriginalText() + "\"");
+
+                String originalText = storyBookParagraphGsons.get(paragraphIndex).getOriginalText();
+                String[] wordsInOriginalText = originalText.trim().split(" ");
+                Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
+                Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
+                String paragraphText = "";
+
                 if (!TextUtils.isEmpty(chapterText)) {
-                    chapterText += "\n\n";
+                    paragraphText += "\n\n";
                 }
-                chapterText += storyBookParagraphGson.getOriginalText();
-            }
+                paragraphText += originalText;
+                chapterText += paragraphText;
 
-            ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
-            readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
-
-            chapterTextView = root.findViewById(R.id.chapter_text);
-            chapterTextView.setText(chapterText);
-
-            setTextSizeByLevel(chapterTextView);
-
-            // Underline clickable Words
-            for (StoryBookParagraphGson storyBookParagraphGson : storyBookChapter.getStoryBookParagraphs()) {
-                List<WordGson> wordsWithAudio = storyBookParagraphGson.getWords();
+                List<WordGson> wordsWithAudio = storyBookParagraphGsons.get(paragraphIndex).getWords();
                 Log.i(getClass().getName(), "words: " + wordsWithAudio);
+                // Underline clickable Words
+                Spannable spannable = new SpannableString(paragraphText);
+
                 if (wordsWithAudio != null) {
                     Log.i(getClass().getName(), "words.size(): " + wordsWithAudio.size());
-                    String[] wordsInParagraph = storyBookParagraphGson.getOriginalText().trim().split(" ");
-                    Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInParagraph.length);
-                    Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInParagraph));
-
-                    Spannable spannable = new SpannableString(chapterText);
 
                     // Add Spannables
                     int spannableStart = 0;
                     int spannableEnd = 0;
-                    for (int i = 0; i < wordsInParagraph.length; i++) {
-                        String wordInParagraph = wordsInParagraph[i];
+                    if (paragraphIndex != 0) {
+                        spannableStart += 2; // +2 for the 2 new lines
+                        spannableEnd += 2;
+                    }
+
+                    for (int i = 0; i < wordsInOriginalText.length; i++) {
+                        String wordInParagraph = wordsInOriginalText[i];
                         spannableEnd += wordInParagraph.length();
 
                         final WordGson wordWithAudio = wordsWithAudio.get(i);
@@ -189,11 +191,17 @@ public class ChapterFragment extends Fragment implements AudioListener {
                         spannableStart += wordInParagraph.length() + 1; // +1 for the whitespace
                         spannableEnd += 1; // +1 for the whitespace
                     }
-
-                    chapterTextView.setText(spannable);
-                    chapterTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 }
+
+                chapterTextView.setText(TextUtils.concat(chapterTextView.getText(), spannable));
+                chapterTextView.setMovementMethod(LinkMovementMethod.getInstance());
             }
+
+            ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
+            readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
+
+            setTextSizeByLevel(chapterTextView);
+
         } else {
             fab.setVisibility(View.GONE);
         }
