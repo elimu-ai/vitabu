@@ -184,7 +184,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                             };
                             spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-                            ColoredUnderlineSpan coloredUnderlineSpan = new ColoredUnderlineSpan(getResources().getColor(R.color.colorAccent), getResources().getDimension(R.dimen.underline_thickness));
+                            ColoredUnderlineSpan coloredUnderlineSpan = new ColoredUnderlineSpan(getResources().getColor(R.color.green_accent_transparent), getResources().getDimension(R.dimen.underline_thickness));
                             spannable.setSpan(coloredUnderlineSpan, spannableStart, spannableEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                         }
 
