@@ -6,23 +6,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
-import android.text.style.BackgroundColorSpan;
-import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
@@ -42,7 +39,6 @@ import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
-import ai.elimu.vitabu.util.ColoredUnderlineSpan;
 
 public class ChapterFragment extends Fragment implements AudioListener {
 
@@ -59,7 +55,9 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
     private StoryBookChapterGson storyBookChapter;
 
-    private TextView chapterTextView;
+    protected String chapterText = "";
+
+    private RecyclerView chapterRecyclerView;
 
     private TextToSpeech tts;
 
@@ -102,6 +100,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
         final View root = inflater.inflate(getRootLayout(), container, false);
 
         FloatingActionButton fab = root.findViewById(R.id.fab);
+        chapterRecyclerView = root.findViewById(R.id.chapter_text);
 
         // Set chapter image
         ImageGson chapterImage = storyBookChapter.getImage();
@@ -117,10 +116,42 @@ public class ChapterFragment extends Fragment implements AudioListener {
         // Set paragraph(s)
         List<StoryBookParagraphGson> storyBookParagraphGsons = storyBookChapter.getStoryBookParagraphs();
         Log.i(getClass().getName(), "storyBookChapter.getStoryBookParagraphs(): " + storyBookParagraphGsons);
-        String chapterText = "";
-        chapterTextView = root.findViewById(R.id.chapter_text);
 
         if (storyBookParagraphGsons != null) {
+
+            ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
+            readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
+
+            WordAdapter wordAdapter = new WordAdapter(readingLevelPosition, new WordAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(WordGson wordWithAudio, View view, int position) {
+                    Log.i(getClass().getName(), "onClick");
+                    Log.i(getClass().getName(), "word.getText(): \"" + wordWithAudio.getText() + "\"");
+
+                    WordDialogFragment.newInstance(wordWithAudio.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
+
+                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(wordWithAudio.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    Log.i(getClass().getName(), "audioGson: " + audioGson);
+                    if (audioGson != null) {
+                        playAudioFile(audioGson);
+                    } else {
+                        // Fall back to TTS
+                        tts.speak(wordWithAudio.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordWithAudio.getId());
+                    }
+
+                    // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                    LearningEventUtil.reportWordLearningEvent(wordWithAudio, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
+                }
+            });
+
+            if (chapterRecyclerView != null) {
+                FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(getContext());
+                layoutManager.setFlexDirection(FlexDirection.ROW);
+                layoutManager.setJustifyContent(JustifyContent.CENTER);
+                chapterRecyclerView.setLayoutManager(layoutManager);
+                chapterRecyclerView.setAdapter(wordAdapter);
+            }
+
             for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
                 Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(paragraphIndex).getOriginalText() + "\"");
 
@@ -128,80 +159,17 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 String[] wordsInOriginalText = originalText.trim().split(" ");
                 Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
                 Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
-                String paragraphText = "";
 
                 if (!TextUtils.isEmpty(chapterText)) {
-                    paragraphText += "\n\n";
+                    chapterText += "\n\n";
                 }
-                paragraphText += originalText;
-                chapterText += paragraphText;
+                chapterText += originalText;
 
-                List<WordGson> wordsWithAudio = storyBookParagraphGsons.get(paragraphIndex).getWords();
-                Log.i(getClass().getName(), "words: " + wordsWithAudio);
-                // Underline clickable Words
-                Spannable spannable = new SpannableString(paragraphText);
+                List<WordGson> wordAudios = storyBookParagraphGsons.get(paragraphIndex).getWords();
+                Log.i(getClass().getName(), "words: " + wordAudios);
 
-                if (wordsWithAudio != null) {
-                    Log.i(getClass().getName(), "words.size(): " + wordsWithAudio.size());
-
-                    // Add Spannables
-                    int spannableStart = 0;
-                    int spannableEnd = 0;
-                    if (paragraphIndex != 0) {
-                        spannableStart += 2; // +2 for the 2 new lines
-                        spannableEnd += 2;
-                    }
-
-                    for (int i = 0; i < wordsInOriginalText.length; i++) {
-                        String wordInParagraph = wordsInOriginalText[i];
-                        spannableEnd += wordInParagraph.length();
-
-                        final WordGson wordWithAudio = wordsWithAudio.get(i);
-                        if (wordWithAudio != null) {
-                            Log.i(getClass().getName(), "Adding UnderlineSpan for \"" + wordWithAudio.getText() + "\"");
-                            Log.i(getClass().getName(), "chapterText.substring(spannableStart, spannableEnd): \"" + chapterText.substring(spannableStart, spannableEnd) + "\"");
-
-                            ClickableSpan clickableSpan = new ClickableSpan() {
-                                @Override
-                                public void onClick(@NonNull View widget) {
-                                    Log.i(getClass().getName(), "onClick");
-                                    Log.i(getClass().getName(), "word.getText(): \"" + wordWithAudio.getText() + "\"");
-
-                                    WordDialogFragment.newInstance(wordWithAudio.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
-
-                                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(wordWithAudio.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-                                    Log.i(getClass().getName(), "audioGson: " + audioGson);
-                                    if (audioGson != null) {
-                                        playAudioFile(audioGson);
-                                    } else {
-                                        // Fall back to TTS
-                                        tts.speak(wordWithAudio.getText(), TextToSpeech.QUEUE_FLUSH, null, "word_" + wordWithAudio.getId());
-                                    }
-
-                                    // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                                    LearningEventUtil.reportWordLearningEvent(wordWithAudio, LearningEventType.WORD_PRESSED, getContext(), BuildConfig.ANALYTICS_APPLICATION_ID);
-                                }
-                            };
-                            spannable.setSpan(clickableSpan, spannableStart, spannableEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                            ColoredUnderlineSpan coloredUnderlineSpan = new ColoredUnderlineSpan(getResources().getColor(R.color.green_accent_transparent), getResources().getDimension(R.dimen.underline_thickness));
-                            spannable.setSpan(coloredUnderlineSpan, spannableStart, spannableEnd, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-                        }
-
-                        spannableStart += wordInParagraph.length() + 1; // +1 for the whitespace
-                        spannableEnd += 1; // +1 for the whitespace
-                    }
-                }
-
-                chapterTextView.setText(TextUtils.concat(chapterTextView.getText(), spannable));
-                chapterTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                wordAdapter.addParagraph(Arrays.asList(wordsInOriginalText), wordAudios);
             }
-
-            ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
-            readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
-
-            setTextSizeByLevel(chapterTextView);
-
         } else {
             fab.setVisibility(View.GONE);
         }
@@ -212,24 +180,14 @@ public class ChapterFragment extends Fragment implements AudioListener {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
-                playAudio(chapterTextView, finalChapterText, ChapterFragment.this);
+                playAudio(finalChapterText, ChapterFragment.this);
             }
         });
 
         return root;
     }
 
-    public void setTextSizeByLevel(TextView textView) {
-        int[] fontSize = getResources().getIntArray(R.array.chapter_text_font_size);
-        String[] letterSpacing = getResources().getStringArray(R.array.chapter_text_letter_spacing);
-        String[] lineSpacing = getResources().getStringArray(R.array.chapter_text_line_spacing);
-
-        textView.setTextSize(fontSize[readingLevelPosition]);
-        textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
-        textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
-    }
-
-    public void playAudio(final TextView textView, final String chapterText, final AudioListener audioListener) {
+    public void playAudio(final String chapterText, final AudioListener audioListener) {
         List<StoryBookParagraphGson> storyBookParagraphs = storyBookChapter.getStoryBookParagraphs();
         StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
         String transcription = storyBookParagraphGson.getOriginalText();
@@ -240,48 +198,57 @@ public class ChapterFragment extends Fragment implements AudioListener {
             playAudioFile(audioGson);
         } else {
             // Fall back to TTS
-
-            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
-                @Override
-                public void onStart(String utteranceId) {
-                    Log.i(getClass().getName(), "onStart");
-                }
-
-                @Override
-                public void onRangeStart(String utteranceId, int start, int end, int frame) {
-                    Log.i(getClass().getName(), "onRangeStart");
-                    super.onRangeStart(utteranceId, start, end, frame);
-
-                    Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
-
-                    // Highlight the word being spoken
-                    Spannable spannable = new SpannableString(chapterText);
-                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                    spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    textView.setText(spannable);
-                }
-
-                @Override
-                public void onDone(String utteranceId) {
-                    Log.i(getClass().getName(), "onDone");
-
-                    // Remove highlighting of the last spoken word
-                    textView.setText(chapterText);
-
-                    if (audioListener != null) {
-                        audioListener.onAudioDone();
-                    }
-                }
-
-                @Override
-                public void onError(String utteranceId) {
-                    Log.i(getClass().getName(), "onError");
-                }
-            });
+            tts.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener));
 
             Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
             tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
         }
+    }
+
+    public UtteranceProgressListener getUtteranceProgressListener(AudioListener _audioListener) {
+
+        final int[] wordPosition = {-1};
+
+        return new UtteranceProgressListener() {
+
+            @Override
+            public void onStart(String utteranceId) {
+                Log.i(getClass().getName(), "onStart");
+            }
+
+            @Override
+            public void onRangeStart(String utteranceId, int start, int end, int frame) {
+                Log.i(getClass().getName(), "onRangeStart");
+                super.onRangeStart(utteranceId, start, end, frame);
+
+                Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
+
+                // Highlight the word being spoken
+                if (wordPosition[0] > -1) {
+                    chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackground(getResources().getDrawable(R.drawable.bg_word_selector));
+                }
+
+                wordPosition[0]++;
+                if (chapterRecyclerView.getAdapter().getItemViewType(wordPosition[0]) == WordAdapter.NEW_PARAGRAPH_TYPE) {
+                    wordPosition[0]++;
+                }
+
+                chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }
+
+            @Override
+            public void onDone(String utteranceId) {
+                Log.i(getClass().getName(), "onDone");
+
+                // Remove highlighting of the last spoken word
+                chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackground(getResources().getDrawable(R.drawable.bg_word_selector));
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+                Log.i(getClass().getName(), "onError");
+            }
+        };
     }
 
     private void playAudioFile(AudioGson audioGson) {

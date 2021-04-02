@@ -34,4 +34,11 @@
         <item>1.3</item>
         <item>1.2</item>
     </string-array>
+
+    <integer-array name="chapter_text_line_spacing_recyclerview">
+        <item>16</item>
+        <item>9</item>
+        <item>5</item>
+        <item>1</item>
+    </integer-array>
 </resources>
