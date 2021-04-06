@@ -12,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -201,7 +203,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
             tts.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener));
 
             Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
-            tts.speak(chapterText, TextToSpeech.QUEUE_FLUSH, null, "0");
+            tts.speak(chapterText.replaceAll("[-*]", ""), TextToSpeech.QUEUE_FLUSH, null, "0");
         }
     }
 
@@ -210,6 +212,8 @@ public class ChapterFragment extends Fragment implements AudioListener {
         final int[] wordPosition = {-1};
 
         return new UtteranceProgressListener() {
+
+            final FlexboxLayoutManager layoutManager = (FlexboxLayoutManager) chapterRecyclerView.getLayoutManager();
 
             @Override
             public void onStart(String utteranceId) {
@@ -222,18 +226,29 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 super.onRangeStart(utteranceId, start, end, frame);
 
                 Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
+                View itemView;
 
                 // Highlight the word being spoken
                 if (wordPosition[0] > -1) {
-                    chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackground(getResources().getDrawable(R.drawable.bg_word_selector));
+                    itemView = layoutManager.findViewByPosition(wordPosition[0]);
+                    if (itemView != null) {
+                        itemView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bg_word_selector));
+                    }
                 }
 
                 wordPosition[0]++;
+                itemView = layoutManager.findViewByPosition(wordPosition[0]);
                 if (chapterRecyclerView.getAdapter().getItemViewType(wordPosition[0]) == WordAdapter.NEW_PARAGRAPH_TYPE) {
+                    wordPosition[0]++;
+                } else if (itemView != null && ((TextView)itemView.findViewById(R.id.word_text)).getText().length() == 0) {
                     wordPosition[0]++;
                 }
 
-                chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                scrollToWordIfNotVisible(wordPosition[0]);
+                itemView = layoutManager.findViewByPosition(wordPosition[0]);
+                if (itemView != null) {
+                    itemView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                }
             }
 
             @Override
@@ -241,12 +256,29 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 Log.i(getClass().getName(), "onDone");
 
                 // Remove highlighting of the last spoken word
-                chapterRecyclerView.getLayoutManager().getChildAt(wordPosition[0]).setBackground(getResources().getDrawable(R.drawable.bg_word_selector));
+                View itemView = layoutManager.findViewByPosition(wordPosition[0]);
+                if (itemView != null) {
+                    itemView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bg_word_selector));
+                }
             }
 
             @Override
             public void onError(String utteranceId) {
                 Log.i(getClass().getName(), "onError");
+            }
+
+            private void scrollToWordIfNotVisible(final int position) {
+                int firstWordVisible = layoutManager.findFirstCompletelyVisibleItemPosition();
+                int lastWordVisible = layoutManager.findLastCompletelyVisibleItemPosition();
+
+                if (position < firstWordVisible || position > lastWordVisible) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            layoutManager.scrollToPosition(position);
+                        }
+                    });
+                }
             }
         };
     }

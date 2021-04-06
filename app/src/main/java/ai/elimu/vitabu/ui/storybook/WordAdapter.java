@@ -21,7 +21,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
+class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int WORD_TYPE = 0;
     public static final int NEW_PARAGRAPH_TYPE = 1;
@@ -43,22 +43,29 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
 
     @NonNull
     @Override
-    public WordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.word_layout, parent, false);
-        return new WordViewHolder(view);
+
+        if (viewType == WORD_TYPE) {
+            return new WordViewHolder(view);
+        } else {
+            return new EmptyViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WordViewHolder holder, final int position) {
-        holder.paintWordLayout(wordsInOriginalText.get(position), wordAudios.get(position), readingLevelPosition, getItemViewType(position) == NEW_PARAGRAPH_TYPE);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        if (getItemViewType(position) == WORD_TYPE) {
+            ((WordViewHolder) holder).paintWordLayout(wordsInOriginalText.get(position), wordAudios.get(position), readingLevelPosition);
 
-        if (wordAudios.get(position) != null) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(wordAudios.get(position), v, position);
-                }
-            });
+            if (wordAudios.get(position) != null) {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listener.onItemClick(wordAudios.get(position), v, position);
+                    }
+                });
+            }
         }
     }
 
@@ -69,7 +76,7 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        if (wordsInOriginalText.get(position).isEmpty()) {
+        if (wordsInOriginalText.get(position) == null) {
             return NEW_PARAGRAPH_TYPE;
         } else {
             return WORD_TYPE;
@@ -79,7 +86,7 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
     public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordAudios) {
         //Words
         this.wordsInOriginalText.addAll(wordsInOriginalText);
-        this.wordsInOriginalText.add("");
+        this.wordsInOriginalText.add(null);
 
         //Audios
         if (wordAudios == null) {
@@ -93,6 +100,15 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
     }
 
 
+    public static class EmptyViewHolder extends RecyclerView.ViewHolder {
+
+        public EmptyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            itemView.getLayoutParams().width = MATCH_PARENT;
+        }
+    }
+
+    
     public static class WordViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView wordText;
@@ -104,18 +120,16 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
             wordUnderline = itemView.findViewById(R.id.word_underline);
         }
 
-        public void paintWordLayout(String word, WordGson wordWithAudio, int readingLevelPosition, boolean paragraphDivider) {
-            paintWord(word, readingLevelPosition, paragraphDivider);
-            paintUnderline(wordWithAudio, paragraphDivider);
+        public void paintWordLayout(String word, WordGson wordWithAudio, int readingLevelPosition) {
+            paintWord(word, readingLevelPosition);
+            paintUnderline(wordWithAudio);
         }
 
-        private void paintWord(String word, int readingLevelPosition, boolean paragraphDivider) {
+        private void paintWord(String word, int readingLevelPosition) {
             wordText.setText(word);
             setTextSizeByLevel(wordText, readingLevelPosition);
 
-            if (paragraphDivider) {
-                itemView.getLayoutParams().width = MATCH_PARENT;
-            } else if (word.isEmpty()) {
+            if (word.isEmpty()) {
                 itemView.getLayoutParams().width = 0;
             }
         }
@@ -131,9 +145,9 @@ class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
             textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
         }
 
-        private void paintUnderline(WordGson wordWithAudio, boolean paragraphDivider) {
+        private void paintUnderline(WordGson wordWithAudio) {
             // Underline clickable Words
-            if (paragraphDivider || wordWithAudio == null) {
+            if (wordWithAudio == null) {
                 wordUnderline.setVisibility(GONE);
             } else {
                 wordUnderline.setVisibility(VISIBLE);
