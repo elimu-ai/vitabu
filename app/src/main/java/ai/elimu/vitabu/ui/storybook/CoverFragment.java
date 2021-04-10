@@ -94,7 +94,7 @@ public class CoverFragment extends ChapterFragment {
         audioTextView = descriptionTextView;
         audioText = description;
 
-        playAudio(description,null);
+        playAudio(description, null);
     }
 
     @Override

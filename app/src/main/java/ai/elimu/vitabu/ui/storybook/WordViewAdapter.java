@@ -21,7 +21,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
-class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int WORD_TYPE = 0;
     public static final int NEW_PARAGRAPH_TYPE = 1;
@@ -30,13 +30,13 @@ class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final OnItemClickListener listener;
     private final List<String> wordsInOriginalText = new ArrayList<>();
-    private final List<WordGson> wordAudios = new ArrayList<>();
+    private final List<WordGson> words = new ArrayList<>();
 
     public interface OnItemClickListener {
         void onItemClick(WordGson wordGson, View view, int position);
     }
 
-    public WordAdapter(int readingLevelPosition, OnItemClickListener listener) {
+    public WordViewAdapter(int readingLevelPosition, OnItemClickListener listener) {
         this.readingLevelPosition = readingLevelPosition;
         this.listener = listener;
     }
@@ -56,13 +56,13 @@ class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if (getItemViewType(position) == WORD_TYPE) {
-            ((WordViewHolder) holder).paintWordLayout(wordsInOriginalText.get(position), wordAudios.get(position), readingLevelPosition);
+            ((WordViewHolder) holder).paintWordLayout(wordsInOriginalText.get(position), words.get(position), readingLevelPosition);
 
-            if (wordAudios.get(position) != null) {
+            if (words.get(position) != null) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        listener.onItemClick(wordAudios.get(position), v, position);
+                        listener.onItemClick(words.get(position), v, position);
                     }
                 });
             }
@@ -84,17 +84,17 @@ class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordAudios) {
-        //Words
+        // Words
         this.wordsInOriginalText.addAll(wordsInOriginalText);
         this.wordsInOriginalText.add(null);
 
-        //Audios
+        // Audios
         if (wordAudios == null) {
-            this.wordAudios.addAll(Collections.<WordGson>nCopies(wordsInOriginalText.size(), null));
+            this.words.addAll(Collections.<WordGson>nCopies(wordsInOriginalText.size(), null));
         } else {
-            this.wordAudios.addAll(wordAudios);
+            this.words.addAll(wordAudios);
         }
-        this.wordAudios.add(null);
+        this.words.add(null);
 
         notifyDataSetChanged();
     }

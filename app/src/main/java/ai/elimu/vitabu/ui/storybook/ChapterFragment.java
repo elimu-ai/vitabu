@@ -124,7 +124,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
             ReadingLevel readingLevel = (ReadingLevel) getArguments().get(ARG_READING_LEVEL);
             readingLevelPosition = (readingLevel == null) ? 0 : readingLevel.ordinal();
 
-            WordAdapter wordAdapter = new WordAdapter(readingLevelPosition, new WordAdapter.OnItemClickListener() {
+            WordViewAdapter wordViewAdapter = new WordViewAdapter(readingLevelPosition, new WordViewAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(WordGson wordWithAudio, View view, int position) {
                     Log.i(getClass().getName(), "onClick");
@@ -151,7 +151,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 layoutManager.setFlexDirection(FlexDirection.ROW);
                 layoutManager.setJustifyContent(JustifyContent.CENTER);
                 chapterRecyclerView.setLayoutManager(layoutManager);
-                chapterRecyclerView.setAdapter(wordAdapter);
+                chapterRecyclerView.setAdapter(wordViewAdapter);
             }
 
             for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
@@ -170,7 +170,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 List<WordGson> wordAudios = storyBookParagraphGsons.get(paragraphIndex).getWords();
                 Log.i(getClass().getName(), "words: " + wordAudios);
 
-                wordAdapter.addParagraph(Arrays.asList(wordsInOriginalText), wordAudios);
+                wordViewAdapter.addParagraph(Arrays.asList(wordsInOriginalText), wordAudios);
             }
         } else {
             fab.setVisibility(View.GONE);
@@ -238,7 +238,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
                 wordPosition[0]++;
                 itemView = layoutManager.findViewByPosition(wordPosition[0]);
-                if (chapterRecyclerView.getAdapter().getItemViewType(wordPosition[0]) == WordAdapter.NEW_PARAGRAPH_TYPE) {
+                if (chapterRecyclerView.getAdapter().getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
                     wordPosition[0]++;
                 } else if (itemView != null && ((TextView)itemView.findViewById(R.id.word_text)).getText().length() == 0) {
                     wordPosition[0]++;
@@ -271,7 +271,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 int firstWordVisible = layoutManager.findFirstCompletelyVisibleItemPosition();
                 int lastWordVisible = layoutManager.findLastCompletelyVisibleItemPosition();
 
-                if (position < firstWordVisible || position > lastWordVisible) {
+                if ((position < firstWordVisible) || (position > lastWordVisible)) {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
