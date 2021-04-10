@@ -138,11 +138,13 @@ class WordAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int[] fontSize = itemView.getContext().getResources().getIntArray(R.array.chapter_text_font_size);
             String[] letterSpacing = itemView.getContext().getResources().getStringArray(R.array.chapter_text_letter_spacing);
             int[] lineSpacing = itemView.getContext().getResources().getIntArray(R.array.chapter_text_line_spacing_recyclerview);
+            int[] wordSpacing = itemView.getContext().getResources().getIntArray(R.array.chapter_text_word_spacing_recyclerview);
 
             ((FlexboxLayoutManager.LayoutParams) itemView.getLayoutParams()).bottomMargin = lineSpacing[readingLevelPosition];
 
             textView.setTextSize(fontSize[readingLevelPosition]);
             textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
+            itemView.setPadding(wordSpacing[readingLevelPosition], 0, wordSpacing[readingLevelPosition], 0);
         }
 
         private void paintUnderline(WordGson wordWithAudio) {
