@@ -34,4 +34,25 @@
         <item>1.3</item>
         <item>1.2</item>
     </string-array>
+
+    <integer-array name="chapter_text_word_spacing">
+        <item>3</item>
+        <item>3</item>
+        <item>2</item>
+        <item>2</item>
+    </integer-array>
+
+    <integer-array name="chapter_text_line_spacing_recyclerview">
+        <item>16</item>
+        <item>9</item>
+        <item>5</item>
+        <item>1</item>
+    </integer-array>
+
+    <integer-array name="chapter_text_word_spacing_recyclerview">
+        <item>20</item>
+        <item>16</item>
+        <item>12</item>
+        <item>8</item>
+    </integer-array>
 </resources>
