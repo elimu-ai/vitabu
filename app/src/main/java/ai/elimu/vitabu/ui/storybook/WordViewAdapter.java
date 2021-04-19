@@ -112,31 +112,31 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     
     public static class WordViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView wordText;
+        private final TextView wordTextView;
         private final TextView wordEmoji;
         private final View wordUnderline;
 
         public WordViewHolder(@NonNull View itemView) {
             super(itemView);
-            wordText = itemView.findViewById(R.id.word_text);
+            wordTextView = itemView.findViewById(R.id.word_text);
             wordUnderline = itemView.findViewById(R.id.word_underline);
             wordEmoji = itemView.findViewById(R.id.word_emoji);
         }
 
-        public void paintWordLayout(String word, WordGson wordWithAudio, int readingLevelPosition) {
+        public void paintWordLayout(String wordText, WordGson wordWithAudio, int readingLevelPosition) {
             long wordId = -1;
             if (wordWithAudio != null)
                 wordId = wordWithAudio.getId();
 
-            paintWord(wordId, word, readingLevelPosition);
+            paintWord(wordId, wordText, readingLevelPosition);
             paintUnderline(wordWithAudio);
         }
 
-        private void paintWord(long wordId, String word, int readingLevelPosition) {
-            wordText.setText(word);
-            setTextSizeByLevel(wordText, readingLevelPosition);
+        private void paintWord(long wordId, String wordText, int readingLevelPosition) {
+            wordTextView.setText(wordText);
+            setTextSizeByLevel(wordTextView, readingLevelPosition);
 
-            if (word.isEmpty()) {
+            if (wordText.isEmpty()) {
                 itemView.getLayoutParams().width = 0;
             }
 
