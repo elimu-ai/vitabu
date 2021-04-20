@@ -30,7 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
-import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.AudioGson;
@@ -132,7 +132,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
                     WordDialogFragment.newInstance(wordWithAudio.getId()).show(getActivity().getSupportFragmentManager(), "dialog");
 
-                    AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(wordWithAudio.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    AudioGson audioGson = ContentProviderUtil.getAudioGsonByTranscription(wordWithAudio.getText().toLowerCase(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                     Log.i(getClass().getName(), "audioGson: " + audioGson);
                     if (audioGson != null) {
                         playAudioFile(audioGson);
@@ -194,7 +194,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
         StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
         String transcription = storyBookParagraphGson.getOriginalText();
         Log.i(getClass().getName(), "transcription: \"" + transcription + "\"");
-        AudioGson audioGson = ContentProviderHelper.getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        AudioGson audioGson = ContentProviderUtil.getAudioGsonByTranscription(transcription, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(getClass().getName(), "audioGson: " + audioGson);
         if (audioGson != null) {
             playAudioFile(audioGson);

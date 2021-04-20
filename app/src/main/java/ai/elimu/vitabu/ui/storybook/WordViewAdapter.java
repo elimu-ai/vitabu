@@ -13,8 +13,12 @@ import com.google.android.flexbox.FlexboxLayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import ai.elimu.content_provider.utils.ContentProviderUtil;
+import ai.elimu.model.v2.gson.content.EmojiGson;
 import ai.elimu.model.v2.gson.content.WordGson;
+import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 
 import static android.view.View.GONE;
@@ -59,12 +63,9 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((WordViewHolder) holder).paintWordLayout(wordsInOriginalText.get(position), words.get(position), readingLevelPosition);
 
             if (words.get(position) != null) {
-                holder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        listener.onItemClick(words.get(position), v, position);
-                    }
-                });
+                holder.itemView.setOnClickListener(v ->
+                        listener.onItemClick(words.get(position), v, position)
+                );
             }
         }
     }
@@ -111,26 +112,40 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     
     public static class WordViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView wordText;
+        private final TextView wordTextView;
+        private final TextView wordEmoji;
         private final View wordUnderline;
 
         public WordViewHolder(@NonNull View itemView) {
             super(itemView);
-            wordText = itemView.findViewById(R.id.word_text);
+            wordTextView = itemView.findViewById(R.id.word_text);
             wordUnderline = itemView.findViewById(R.id.word_underline);
+            wordEmoji = itemView.findViewById(R.id.word_emoji);
         }
 
-        public void paintWordLayout(String word, WordGson wordWithAudio, int readingLevelPosition) {
-            paintWord(word, readingLevelPosition);
+        public void paintWordLayout(String wordText, WordGson wordWithAudio, int readingLevelPosition) {
+            long wordId = -1;
+            if (wordWithAudio != null)
+                wordId = wordWithAudio.getId();
+
+            paintWord(wordId, wordText, readingLevelPosition);
             paintUnderline(wordWithAudio);
         }
 
-        private void paintWord(String word, int readingLevelPosition) {
-            wordText.setText(word);
-            setTextSizeByLevel(wordText, readingLevelPosition);
+        private void paintWord(long wordId, String wordText, int readingLevelPosition) {
+            wordTextView.setText(wordText);
+            setTextSizeByLevel(wordTextView, readingLevelPosition);
 
-            if (word.isEmpty()) {
+            if (wordText.isEmpty()) {
                 itemView.getLayoutParams().width = 0;
+            }
+
+            if (wordId != -1) {
+                List<EmojiGson> emojiGsons = ContentProviderUtil.getAllEmojiGsons(wordId, itemView.getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                if (!emojiGsons.isEmpty()) {
+                    wordEmoji.setText(emojiGsons.stream().map(EmojiGson::getGlyph).collect(Collectors.joining("")));
+                    setTextSizeByLevel(wordEmoji, readingLevelPosition);
+                }
             }
         }
 

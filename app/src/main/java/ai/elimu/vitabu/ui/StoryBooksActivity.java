@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
 
 import ai.elimu.analytics.utils.LearningEventUtil;
-import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.enums.analytics.LearningEventType;
 import ai.elimu.model.v2.gson.content.ImageGson;
@@ -52,7 +52,7 @@ public class StoryBooksActivity extends AppCompatActivity {
         storyBooksProgressBar = findViewById(R.id.storybooks_progress_bar);
 
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        storyBooks = ContentProviderHelper.getStoryBookGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        storyBooks = ContentProviderUtil.getAllStoryBookGsons(getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(getClass().getName(), "storyBooks.size(): " + storyBooks.size());
     }
 
@@ -112,7 +112,7 @@ public class StoryBooksActivity extends AppCompatActivity {
 
                     // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                     Log.i(getClass().getName(), "storyBook.getCoverImage(): " + storyBook.getCoverImage());
-                    final ImageGson coverImage = ContentProviderHelper.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                    final ImageGson coverImage = ContentProviderUtil.getImageGson(storyBook.getCoverImage().getId(), getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                     if (coverImage != null) {
                         final ImageView coverImageView = storyBookView.findViewById(R.id.coverImageView);
                         runOnUiThread(new Runnable() {

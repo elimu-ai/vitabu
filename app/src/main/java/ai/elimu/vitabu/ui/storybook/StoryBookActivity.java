@@ -8,7 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.List;
 
-import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.model.enums.ReadingLevel;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.vitabu.BuildConfig;
@@ -34,7 +34,7 @@ public class StoryBookActivity extends AppCompatActivity {
         String description = getIntent().getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION);
 
         // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        List<StoryBookChapterGson> storyBookChapters = ContentProviderHelper.getStoryBookChapterGsons(storyBookId, getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        List<StoryBookChapterGson> storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(storyBookId, getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
 
         ViewPager viewPager = findViewById(R.id.view_pager);
 

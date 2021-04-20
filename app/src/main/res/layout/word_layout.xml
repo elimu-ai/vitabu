@@ -31,4 +31,14 @@
         app:layout_constraintStart_toStartOf="@id/word_text"
         app:layout_constraintEnd_toEndOf="@id/word_text"
         tools:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/word_emoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:textSize="32sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/word_text"
+        tools:text="emoji" />
 </androidx.constraintlayout.widget.ConstraintLayout>

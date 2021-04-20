@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.List;
 
-import ai.elimu.content_provider.utils.ContentProviderHelper;
+import ai.elimu.content_provider.utils.ContentProviderUtil;
 import ai.elimu.model.v2.gson.content.EmojiGson;
 import ai.elimu.model.v2.gson.content.WordGson;
 import ai.elimu.vitabu.BuildConfig;
@@ -52,14 +52,14 @@ public class WordDialogFragment extends BottomSheetDialogFragment {
         Long wordId = getArguments().getLong(ARG_WORD_ID);
         Log.i(WordDialogFragment.class.getName(), "wordId: " + wordId);
 
-        WordGson wordGson = ContentProviderHelper.getWordGson(wordId, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        WordGson wordGson = ContentProviderUtil.getWordGson(wordId, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(WordDialogFragment.class.getName(), "wordGson: " + wordGson);
 
         TextView textView = view.findViewById(R.id.wordTextView);
         textView.setText(wordGson.getText());
 
         // Append Emojis (if any) below the Word
-        List<EmojiGson> emojiGsons = ContentProviderHelper.getEmojiGsons(wordGson.getId(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        List<EmojiGson> emojiGsons = ContentProviderUtil.getAllEmojiGsons(wordGson.getId(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         if (!emojiGsons.isEmpty()) {
             textView.setText(textView.getText() + "\n");
             for (EmojiGson emojiGson : emojiGsons) {
