@@ -58,6 +58,7 @@ public class CoverFragment extends ChapterFragment {
 
         titleTextView = root.findViewById(R.id.storybook_title);
         titleTextView.setText(chapterText);
+
         setTextSizeByLevel(titleTextView, titleFontSize);
 
         // Initialize audio parameters with the storybook title
@@ -135,6 +136,16 @@ public class CoverFragment extends ChapterFragment {
             @Override
             public void onError(String utteranceId) {
                 Log.i(getClass().getName(), "onError");
+            }
+
+            @Override
+            public void onStop(String utteranceId, boolean interrupted) {
+                super.onStop(utteranceId, interrupted);
+                titleTextView.setText(chapterText);
+                descriptionTextView.setText(description);
+
+                audioText = chapterText;
+                audioTextView = titleTextView;
             }
         };
     }
