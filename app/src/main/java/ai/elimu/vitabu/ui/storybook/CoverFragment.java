@@ -113,12 +113,14 @@ public class CoverFragment extends ChapterFragment {
                 super.onRangeStart(utteranceId, start, end, frame);
 
                 Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
-
-                // Highlight the word being spoken
-                Spannable spannable = new SpannableString(audioText);
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                audioTextView.setText(spannable);
+                
+                if (start >= 0) {
+                    // Highlight the word being spoken
+                    Spannable spannable = new SpannableString(audioText);
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
+                    spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    audioTextView.setText(spannable);
+                }
             }
 
             @Override
@@ -130,6 +132,8 @@ public class CoverFragment extends ChapterFragment {
 
                 if (audioListener != null) {
                     audioListener.onAudioDone();
+                } else {
+                    onStop(utteranceId, false);
                 }
             }
 
