@@ -19,7 +19,7 @@ public class ChapterPagerAdapter extends FragmentStatePagerAdapter {
     private String description;
 
     public ChapterPagerAdapter(FragmentManager fm, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel, String description) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         ChapterPagerAdapter.storyBookChapters = storyBookChapters;
         this.readingLevel = readingLevel;
         this.description = description;

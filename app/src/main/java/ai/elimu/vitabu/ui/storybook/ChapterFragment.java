@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +63,8 @@ public class ChapterFragment extends Fragment implements AudioListener {
     private RecyclerView chapterRecyclerView;
 
     private TextToSpeech tts;
+
+    private MediaPlayer mediaPlayer;
 
     protected int readingLevelPosition;
 
@@ -176,8 +179,16 @@ public class ChapterFragment extends Fragment implements AudioListener {
             fab.setVisibility(View.GONE);
         }
 
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         // Add button for initializing Text-to-Speech (TTS)
         final String finalChapterText = chapterText;
+        FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,8 +196,6 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 playAudio(finalChapterText, ChapterFragment.this);
             }
         });
-
-        return root;
     }
 
     public void playAudio(final String chapterText, final AudioListener audioListener) {
@@ -207,13 +216,24 @@ public class ChapterFragment extends Fragment implements AudioListener {
         }
     }
 
-    public UtteranceProgressListener getUtteranceProgressListener(AudioListener _audioListener) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        tts.stop();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+        }
+    }
+
+    public UtteranceProgressListener getUtteranceProgressListener(AudioListener audioListener) {
 
         final int[] wordPosition = {-1};
 
         return new UtteranceProgressListener() {
 
             final FlexboxLayoutManager layoutManager = (FlexboxLayoutManager) chapterRecyclerView.getLayoutManager();
+
+            View highlightedTextView;
 
             @Override
             public void onStart(String utteranceId) {
@@ -248,6 +268,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 itemView = layoutManager.findViewByPosition(wordPosition[0]);
                 if (itemView != null) {
                     itemView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                    highlightedTextView = itemView;
                 }
             }
 
@@ -265,6 +286,14 @@ public class ChapterFragment extends Fragment implements AudioListener {
             @Override
             public void onError(String utteranceId) {
                 Log.i(getClass().getName(), "onError");
+            }
+
+            @Override
+            public void onStop(String utteranceId, boolean interrupted) {
+                super.onStop(utteranceId, interrupted);
+                if (highlightedTextView != null) {
+                    highlightedTextView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.bg_word_selector));
+                }
             }
 
             private void scrollToWordIfNotVisible(final int position) {
@@ -288,7 +317,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 audioGson.getId() + "_r" + audioGson.getRevisionNumber() + "." + audioGson.getAudioFormat().toString().toLowerCase());
         Log.i(getClass().getName(), "audioFile: " + audioFile);
         Log.i(getClass().getName(), "audioFile.exists(): " + audioFile.exists());
-        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(audioFile.getPath());
             mediaPlayer.prepare();

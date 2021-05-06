@@ -58,6 +58,7 @@ public class CoverFragment extends ChapterFragment {
 
         titleTextView = root.findViewById(R.id.storybook_title);
         titleTextView.setText(chapterText);
+
         setTextSizeByLevel(titleTextView, titleFontSize);
 
         // Initialize audio parameters with the storybook title
@@ -112,12 +113,14 @@ public class CoverFragment extends ChapterFragment {
                 super.onRangeStart(utteranceId, start, end, frame);
 
                 Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
-
-                // Highlight the word being spoken
-                Spannable spannable = new SpannableString(audioText);
-                BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                audioTextView.setText(spannable);
+                
+                if (start >= 0) {
+                    // Highlight the word being spoken
+                    Spannable spannable = new SpannableString(audioText);
+                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
+                    spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    audioTextView.setText(spannable);
+                }
             }
 
             @Override
@@ -129,12 +132,24 @@ public class CoverFragment extends ChapterFragment {
 
                 if (audioListener != null) {
                     audioListener.onAudioDone();
+                } else {
+                    onStop(utteranceId, false);
                 }
             }
 
             @Override
             public void onError(String utteranceId) {
                 Log.i(getClass().getName(), "onError");
+            }
+
+            @Override
+            public void onStop(String utteranceId, boolean interrupted) {
+                super.onStop(utteranceId, interrupted);
+                titleTextView.setText(chapterText);
+                descriptionTextView.setText(description);
+
+                audioText = chapterText;
+                audioTextView = titleTextView;
             }
         };
     }
