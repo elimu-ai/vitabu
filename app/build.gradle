@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
     defaultConfig {
         applicationId "ai.elimu.vitabu"
         minSdkVersion 24
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1001002
         versionName "1.1.2-SNAPSHOT"
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
@@ -45,10 +45,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.github.elimu-ai:model:model-2.0.33' // See https://jitpack.io/#elimu-ai/model
+    implementation 'com.github.elimu-ai:model:model-2.0.37' // See https://jitpack.io/#elimu-ai/model
     implementation 'com.github.elimu-ai:content-provider:1.2.7@aar' // See https://jitpack.io/#elimu-ai/content-provider
     implementation 'com.github.elimu-ai:analytics:3.1.5@aar' // See https://jitpack.io/#elimu-ai/analytics
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android:flexbox:2.0.1'
