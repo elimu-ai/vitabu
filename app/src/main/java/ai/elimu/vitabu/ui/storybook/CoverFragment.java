@@ -128,7 +128,9 @@ public class CoverFragment extends ChapterFragment {
                 Log.i(getClass().getName(), "onDone");
 
                 // Remove highlighting of the last spoken word
-                audioTextView.setText(audioText);
+                requireActivity().runOnUiThread(() -> {
+                    audioTextView.setText(audioText);
+                });
 
                 if (audioListener != null) {
                     audioListener.onAudioDone();
@@ -145,9 +147,10 @@ public class CoverFragment extends ChapterFragment {
             @Override
             public void onStop(String utteranceId, boolean interrupted) {
                 super.onStop(utteranceId, interrupted);
-                titleTextView.setText(chapterText);
-                descriptionTextView.setText(description);
-
+                requireActivity().runOnUiThread(() -> {
+                    titleTextView.setText(chapterText);
+                    descriptionTextView.setText(description);
+                });
                 audioText = chapterText;
                 audioTextView = titleTextView;
             }
