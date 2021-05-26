@@ -27,6 +27,8 @@ public class BaseApplication extends Application {
                 // Fetch the chosen language from the Appstore
                 // TODO
 //                tts.setLanguage(new Locale("hin"));
+
+                tts.setSpeechRate(0.5f);
             }
         });
     }

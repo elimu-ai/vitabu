@@ -320,6 +320,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(audioFile.getPath());
+            mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(0.5f));
             mediaPlayer.prepare();
             mediaPlayer.start();
         } catch (IOException e) {
