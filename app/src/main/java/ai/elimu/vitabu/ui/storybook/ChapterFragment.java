@@ -43,6 +43,8 @@ import ai.elimu.vitabu.BaseApplication;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
 
+import static ai.elimu.vitabu.BaseApplication.SPEECH_RATE;
+
 public class ChapterFragment extends Fragment implements AudioListener {
 
     protected static final String ARG_CHAPTER_INDEX = "chapter_index";
@@ -320,6 +322,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
         mediaPlayer = new MediaPlayer();
         try {
             mediaPlayer.setDataSource(audioFile.getPath());
+            mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(SPEECH_RATE));
             mediaPlayer.prepare();
             mediaPlayer.start();
         } catch (IOException e) {

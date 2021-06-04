@@ -9,6 +9,8 @@ import java.util.concurrent.Executors;
 
 public class BaseApplication extends Application {
 
+    public static final float SPEECH_RATE = 0.5f;
+
     Executor executorService = Executors.newSingleThreadExecutor();
 
     private TextToSpeech tts;
@@ -27,6 +29,8 @@ public class BaseApplication extends Application {
                 // Fetch the chosen language from the Appstore
                 // TODO
 //                tts.setLanguage(new Locale("hin"));
+
+                tts.setSpeechRate(SPEECH_RATE);
             }
         });
     }
