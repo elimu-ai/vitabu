@@ -54,19 +54,19 @@ public class CoverFragment extends ChapterFragment {
         int[] titleFontSize = getResources().getIntArray(R.array.cover_title_font_size);
         int[] descriptionFontSize = getResources().getIntArray(R.array.chapter_text_font_size);
 
-        for (int i=0; i<chapterText.length; i++) {
-            chapterText[i] = setWordSpacing(chapterText[i]);
+        for (int i=0; i<chapterParagraph.length; i++) {
+            chapterParagraph[i] = setWordSpacing(chapterParagraph[i]);
         }
 
         titleTextView = root.findViewById(R.id.storybook_title);
-        titleTextView.setText(chapterText[0]);
+        titleTextView.setText(chapterParagraph[0]);
 
         setTextSizeByLevel(titleTextView, titleFontSize);
 
         // Initialize audio parameters with the storybook title
         audioTextView = titleTextView;
 
-        audioText = TextUtils.join("", chapterText);
+        audioText = TextUtils.join("", chapterParagraph);
         description[0] = setWordSpacing((String) getArguments().get(ARG_DESCRIPTION));
         descriptionTextView = root.findViewById(R.id.storybook_description);
         descriptionTextView.setText(description[0]);
@@ -150,10 +150,10 @@ public class CoverFragment extends ChapterFragment {
             public void onStop(String utteranceId, boolean interrupted) {
                 super.onStop(utteranceId, interrupted);
                 requireActivity().runOnUiThread(() -> {
-                    titleTextView.setText(TextUtils.join("", chapterText));
+                    titleTextView.setText(TextUtils.join("", chapterParagraph));
                     descriptionTextView.setText(description[0]);
                 });
-                audioText = TextUtils.join("", chapterText);
+                audioText = TextUtils.join("", chapterParagraph);
                 audioTextView = titleTextView;
             }
         };
