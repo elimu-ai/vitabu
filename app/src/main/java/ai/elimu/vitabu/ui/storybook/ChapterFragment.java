@@ -61,7 +61,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
 
     private StoryBookChapterGson storyBookChapter;
 
-    protected String[] chapterParagraph = {};
+    protected String[] chapterParagraphs = {};
 
     private RecyclerView chapterRecyclerView;
 
@@ -160,7 +160,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 chapterRecyclerView.setAdapter(wordViewAdapter);
             }
 
-            chapterParagraph = new String[storyBookParagraphGsons.size()];
+            chapterParagraphs = new String[storyBookParagraphGsons.size()];
             for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
                 Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(paragraphIndex).getOriginalText() + "\"");
 
@@ -169,7 +169,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
                 Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
 
-                chapterParagraph[paragraphIndex] = originalText;
+                chapterParagraphs[paragraphIndex] = originalText;
 
                 List<WordGson> wordAudios = storyBookParagraphGsons.get(paragraphIndex).getWords();
                 Log.i(getClass().getName(), "words: " + wordAudios);
@@ -188,7 +188,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
         super.onViewCreated(view, savedInstanceState);
 
         // Add button for initializing Text-to-Speech (TTS)
-        final String[] chapterText = chapterParagraph;
+        final String[] chapterText = chapterParagraphs;
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
