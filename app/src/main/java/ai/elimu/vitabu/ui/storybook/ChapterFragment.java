@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,9 +57,11 @@ public class ChapterFragment extends Fragment implements AudioListener {
     final static String PICTURES_PATH = FILES_PATH + Environment.DIRECTORY_PICTURES + "/";
     final static String MUSIC_PATH = FILES_PATH + Environment.DIRECTORY_MUSIC + "/";
 
+    private final static long PARAGRAPH_PAUSE = 1000;
+
     private StoryBookChapterGson storyBookChapter;
 
-    protected String chapterText = "";
+    protected String[] chapterParagraphs = {};
 
     private RecyclerView chapterRecyclerView;
 
@@ -159,6 +160,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 chapterRecyclerView.setAdapter(wordViewAdapter);
             }
 
+            chapterParagraphs = new String[storyBookParagraphGsons.size()];
             for (int paragraphIndex = 0; paragraphIndex < storyBookParagraphGsons.size(); paragraphIndex++) {
                 Log.i(getClass().getName(), "storyBookParagraphGson.getOriginalText(): \"" + storyBookParagraphGsons.get(paragraphIndex).getOriginalText() + "\"");
 
@@ -167,10 +169,7 @@ public class ChapterFragment extends Fragment implements AudioListener {
                 Log.i(getClass().getName(), "wordsInOriginalText.length: " + wordsInOriginalText.length);
                 Log.i(getClass().getName(), "Arrays.toString(wordsInOriginalText): " + Arrays.toString(wordsInOriginalText));
 
-                if (!TextUtils.isEmpty(chapterText)) {
-                    chapterText += "\n\n";
-                }
-                chapterText += originalText;
+                chapterParagraphs[paragraphIndex] = originalText;
 
                 List<WordGson> wordAudios = storyBookParagraphGsons.get(paragraphIndex).getWords();
                 Log.i(getClass().getName(), "words: " + wordAudios);
@@ -189,18 +188,18 @@ public class ChapterFragment extends Fragment implements AudioListener {
         super.onViewCreated(view, savedInstanceState);
 
         // Add button for initializing Text-to-Speech (TTS)
-        final String finalChapterText = chapterText;
+        final String[] chapterText = chapterParagraphs;
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
-                playAudio(finalChapterText, ChapterFragment.this);
+                playAudio(chapterText, ChapterFragment.this);
             }
         });
     }
 
-    public void playAudio(final String chapterText, final AudioListener audioListener) {
+    public void playAudio(final String[] chapterText, final AudioListener audioListener) {
         List<StoryBookParagraphGson> storyBookParagraphs = storyBookChapter.getStoryBookParagraphs();
         StoryBookParagraphGson storyBookParagraphGson = storyBookParagraphs.get(0);
         String transcription = storyBookParagraphGson.getOriginalText();
@@ -213,8 +212,11 @@ public class ChapterFragment extends Fragment implements AudioListener {
             // Fall back to TTS
             tts.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener));
 
-            Log.i(getClass().getName(), "chapterText: \"" + chapterText + "\"");
-            tts.speak(chapterText.replaceAll("[-*]", ""), TextToSpeech.QUEUE_FLUSH, null, "0");
+            Log.i(getClass().getName(), "chapterText: \"" + Arrays.toString(chapterText) + "\"");
+            for (String paragraph : chapterText) {
+                tts.speak(paragraph.replaceAll("[-*]", ""), TextToSpeech.QUEUE_ADD, null, "0");
+                tts.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null);
+            }
         }
     }
 

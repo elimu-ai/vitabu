@@ -30,7 +30,7 @@ public class CoverFragment extends ChapterFragment {
     protected TextView titleTextView;
 
     private TextView descriptionTextView;
-    private String description;
+    private final String[] description = new String[1];
 
     public static CoverFragment newInstance(ReadingLevel readingLevel, String description) {
         CoverFragment fragment = new CoverFragment();
@@ -54,20 +54,22 @@ public class CoverFragment extends ChapterFragment {
         int[] titleFontSize = getResources().getIntArray(R.array.cover_title_font_size);
         int[] descriptionFontSize = getResources().getIntArray(R.array.chapter_text_font_size);
 
-        chapterText = setWordSpacing(chapterText);
+        for (int i = 0; i < chapterParagraphs.length; i++) {
+            chapterParagraphs[i] = setWordSpacing(chapterParagraphs[i]);
+        }
 
         titleTextView = root.findViewById(R.id.storybook_title);
-        titleTextView.setText(chapterText);
+        titleTextView.setText(chapterParagraphs[0]);
 
         setTextSizeByLevel(titleTextView, titleFontSize);
 
         // Initialize audio parameters with the storybook title
         audioTextView = titleTextView;
-        audioText = chapterText;
 
-        description = setWordSpacing((String) getArguments().get(ARG_DESCRIPTION));
+        audioText = TextUtils.join("", chapterParagraphs);
+        description[0] = setWordSpacing((String) getArguments().get(ARG_DESCRIPTION));
         descriptionTextView = root.findViewById(R.id.storybook_description);
-        descriptionTextView.setText(description);
+        descriptionTextView.setText(description[0]);
 
         setTextSizeByLevel(descriptionTextView, descriptionFontSize);
 
@@ -93,7 +95,7 @@ public class CoverFragment extends ChapterFragment {
     public void onAudioDone() {
         // Update audio parameters with the storybook description
         audioTextView = descriptionTextView;
-        audioText = description;
+        audioText = description[0];
 
         playAudio(description, null);
     }
@@ -148,10 +150,10 @@ public class CoverFragment extends ChapterFragment {
             public void onStop(String utteranceId, boolean interrupted) {
                 super.onStop(utteranceId, interrupted);
                 requireActivity().runOnUiThread(() -> {
-                    titleTextView.setText(chapterText);
-                    descriptionTextView.setText(description);
+                    titleTextView.setText(TextUtils.join("", chapterParagraphs));
+                    descriptionTextView.setText(description[0]);
                 });
-                audioText = chapterText;
+                audioText = TextUtils.join("", chapterParagraphs);
                 audioTextView = titleTextView;
             }
         };
