@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-import ai.elimu.model.enums.ReadingLevel;
+import ai.elimu.model.v2.enums.ReadingLevel;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 
 public class ChapterPagerAdapter extends FragmentStatePagerAdapter {

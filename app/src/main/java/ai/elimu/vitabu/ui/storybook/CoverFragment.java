@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import java.util.Collections;
 import java.util.List;
 
-import ai.elimu.model.enums.ReadingLevel;
+import ai.elimu.model.v2.enums.ReadingLevel;
 import ai.elimu.vitabu.R;
 
 public class CoverFragment extends ChapterFragment {

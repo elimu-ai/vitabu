@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.List;
 
 import ai.elimu.content_provider.utils.ContentProviderUtil;
-import ai.elimu.model.enums.ReadingLevel;
+import ai.elimu.model.v2.enums.ReadingLevel;
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
 import ai.elimu.vitabu.BuildConfig;
 import ai.elimu.vitabu.R;
