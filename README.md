@@ -1,4 +1,4 @@
-# Vitabu
+# Vitabu 📚
 
 Android application for reading storybooks.
 
