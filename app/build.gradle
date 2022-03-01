@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+
     defaultConfig {
         applicationId "ai.elimu.vitabu"
         minSdkVersion 24
@@ -12,6 +12,7 @@ android {
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
