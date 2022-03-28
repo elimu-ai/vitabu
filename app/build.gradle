@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         applicationId "ai.elimu.vitabu"
         minSdkVersion 24
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 1001004
         versionName "1.1.4-SNAPSHOT"
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
