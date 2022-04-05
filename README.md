@@ -6,6 +6,10 @@ Android application for reading storybooks.
 
 <img width="320" alt="device-2020-06-10-152302" src="https://user-images.githubusercontent.com/15718174/84238987-6e900900-ab2e-11ea-82d5-c41a510473dd.png">
 
+## Installation
+
+Note: This app depends on the [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider) to be installed.
+
 ---
 
 ## About the elimu.ai Community
