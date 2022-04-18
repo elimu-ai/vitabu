@@ -16,17 +16,19 @@ android {
     signingConfigs {
         debug {
             // keytool -genkeypair -v -keystore my-debug-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+            // ./gradlew assemble -Dpassword=123456
             storeFile file('my-debug-key.keystore')
-            storePassword '123456'
+            storePassword System.getProperty('password')
             keyAlias 'my-key-alias'
-            keyPassword '123456'
+            keyPassword System.getProperty('password')
         }
         release {
             // keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+            // ./gradlew assemble -Dpassword=123456
             storeFile file('my-release-key.keystore')
-            storePassword '123456'
+            storePassword System.getProperty('password')
             keyAlias 'my-key-alias'
-            keyPassword '123456'
+            keyPassword System.getProperty('password')
         }
     }
 
