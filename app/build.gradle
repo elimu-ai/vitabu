@@ -48,6 +48,7 @@ android {
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider.test"]
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider.test"')
             buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics.test"')
+            signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled false
