@@ -13,6 +13,23 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        debug {
+            // keytool -genkeypair -v -keystore my-debug-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+            storeFile file('my-debug-key.keystore')
+            storePassword '123456'
+            keyAlias 'my-key-alias'
+            keyPassword '123456'
+        }
+        release {
+            // keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+            storeFile file('my-release-key.keystore')
+            storePassword '123456'
+            keyAlias 'my-key-alias'
+            keyPassword '123456'
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
@@ -20,6 +37,7 @@ android {
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider.debug"]
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider.debug"')
             buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics.debug"')
+            signingConfig signingConfigs.debug
         }
         qa_test {
             initWith debug
@@ -34,6 +52,7 @@ android {
             manifestPlaceholders = [contentProviderApplicationId: "ai.elimu.content_provider"]
             buildConfigField("String", "CONTENT_PROVIDER_APPLICATION_ID", '"ai.elimu.content_provider"')
             buildConfigField("String", "ANALYTICS_APPLICATION_ID", '"ai.elimu.analytics"')
+            signingConfig signingConfigs.release
         }
     }
 
