@@ -17,18 +17,36 @@ android {
         qa_test {
             // keytool -genkeypair -v -keystore my-debug-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
             // ./gradlew assembleQa_test -Dpassword=123456 -Dstorefile=/home/sxm/gitcoin/vitabu/sxm/vitabu/app/my-debug-key.keystore
-            storeFile file(System.getProperty('storefile'))
-            storePassword System.getProperty('password')
+            if(System.getProperty('storefile')){
+                storeFile file(System.getProperty('storefile'))
+            } else {
+                storeFile file("my-debug-key.keystore");
+            }
+            if(System.getProperty('password')) {
+                storePassword System.getProperty('password')
+                keyPassword System.getProperty('password')
+            } else {
+                storePassword '123456'
+                keyPassword '123456'
+            }
             keyAlias 'my-key-alias'
-            keyPassword System.getProperty('password')
         }
         release {
             // keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
             // ./gradlew assembleRelease -Dpassword=123456 -Dstorefile=/home/sxm/gitcoin/vitabu/sxm/vitabu/app/my-release-key.keystore
-            storeFile file(System.getProperty('storefile'))
-            storePassword System.getProperty('password')
+            if(System.getProperty('storefile')){
+                storeFile file(System.getProperty('storefile'))
+            } else {
+                storeFile file("my-release-key.keystore");
+            }
+            if(System.getProperty('password')) {
+                storePassword System.getProperty('password')
+                keyPassword System.getProperty('password')
+            } else {
+                storePassword '123456'
+                keyPassword '123456'
+            }
             keyAlias 'my-key-alias'
-            keyPassword System.getProperty('password')
         }
     }
 
