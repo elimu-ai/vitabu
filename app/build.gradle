@@ -61,22 +61,48 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
-
-task releaseClean {
+task ensureCleanRepo {
     doLast {
         if (!grgit.repository.jgit.status().call().clean) {
-            throw new GradleException('Git status is not clean, please commit or stash your changes!')
+            throw new GradleException('Git status is not clean, please stash your changes!')
         }
+    }
+}
+task releaseClean(dependsOn: ensureCleanRepo) {
+    doLast {
+        def Clean = true
+        String headCommitMessage = grgit.head().shortMessage
+        while (headCommitMessage.contains("[gradle-release-task]")) {
+            Clean = false
+            println "Found git commit: $headCommitMessage"
+            if (headCommitMessage.indexOf("vitabu-") > -1) {
+                def tagName = headCommitMessage.split("vitabu-")[1]
+                println "Removing the git tag: $tagName"
+                try {
+                    grgit.tag.remove {
+                        names = [tagName]
+                    }
+                } catch (Exception e) {
+                    println "Error while removing git tag:\n $e"
+                }
+            }
+            println "Resetting the git commit permanently!"
+            grgit.reset(commit: "HEAD~1", mode: "hard")
+            headCommitMessage = grgit.head().shortMessage
+
+        }
+        if (Clean){
+            println "Repository is already clean"
+        }
+        println "Done!"
     }
 }
 
 // Task parameters:
 //    bumpVersion -> if available will specify new versionName directly and ignores the `bumpType` parameter.
 //    bumpType[major|minor|patch] -> will specify how the version bumping occurs.
-task releasePrepare(dependsOn: releaseClean) {
+task releasePrepare(dependsOn: ensureCleanRepo) {
     doLast {
-        def headCommit = grgit.repository.jgit.reflog().call().iterator().next().newId.name
-
         def versionName = android.defaultConfig.versionName
 
         if (versionName.indexOf("-") > -1) {
@@ -95,8 +121,6 @@ task releasePrepare(dependsOn: releaseClean) {
                 message = "Release of $versionName"
             }
         } catch (Exception e) {
-            print "Failed, undoing last changes to the repo..."
-            grgit.reset(commit: headCommit, mode: "mixed")
             throw new GradleException("Failed to tag the repo, error:\n $e")
         }
 
@@ -105,7 +129,7 @@ task releasePrepare(dependsOn: releaseClean) {
         def newVersionName
         if (project.properties.containsKey("bumpVersion")) {
             newVersionName = project.properties["bumpVersion"]
-            print "Bumping the version directly (bumpVersion=$newVersionName)"
+            println "Bumping the version directly (bumpVersion=$newVersionName)"
         } else if (project.properties.containsKey("bumpType")) {
             def (major, minor, patch) = versionName.tokenize('.')
             switch (bumpType) {
@@ -137,12 +161,24 @@ task releasePrepare(dependsOn: releaseClean) {
         buildFile.setText(buildText) //replace the build file's text
         grgit.add(patterns: ['app/build.gradle'])
         grgit.commit(message: "[gradle-release-task] prepare for next development iteration")
+        println "Done!"
     }
 
 }
 
-task performRelease(dependsOn: releaseClean) {
+task releasePerform(dependsOn: ensureCleanRepo) {
     doLast {
-        grgit.push()
+        boolean force = false
+        if (project.properties.containsKey("force")) {
+            force = project.properties["force"]
+        }
+        println "Pushing the newest commits to the remote repository (force: $force)"
+        try {
+            grgit.push(force: force)
+        } catch (Exception e) {
+            throw new GradleException("Failed to push to the repo,\n" +
+                    " you can try using -Pforce=true parameter to force the push, error: \n$e")
+        }
+        println "Done!"
     }
 }
