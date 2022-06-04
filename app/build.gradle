@@ -70,13 +70,15 @@ task ensureCleanRepo {
 }
 task releaseClean(dependsOn: ensureCleanRepo) {
     doLast {
-        def Clean = true
+        def clean = true
+        def applicationId = android.defaultConfig.applicationId
+
         String headCommitMessage = grgit.head().shortMessage
         while (headCommitMessage.contains("[gradle-release-task]")) {
-            Clean = false
+            clean = false
             println "Found git commit: $headCommitMessage"
-            if (headCommitMessage.indexOf("vitabu-") > -1) {
-                def tagName = headCommitMessage.split("vitabu-")[1]
+            if (headCommitMessage.indexOf("$applicationId-") > -1) {
+                def tagName = headCommitMessage.split("$applicationId-")[1]
                 println "Removing the git tag: $tagName"
                 try {
                     grgit.tag.remove {
@@ -91,7 +93,7 @@ task releaseClean(dependsOn: ensureCleanRepo) {
             headCommitMessage = grgit.head().shortMessage
 
         }
-        if (Clean){
+        if (clean){
             println "Repository is already clean"
         }
         println "Done!"
@@ -103,6 +105,7 @@ task releaseClean(dependsOn: ensureCleanRepo) {
 //    bumpType[major|minor|patch] -> will specify how the version bumping occurs.
 task releasePrepare(dependsOn: ensureCleanRepo) {
     doLast {
+        def applicationId = android.defaultConfig.applicationId
         def versionName = android.defaultConfig.versionName
 
         if (versionName.indexOf("-") > -1) {
@@ -114,7 +117,7 @@ task releasePrepare(dependsOn: ensureCleanRepo) {
         buildText = buildText.replaceFirst(/versionName(\s+.*)/, "versionName '$versionName'")
         buildFile.setText(buildText) //replace the build file's text
         grgit.add(patterns: ['app/build.gradle'])
-        grgit.commit(message: "[gradle-release-task] prepare release vitabu-$versionName")
+        grgit.commit(message: "[gradle-release-task] prepare release $applicationId-$versionName")
         try {
             grgit.tag.add {
                 name = versionName
