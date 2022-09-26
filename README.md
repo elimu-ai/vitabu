@@ -27,6 +27,7 @@ adb install app/build/outputs/apk/debug/ai.elimu.vitabu-<versionCode>-debug.apk
 Perform a release:
 
 ```
+./gradlew releaseClean
 ./gradlew releasePrepare -PbumpType=patch
 ./gradlew releasePerform
 ```
