@@ -24,6 +24,13 @@ Install APK:
 adb install app/build/outputs/apk/debug/ai.elimu.vitabu-<versionCode>-debug.apk
 ```
 
+Perform a release:
+
+```
+./gradlew releasePrepare -PbumpType=patch
+./gradlew releasePerform
+```
+
 ---
 
 ## About the elimu.ai Community
