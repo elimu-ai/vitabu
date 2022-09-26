@@ -7,8 +7,8 @@ android {
         applicationId "ai.elimu.vitabu"
         minSdkVersion 24
         targetSdkVersion 32
-        versionCode 1001005
-        versionName '1.1.5'
+        versionCode 1001006
+        versionName '1.1.6-SNAPSHOT'
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
