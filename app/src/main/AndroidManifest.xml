@@ -8,6 +8,10 @@
     <!-- TODO: remove this request for permission once the Content Provider app can provide image files directly -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <queries>
+        <provider android:authorities="${contentProviderApplicationId}.provider.storybook_provider" />
+    </queries>
+
     <application
         android:name=".BaseApplication"
         android:allowBackup="true"
