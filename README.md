@@ -37,7 +37,6 @@ Perform a release:
 ./gradlew releasePerform
 ```
 
-
 ---
 
 <p align="center">
@@ -56,4 +55,6 @@ Perform a release:
   <a href="https://github.com/elimu-ai/wiki/milestones">Milestones 🎯</a>
   &nbsp;•&nbsp;
   <a href="https://github.com/elimu-ai/wiki#open-source-community">Community 👋🏽</a>
+  &nbsp;•&nbsp;
+  <a href="https://www.drips.network/app/drip-lists/41305178594442616889778610143373288091511468151140966646158126636698">Drips 💧</a>
 </p>
