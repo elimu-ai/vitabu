@@ -13,7 +13,8 @@ Corresponding [EGRA skill](https://github.com/elimu-ai/model/blob/main/src/main/
 
 ## Installation
 
-Note: This app depends on the [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider) to be installed.
+> [!IMPORTANT]
+> Note: This app depends on the [elimu.ai Content Provider](https://github.com/elimu-ai/content-provider) to be installed.
 
 ## Development 👩🏽‍💻
 
@@ -43,7 +44,7 @@ Perform a release:
   <img src="https://github.com/elimu-ai/webapp/blob/main/src/main/webapp/static/img/logo-text-256x78.png" />
 </p>
 <p align="center">
-  elimu.ai - Free open source learning software for out-of-school children ✨🚀
+  elimu.ai - Free open-source learning software for out-of-school children ✨🚀
 </p>
 <p align="center">
   <a href="https://elimu.ai">Website 🌐</a>
@@ -56,5 +57,5 @@ Perform a release:
   &nbsp;•&nbsp;
   <a href="https://github.com/elimu-ai/wiki#open-source-community">Community 👋🏽</a>
   &nbsp;•&nbsp;
-  <a href="https://www.drips.network/app/drip-lists/41305178594442616889778610143373288091511468151140966646158126636698">Drips 💧</a>
+  <a href="https://www.drips.network/app/drip-lists/41305178594442616889778610143373288091511468151140966646158126636698">Support 💜</a>
 </p>
