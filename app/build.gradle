@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.ajoberstar.grgit'
 android {
-    compileSdkVersion 32
+    compileSdk 35
+    namespace "ai.elimu.vitabu"
 
     defaultConfig {
-        applicationId "ai.elimu.vitabu"
         minSdkVersion 24
         targetSdkVersion 32
         versionCode 1001006
@@ -40,6 +40,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
