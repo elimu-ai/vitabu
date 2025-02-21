@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 32
+        targetSdkVersion 35
         versionCode 1001006
         versionName '1.1.6-SNAPSHOT'
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
