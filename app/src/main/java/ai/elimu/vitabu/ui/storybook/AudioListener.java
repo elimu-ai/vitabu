@@ -1,6 +1,6 @@
 package ai.elimu.vitabu.ui.storybook;
 
-interface AudioListener {
+public interface AudioListener {
 
     void onAudioDone();
 }

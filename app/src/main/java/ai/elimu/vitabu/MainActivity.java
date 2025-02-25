@@ -28,12 +28,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        // TODO: remove this request for permission once the Content Provider app can provide image files directly
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
-            return;
-        }
-
         Intent intent = new Intent(this, StoryBooksActivity.class);
         startActivity(intent);
 
