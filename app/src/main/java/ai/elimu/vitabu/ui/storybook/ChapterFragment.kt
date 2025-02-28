@@ -233,6 +233,11 @@ open class ChapterFragment : Fragment(), AudioListener {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer?.release()
+    }
+
     open fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
         val wordPosition = intArrayOf(-1)
 
