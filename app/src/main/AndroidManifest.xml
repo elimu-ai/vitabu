@@ -10,6 +10,9 @@
 
     <queries>
         <provider android:authorities="${contentProviderApplicationId}.provider.storybook_provider" />
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
     </queries>
 
     <application
