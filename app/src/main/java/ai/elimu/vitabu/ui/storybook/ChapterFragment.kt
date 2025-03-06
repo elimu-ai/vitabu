@@ -1,10 +1,8 @@
 package ai.elimu.vitabu.ui.storybook
 
 import ai.elimu.analytics.utils.LearningEventUtil
-import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.model.v2.enums.analytics.LearningEventType
-import ai.elimu.model.v2.gson.content.AudioGson
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson
 import ai.elimu.model.v2.gson.content.WordGson
 import ai.elimu.vitabu.BaseApplication
@@ -34,10 +32,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
 import java.util.Arrays
-import java.util.Locale
 
 open class ChapterFragment : Fragment(), AudioListener {
     private var storyBookChapter: StoryBookChapterGson? = null
@@ -117,24 +112,12 @@ open class ChapterFragment : Fragment(), AudioListener {
                         WordDialogFragment.newInstance(wordWithAudio.id)
                             .show(activity!!.supportFragmentManager, "dialog")
 
-                        val audioGson = ContentProviderUtil.getAudioGsonByTranscription(
-                            wordWithAudio.text.lowercase(
-                                Locale.getDefault()
-                            ),
-                            context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                        tts!!.speak(
+                            wordWithAudio.text,
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            "word_" + wordWithAudio.id
                         )
-                        Log.i(javaClass.name, "audioGson: $audioGson")
-                        if (audioGson != null) {
-                            playAudioFile(audioGson)
-                        } else {
-                            // Fall back to TTS
-                            tts!!.speak(
-                                wordWithAudio.text,
-                                TextToSpeech.QUEUE_FLUSH,
-                                null,
-                                "word_" + wordWithAudio.id
-                            )
-                        }
 
                         // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                         LearningEventUtil.reportWordLearningEvent(
@@ -195,33 +178,19 @@ open class ChapterFragment : Fragment(), AudioListener {
     }
 
     fun playAudio(chapterText: Array<String?>, audioListener: AudioListener?) {
-        val storyBookParagraphs = storyBookChapter!!.storyBookParagraphs
-        val storyBookParagraphGson = storyBookParagraphs[0]
-        val transcription = storyBookParagraphGson.originalText
-        Log.i(javaClass.name, "transcription: \"$transcription\"")
-        val audioGson = ContentProviderUtil.getAudioGsonByTranscription(
-            transcription,
-            context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        )
-        Log.i(javaClass.name, "audioGson: $audioGson")
-        if (audioGson != null) {
-            playAudioFile(audioGson)
-        } else {
-            // Fall back to TTS
-            tts!!.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
+        tts!!.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
 
-            Log.i(javaClass.name, "chapterText: \"" + chapterText.contentToString() + "\"")
-            Log.v("tuancoltech", "playingAudio with: " + chapterText.size + " paragraphs ")
-            for (paragraph in chapterText) {
-                Log.d("tuancoltech", "Speaking paragraph: $paragraph")
-                tts!!.speak(
-                    paragraph?.replace("[-*]".toRegex(), ""),
-                    TextToSpeech.QUEUE_ADD,
-                    null,
-                    "0"
-                )
-                tts!!.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
-            }
+        Log.i(javaClass.name, "chapterText: \"" + chapterText.contentToString() + "\"")
+        Log.v("tuancoltech", "playingAudio with: " + chapterText.size + " paragraphs ")
+        for (paragraph in chapterText) {
+            Log.d("tuancoltech", "Speaking paragraph: $paragraph")
+            tts!!.speak(
+                paragraph?.replace("[-*]".toRegex(), ""),
+                TextToSpeech.QUEUE_ADD,
+                null,
+                "0"
+            )
+            tts!!.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
         }
     }
 
@@ -326,24 +295,6 @@ open class ChapterFragment : Fragment(), AudioListener {
                     }
                 }
             }
-        }
-    }
-
-    private fun playAudioFile(audioGson: AudioGson) {
-        val audioFile = File(MUSIC_PATH +
-                    audioGson.id + "_r" + audioGson.revisionNumber + "."
-                + audioGson.audioFormat.toString().lowercase(Locale.getDefault()))
-        Log.i(javaClass.name, "audioFile: $audioFile")
-        Log.i(javaClass.name, "audioFile.exists(): " + audioFile.exists())
-        mediaPlayer = MediaPlayer()
-        try {
-            mediaPlayer!!.setDataSource(audioFile.path)
-            mediaPlayer!!.playbackParams =
-                mediaPlayer!!.playbackParams.setSpeed(BaseApplication.SPEECH_RATE)
-            mediaPlayer!!.prepare()
-            mediaPlayer!!.start()
-        } catch (e: IOException) {
-            Log.e(javaClass.name, null, e)
         }
     }
 
