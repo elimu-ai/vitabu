@@ -162,9 +162,11 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setPadding(wordSpacing[readingLevelPosition], 0, wordSpacing[readingLevelPosition], 0);
         }
 
-        private void paintUnderline(WordGson wordWithAudio) {
-            // Underline clickable Words
-            if (wordWithAudio == null) {
+        /**
+         * Underline clickable words, i.e. words that also have a GSON representation.
+         */
+        private void paintUnderline(WordGson wordGson) {
+            if (wordGson == null) {
                 wordUnderline.setVisibility(GONE);
             } else {
                 wordUnderline.setVisibility(VISIBLE);
