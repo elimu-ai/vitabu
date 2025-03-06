@@ -146,7 +146,7 @@ class StoryBooksActivity : AppCompatActivity() {
 
                 val finalStoryBook = storyBook
                 storyBookView.setOnClickListener(object : SingleClickListener() {
-                    override fun onSingleClick(v: View) {
+                    override fun onSingleClick(v: View?) {
                         Log.i(javaClass.name, "onClick")
 
                         Log.i(javaClass.name, "storyBook.getId(): " + finalStoryBook.id)
