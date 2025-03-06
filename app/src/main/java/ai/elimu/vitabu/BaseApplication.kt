@@ -7,6 +7,8 @@ import android.util.Log
 
 class BaseApplication : Application() {
 
+    private val TAG = javaClass.name
+
     var tts: TextToSpeech? = null
         private set
 
@@ -17,12 +19,17 @@ class BaseApplication : Application() {
         // Initialize the Text-to-Speech (TTS) engine
         tts = TextToSpeech(applicationContext, object : OnInitListener {
             override fun onInit(status: Int) {
-                Log.i(javaClass.name, "onInit")
+                Log.i(TAG, "onInit with status: $status")
 
                 // Fetch the chosen language from the Appstore
                 // TODO
 //                tts.setLanguage(new Locale("hin"));
-                tts!!.setSpeechRate(SPEECH_RATE)
+                if (status == TextToSpeech.SUCCESS) {
+                    tts?.setSpeechRate(SPEECH_RATE)
+                } else {
+                    Log.e(TAG, "TTS initialization failed with status: $status")
+                }
+
             }
         })
     }
