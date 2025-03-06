@@ -148,10 +148,10 @@ open class ChapterFragment : Fragment(), AudioListener {
 
                 chapterParagraphs[paragraphIndex] = originalText
 
-                val wordAudios = storyBookParagraphGsons[paragraphIndex].words
-                Log.i(javaClass.name, "words: $wordAudios")
+                val wordGsons = storyBookParagraphGsons[paragraphIndex].words
+                Log.i(javaClass.name, "wordGsons: $wordGsons")
 
-                wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordAudios)
+                wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordGsons)
             }
         } else {
             fab.visibility = View.GONE

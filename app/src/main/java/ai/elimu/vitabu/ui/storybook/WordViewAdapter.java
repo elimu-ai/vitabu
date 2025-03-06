@@ -85,7 +85,7 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordGsons) {
-        // Words
+        // Words in original plaintext
         this.wordsInOriginalText.addAll(wordsInOriginalText);
         this.wordsInOriginalText.add(null);
 
