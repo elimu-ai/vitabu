@@ -1,47 +1,53 @@
-package ai.elimu.vitabu.ui.storybook;
+package ai.elimu.vitabu.ui.storybook
 
-import android.os.Bundle;
-import android.util.Log;
+import ai.elimu.content_provider.utils.ContentProviderUtil
+import ai.elimu.model.v2.enums.ReadingLevel
+import ai.elimu.vitabu.BuildConfig
+import ai.elimu.vitabu.R
+import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
+import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager.widget.ViewPager;
+class StoryBookActivity : AppCompatActivity() {
 
-import java.util.List;
+    private val TAG = javaClass.name
 
-import ai.elimu.content_provider.utils.ContentProviderUtil;
-import ai.elimu.model.v2.enums.ReadingLevel;
-import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
-import ai.elimu.vitabu.BuildConfig;
-import ai.elimu.vitabu.R;
-import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.i(TAG, "onCreate")
+        super.onCreate(savedInstanceState)
 
-public class StoryBookActivity extends AppCompatActivity {
+        setContentView(R.layout.activity_storybook)
 
-    public static final String EXTRA_KEY_STORYBOOK_ID = "EXTRA_KEY_STORYBOOK_ID";
-    public static final String EXTRA_KEY_STORYBOOK_LEVEL = "EXTRA_KEY_STORYBOOK_LEVEL";
-    public static final String EXTRA_KEY_STORYBOOK_DESCRIPTION = "EXTRA_KEY_STORYBOOK_DESCRIPTION";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        Log.i(getClass().getName(), "onCreate");
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_storybook);
-
-        Long storyBookId = getIntent().getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0);
-        Log.i(getClass().getName(), "storyBookId: " + storyBookId);
-        ReadingLevel readingLevel = (ReadingLevel) getIntent().getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL);
-        String description = getIntent().getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION);
+        val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
+        Log.i(TAG, "storyBookId: $storyBookId")
+        val readingLevel = intent.getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL) as ReadingLevel?
+        val description = intent.getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION)
 
         // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        List<StoryBookChapterGson> storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(storyBookId, getApplicationContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        val storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(
+            storyBookId,
+            applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+        )
 
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        val viewPager = findViewById<ViewPager>(R.id.view_pager)
 
-        ChapterPagerAdapter chapterPagerAdapter = new ChapterPagerAdapter(getSupportFragmentManager(), storyBookChapters, readingLevel, description);
-        viewPager.setAdapter(chapterPagerAdapter);
+        val chapterPagerAdapter = ChapterPagerAdapter(
+            supportFragmentManager,
+            storyBookChapters,
+            readingLevel,
+            description
+        )
+        viewPager.adapter = chapterPagerAdapter
 
-        ZoomOutPageTransformer zoomOutPageTransformer = new ZoomOutPageTransformer();
-        viewPager.setPageTransformer(true, zoomOutPageTransformer);
+        val zoomOutPageTransformer = ZoomOutPageTransformer()
+        viewPager.setPageTransformer(true, zoomOutPageTransformer)
+    }
+
+    companion object {
+        const val EXTRA_KEY_STORYBOOK_ID: String = "EXTRA_KEY_STORYBOOK_ID"
+        const val EXTRA_KEY_STORYBOOK_LEVEL: String = "EXTRA_KEY_STORYBOOK_LEVEL"
+        const val EXTRA_KEY_STORYBOOK_DESCRIPTION: String = "EXTRA_KEY_STORYBOOK_DESCRIPTION"
     }
 }
