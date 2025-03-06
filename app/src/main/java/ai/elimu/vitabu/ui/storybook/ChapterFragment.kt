@@ -9,7 +9,6 @@ import ai.elimu.vitabu.BaseApplication
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.util.readImageBytes
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Environment
 import android.speech.tts.TextToSpeech
@@ -43,8 +42,6 @@ open class ChapterFragment : Fragment(), AudioListener {
     private var chapterRecyclerView: RecyclerView? = null
 
     private var tts: TextToSpeech? = null
-
-    private var mediaPlayer: MediaPlayer? = null
 
     @JvmField
     protected var readingLevelPosition: Int = 0
@@ -197,14 +194,6 @@ open class ChapterFragment : Fragment(), AudioListener {
     override fun onPause() {
         super.onPause()
         tts!!.stop()
-        if (mediaPlayer != null) {
-            mediaPlayer!!.stop()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer?.release()
     }
 
     open fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
