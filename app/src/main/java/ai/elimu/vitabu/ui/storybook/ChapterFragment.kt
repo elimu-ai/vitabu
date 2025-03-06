@@ -300,7 +300,6 @@ open class ChapterFragment : Fragment(), AudioListener {
                 "/files/"
 
         val PICTURES_PATH: String = FILES_PATH + Environment.DIRECTORY_PICTURES + "/"
-        val MUSIC_PATH: String = FILES_PATH + Environment.DIRECTORY_MUSIC + "/"
 
         private const val PARAGRAPH_PAUSE: Long = 1000
 
