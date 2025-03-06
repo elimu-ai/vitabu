@@ -105,23 +105,23 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             val wordViewAdapter =
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
-                    override fun onItemClick(wordWithAudio: WordGson, view: View, position: Int) {
+                    override fun onItemClick(wordGson: WordGson, view: View, position: Int) {
                         Log.i(javaClass.name, "onClick")
-                        Log.i(javaClass.name, "word.getText(): \"" + wordWithAudio.text + "\"")
+                        Log.i(javaClass.name, "wordGson.text: \"" + wordGson.text + "\"")
 
-                        WordDialogFragment.newInstance(wordWithAudio.id)
+                        WordDialogFragment.newInstance(wordGson.id)
                             .show(activity!!.supportFragmentManager, "dialog")
 
                         tts!!.speak(
-                            wordWithAudio.text,
+                            wordGson.text,
                             TextToSpeech.QUEUE_FLUSH,
                             null,
-                            "word_" + wordWithAudio.id
+                            "word_" + wordGson.id
                         )
 
                         // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                         LearningEventUtil.reportWordLearningEvent(
-                            wordWithAudio, LearningEventType.WORD_PRESSED,
+                            wordGson, LearningEventType.WORD_PRESSED,
                             context, BuildConfig.ANALYTICS_APPLICATION_ID
                         )
                     }
