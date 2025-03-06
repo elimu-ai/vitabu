@@ -84,16 +84,16 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordAudios) {
+    public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordGsons) {
         // Words
         this.wordsInOriginalText.addAll(wordsInOriginalText);
         this.wordsInOriginalText.add(null);
 
-        // Audios
-        if (wordAudios == null) {
+        // Words with GSON representation
+        if (wordGsons == null) {
             this.words.addAll(Collections.<WordGson>nCopies(wordsInOriginalText.size(), null));
         } else {
-            this.words.addAll(wordAudios);
+            this.words.addAll(wordGsons);
         }
         this.words.add(null);
 
