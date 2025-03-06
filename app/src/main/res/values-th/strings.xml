@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">หนังสือ</string>
+    <string name="level">ระดับ %d</string>
+</resources>
