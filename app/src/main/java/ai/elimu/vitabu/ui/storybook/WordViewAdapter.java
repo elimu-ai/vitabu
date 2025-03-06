@@ -123,13 +123,13 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             wordEmoji = itemView.findViewById(R.id.word_emoji);
         }
 
-        public void paintWordLayout(String wordText, WordGson wordWithAudio, int readingLevelPosition) {
+        public void paintWordLayout(String wordText, WordGson wordGson, int readingLevelPosition) {
             long wordId = -1;
-            if (wordWithAudio != null)
-                wordId = wordWithAudio.getId();
+            if (wordGson != null)
+                wordId = wordGson.getId();
 
             paintWord(wordId, wordText, readingLevelPosition);
-            paintUnderline(wordWithAudio);
+            paintUnderline(wordGson);
         }
 
         private void paintWord(long wordId, String wordText, int readingLevelPosition) {
