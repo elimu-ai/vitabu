@@ -84,16 +84,16 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordAudios) {
-        // Words
+    public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordGsons) {
+        // Words in original plaintext
         this.wordsInOriginalText.addAll(wordsInOriginalText);
         this.wordsInOriginalText.add(null);
 
-        // Audios
-        if (wordAudios == null) {
+        // Words with GSON representation
+        if (wordGsons == null) {
             this.words.addAll(Collections.<WordGson>nCopies(wordsInOriginalText.size(), null));
         } else {
-            this.words.addAll(wordAudios);
+            this.words.addAll(wordGsons);
         }
         this.words.add(null);
 
@@ -123,13 +123,13 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             wordEmoji = itemView.findViewById(R.id.word_emoji);
         }
 
-        public void paintWordLayout(String wordText, WordGson wordWithAudio, int readingLevelPosition) {
+        public void paintWordLayout(String wordText, WordGson wordGson, int readingLevelPosition) {
             long wordId = -1;
-            if (wordWithAudio != null)
-                wordId = wordWithAudio.getId();
+            if (wordGson != null)
+                wordId = wordGson.getId();
 
             paintWord(wordId, wordText, readingLevelPosition);
-            paintUnderline(wordWithAudio);
+            paintUnderline(wordGson);
         }
 
         private void paintWord(long wordId, String wordText, int readingLevelPosition) {
@@ -162,9 +162,11 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             itemView.setPadding(wordSpacing[readingLevelPosition], 0, wordSpacing[readingLevelPosition], 0);
         }
 
-        private void paintUnderline(WordGson wordWithAudio) {
-            // Underline clickable Words
-            if (wordWithAudio == null) {
+        /**
+         * Underline clickable words, i.e. words that also have a GSON representation.
+         */
+        private void paintUnderline(WordGson wordGson) {
+            if (wordGson == null) {
                 wordUnderline.setVisibility(GONE);
             } else {
                 wordUnderline.setVisibility(VISIBLE);
