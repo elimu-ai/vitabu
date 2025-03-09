@@ -140,7 +140,7 @@ class StoryBooksActivity : AppCompatActivity() {
 
                 val finalStoryBook = storyBook
                 storyBookView.setOnClickListener(object : SingleClickListener() {
-                    override fun onSingleClick(v: View) {
+                    override fun onSingleClick(v: View?) {
                         Log.i(TAG, "onClick")
 
                         Log.i(TAG, "storyBook.getId(): " + finalStoryBook.id)
