@@ -141,7 +141,7 @@ class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
 
             if (wordId != -1) {
-                List<EmojiGson> emojiGsons = ContentProviderUtil.getAllEmojiGsons(wordId, itemView.getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+                List<EmojiGson> emojiGsons = ContentProviderUtil.INSTANCE.getAllEmojiGsons(wordId, itemView.getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
                 if (!emojiGsons.isEmpty()) {
                     wordEmoji.setText(emojiGsons.stream().map(EmojiGson::getGlyph).collect(Collectors.joining("")));
                     setTextSizeByLevel(wordEmoji, readingLevelPosition);

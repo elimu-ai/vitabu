@@ -52,14 +52,14 @@ public class WordDialogFragment extends BottomSheetDialogFragment {
         Long wordId = getArguments().getLong(ARG_WORD_ID);
         Log.i(WordDialogFragment.class.getName(), "wordId: " + wordId);
 
-        WordGson wordGson = ContentProviderUtil.getWordGson(wordId, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        WordGson wordGson = ContentProviderUtil.INSTANCE.getWordGson(wordId, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         Log.i(WordDialogFragment.class.getName(), "wordGson: " + wordGson);
 
         TextView textView = view.findViewById(R.id.wordTextView);
         textView.setText(wordGson.getText());
 
         // Append Emojis (if any) below the Word
-        List<EmojiGson> emojiGsons = ContentProviderUtil.getAllEmojiGsons(wordGson.getId(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+        List<EmojiGson> emojiGsons = ContentProviderUtil.INSTANCE.getAllEmojiGsons(wordGson.getId(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
         if (!emojiGsons.isEmpty()) {
             textView.setText(textView.getText() + "\n");
             for (EmojiGson emojiGson : emojiGsons) {
