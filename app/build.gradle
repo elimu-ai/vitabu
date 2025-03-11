@@ -9,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 35
-        versionCode 1001006
-        versionName '1.1.6-SNAPSHOT'
+        versionCode 1001007
+        versionName '1.1.7-SNAPSHOT'
         setProperty("archivesBaseName", "${applicationId}-${versionCode}")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
