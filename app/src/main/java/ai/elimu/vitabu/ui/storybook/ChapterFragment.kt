@@ -291,8 +291,8 @@ open class ChapterFragment : Fragment(), AudioListener {
     }
 
     companion object {
-        protected const val ARG_CHAPTER_INDEX: String = "chapter_index"
-        protected const val ARG_READING_LEVEL: String = "reading_level"
+        const val ARG_CHAPTER_INDEX: String = "chapter_index"
+        const val ARG_READING_LEVEL: String = "reading_level"
 
         private val FILES_PATH: String = Environment.getExternalStorageDirectory().toString() +
                 "/Android/data/" +

@@ -1,161 +1,160 @@
-package ai.elimu.vitabu.ui.storybook;
+package ai.elimu.vitabu.ui.storybook
 
-import android.os.Bundle;
-import android.speech.tts.UtteranceProgressListener;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.TextUtils;
-import android.text.style.BackgroundColorSpan;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import ai.elimu.model.v2.enums.ReadingLevel
+import ai.elimu.vitabu.R
+import android.os.Bundle
+import android.speech.tts.UtteranceProgressListener
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.TextUtils
+import android.text.style.BackgroundColorSpan
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import java.util.Collections
 
-import androidx.annotation.NonNull;
+class CoverFragment : ChapterFragment() {
+    private var audioTextView: TextView? = null
+    private var audioText: String? = null
 
-import java.util.Collections;
-import java.util.List;
+    private var titleTextView: TextView? = null
 
-import ai.elimu.model.v2.enums.ReadingLevel;
-import ai.elimu.vitabu.R;
+    private var descriptionTextView: TextView? = null
+    private val description = arrayOfNulls<String>(1)
 
-public class CoverFragment extends ChapterFragment {
+    override val rootLayout: Int
+        get() = R.layout.fragment_storybook_cover
 
-    private static final String ARG_DESCRIPTION = "description";
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val root = super.onCreateView(inflater, container, savedInstanceState)
 
-    private TextView audioTextView;
-    private String audioText;
+        val titleFontSize = resources.getIntArray(R.array.cover_title_font_size)
+        val descriptionFontSize = resources.getIntArray(R.array.chapter_text_font_size)
 
-    protected TextView titleTextView;
-
-    private TextView descriptionTextView;
-    private final String[] description = new String[1];
-
-    public static CoverFragment newInstance(ReadingLevel readingLevel, String description) {
-        CoverFragment fragment = new CoverFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(ARG_CHAPTER_INDEX, 0);
-        bundle.putSerializable(ARG_READING_LEVEL, readingLevel);
-        bundle.putSerializable(ARG_DESCRIPTION, description);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
-    @Override
-    public int getRootLayout() {
-        return R.layout.fragment_storybook_cover;
-    }
-
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = super.onCreateView(inflater, container, savedInstanceState);
-
-        int[] titleFontSize = getResources().getIntArray(R.array.cover_title_font_size);
-        int[] descriptionFontSize = getResources().getIntArray(R.array.chapter_text_font_size);
-
-        for (int i = 0; i < chapterParagraphs.length; i++) {
-            chapterParagraphs[i] = setWordSpacing(chapterParagraphs[i]);
+        for (i in chapterParagraphs.indices) {
+            chapterParagraphs[i] = setWordSpacing(chapterParagraphs[i]!!)
         }
 
-        titleTextView = root.findViewById(R.id.storybook_title);
-        titleTextView.setText(chapterParagraphs[0]);
+        titleTextView = root?.findViewById(R.id.storybook_title)
+        titleTextView?.text = chapterParagraphs[0]
 
-        setTextSizeByLevel(titleTextView, titleFontSize);
+        titleTextView?.let { setTextSizeByLevel(it, titleFontSize) }
 
         // Initialize audio parameters with the storybook title
-        audioTextView = titleTextView;
+        audioTextView = titleTextView
 
-        audioText = TextUtils.join("", chapterParagraphs);
-        description[0] = setWordSpacing((String) getArguments().get(ARG_DESCRIPTION));
-        descriptionTextView = root.findViewById(R.id.storybook_description);
-        descriptionTextView.setText(description[0]);
+        audioText = TextUtils.join("", chapterParagraphs)
+        description[0] = setWordSpacing((requireArguments()[ARG_DESCRIPTION] as String?)!!)
+        descriptionTextView = root?.findViewById(R.id.storybook_description)
+        descriptionTextView?.text = description[0]
 
-        setTextSizeByLevel(descriptionTextView, descriptionFontSize);
+        descriptionTextView?.let { setTextSizeByLevel(it, descriptionFontSize) }
 
-        return root;
+        return root
     }
 
-    private String setWordSpacing(String originalText) {
-        int[] wordSpacing = getResources().getIntArray(R.array.chapter_text_word_spacing);
-        List<String> spaces = Collections.nCopies(wordSpacing[readingLevelPosition], " ");
-        return originalText.replace(" ", TextUtils.join("", spaces));
+    private fun setWordSpacing(originalText: String): String {
+        val wordSpacing = resources.getIntArray(R.array.chapter_text_word_spacing)
+        val spaces = Collections.nCopies(wordSpacing[readingLevelPosition], " ")
+        return originalText.replace(" ", TextUtils.join("", spaces))
     }
 
-    private void setTextSizeByLevel(TextView textView, int[] fontSize) {
-        String[] letterSpacing = getResources().getStringArray(R.array.chapter_text_letter_spacing);
-        String[] lineSpacing = getResources().getStringArray(R.array.chapter_text_line_spacing);
+    private fun setTextSizeByLevel(textView: TextView, fontSize: IntArray) {
+        val letterSpacing = resources.getStringArray(R.array.chapter_text_letter_spacing)
+        val lineSpacing = resources.getStringArray(R.array.chapter_text_line_spacing)
 
-        textView.setTextSize(fontSize[readingLevelPosition]);
-        textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
-        textView.setLineSpacing(0, Float.parseFloat(lineSpacing[readingLevelPosition]));
+        textView.textSize = fontSize[readingLevelPosition].toFloat()
+        textView.letterSpacing = letterSpacing[readingLevelPosition].toFloat()
+        textView.setLineSpacing(0f, lineSpacing[readingLevelPosition].toFloat())
     }
 
-    @Override
-    public void onAudioDone() {
+    override fun onAudioDone() {
         // Update audio parameters with the storybook description
-        audioTextView = descriptionTextView;
-        audioText = description[0];
+        audioTextView = descriptionTextView
+        audioText = description[0]
 
-        playAudio(description, null);
+        playAudio(description, null)
     }
 
-    @Override
-    public UtteranceProgressListener getUtteranceProgressListener(final AudioListener audioListener) {
-        return new UtteranceProgressListener() {
-
-            @Override
-            public void onStart(String utteranceId) {
-                Log.i(getClass().getName(), "onStart");
+    override fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
+        return object : UtteranceProgressListener() {
+            override fun onStart(utteranceId: String) {
+                Log.i(javaClass.name, "onStart")
             }
 
-            @Override
-            public void onRangeStart(String utteranceId, int start, int end, int frame) {
-                Log.i(getClass().getName(), "onRangeStart");
-                super.onRangeStart(utteranceId, start, end, frame);
+            override fun onRangeStart(utteranceId: String, start: Int, end: Int, frame: Int) {
+                Log.i(javaClass.name, "onRangeStart")
+                super.onRangeStart(utteranceId, start, end, frame)
 
-                Log.i(getClass().getName(), "utteranceId: " + utteranceId + ", start: " + start + ", end: " + end);
-                
+                Log.i(
+                    javaClass.name,
+                    "utteranceId: $utteranceId, start: $start, end: $end"
+                )
+
                 if (start >= 0) {
                     // Highlight the word being spoken
-                    Spannable spannable = new SpannableString(audioText);
-                    BackgroundColorSpan backgroundColorSpan = new BackgroundColorSpan(getResources().getColor(R.color.colorAccent));
-                    spannable.setSpan(backgroundColorSpan, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                    audioTextView.setText(spannable);
+                    val spannable: Spannable = SpannableString(audioText)
+                    val backgroundColorSpan =
+                        BackgroundColorSpan(resources.getColor(R.color.colorAccent))
+                    spannable.setSpan(
+                        backgroundColorSpan,
+                        start,
+                        end,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    audioTextView!!.text = spannable
                 }
             }
 
-            @Override
-            public void onDone(String utteranceId) {
-                Log.i(getClass().getName(), "onDone");
+            override fun onDone(utteranceId: String) {
+                Log.i(javaClass.name, "onDone")
 
                 // Remove highlighting of the last spoken word
-                requireActivity().runOnUiThread(() -> {
-                    audioTextView.setText(audioText);
-                });
+                requireActivity().runOnUiThread {
+                    audioTextView!!.text = audioText
+                }
 
                 if (audioListener != null) {
-                    audioListener.onAudioDone();
+                    audioListener.onAudioDone()
                 } else {
-                    onStop(utteranceId, false);
+                    onStop(utteranceId, false)
                 }
             }
 
-            @Override
-            public void onError(String utteranceId) {
-                Log.i(getClass().getName(), "onError");
+            override fun onError(utteranceId: String) {
+                Log.i(javaClass.name, "onError")
             }
 
-            @Override
-            public void onStop(String utteranceId, boolean interrupted) {
-                super.onStop(utteranceId, interrupted);
-                requireActivity().runOnUiThread(() -> {
-                    titleTextView.setText(TextUtils.join("", chapterParagraphs));
-                    descriptionTextView.setText(description[0]);
-                });
-                audioText = TextUtils.join("", chapterParagraphs);
-                audioTextView = titleTextView;
+            override fun onStop(utteranceId: String, interrupted: Boolean) {
+                super.onStop(utteranceId, interrupted)
+                requireActivity().runOnUiThread {
+                    titleTextView!!.text = TextUtils.join("", chapterParagraphs)
+                    descriptionTextView!!.text = description[0]
+                }
+                audioText = TextUtils.join("", chapterParagraphs)
+                audioTextView = titleTextView
             }
-        };
+        }
+    }
+
+    companion object {
+        private const val ARG_DESCRIPTION = "description"
+
+        @JvmStatic
+        fun newInstance(readingLevel: ReadingLevel?, description: String?): CoverFragment {
+            val fragment = CoverFragment()
+            val bundle = Bundle()
+            bundle.putInt(ARG_CHAPTER_INDEX, 0)
+            bundle.putSerializable(ARG_READING_LEVEL, readingLevel)
+            bundle.putSerializable(ARG_DESCRIPTION, description)
+            fragment.arguments = bundle
+            return fragment
+        }
     }
 }
