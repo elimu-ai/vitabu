@@ -1,75 +1,78 @@
-package ai.elimu.vitabu.ui.storybook;
+package ai.elimu.vitabu.ui.storybook
 
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import java.util.List;
-
-import ai.elimu.content_provider.utils.ContentProviderUtil;
-import ai.elimu.model.v2.gson.content.EmojiGson;
-import ai.elimu.model.v2.gson.content.WordGson;
-import ai.elimu.vitabu.BuildConfig;
-import ai.elimu.vitabu.R;
+import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
+import ai.elimu.content_provider.utils.ContentProviderUtil.getWordGson
+import ai.elimu.vitabu.BuildConfig
+import ai.elimu.vitabu.R
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
- * <p>A fragment that shows a list of items as a modal bottom sheet.</p>
- * <p>You can show this modal bottom sheet from your activity like this:</p>
+ *
+ * A fragment that shows a list of items as a modal bottom sheet.
+ *
+ * You can show this modal bottom sheet from your activity like this:
  * <pre>
- *     WordDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
- * </pre>
+ * WordDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
+</pre> *
  */
-public class WordDialogFragment extends BottomSheetDialogFragment {
+class WordDialogFragment : BottomSheetDialogFragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        Log.i(WordDialogFragment::class.java.name, "onCreateView")
 
-    private static final String ARG_WORD_ID = "word_id";
-
-    public static WordDialogFragment newInstance(Long wordId) {
-        Log.i(WordDialogFragment.class.getName(), "newInstance");
-
-        final WordDialogFragment fragment = new WordDialogFragment();
-        final Bundle args = new Bundle();
-        args.putLong(ARG_WORD_ID, wordId);
-        fragment.setArguments(args);
-        return fragment;
+        return inflater.inflate(R.layout.fragment_word_dialog, container, false)
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(WordDialogFragment.class.getName(), "onCreateView");
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.i(WordDialogFragment::class.java.name, "onViewCreated")
 
-        return inflater.inflate(R.layout.fragment_word_dialog, container, false);
-    }
+        val context = context ?: return
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(WordDialogFragment.class.getName(), "onViewCreated");
+        val wordId = arguments?.getLong(ARG_WORD_ID) ?: 0L
+        Log.i(WordDialogFragment::class.java.name, "wordId: $wordId")
 
-        Long wordId = getArguments().getLong(ARG_WORD_ID);
-        Log.i(WordDialogFragment.class.getName(), "wordId: " + wordId);
+        val wordGson = getWordGson(wordId, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID)
+        Log.i(WordDialogFragment::class.java.name, "wordGson: $wordGson")
 
-        WordGson wordGson = ContentProviderUtil.INSTANCE.getWordGson(wordId, getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-        Log.i(WordDialogFragment.class.getName(), "wordGson: " + wordGson);
-
-        TextView textView = view.findViewById(R.id.wordTextView);
-        textView.setText(wordGson.getText());
+        val textView = view.findViewById<TextView>(R.id.wordTextView)
+        textView.text = wordGson!!.text
 
         // Append Emojis (if any) below the Word
-        List<EmojiGson> emojiGsons = ContentProviderUtil.INSTANCE.getAllEmojiGsons(wordGson.getId(), getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
-        if (!emojiGsons.isEmpty()) {
-            textView.setText(textView.getText() + "\n");
-            for (EmojiGson emojiGson : emojiGsons) {
-                textView.setText(textView.getText() + emojiGson.getGlyph());
+        val emojiGsons = getAllEmojiGsons(
+            wordGson.id, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+        )
+        if (emojiGsons.isNotEmpty()) {
+            textView.text = textView.text.toString() + "\n"
+            for (emojiGson in emojiGsons) {
+                textView.text = textView.text.toString() + emojiGson.glyph
             }
         }
     }
 
-    @Override
-    public int getTheme() {
-        return R.style.BottomSheetDialogTheme;
+    override fun getTheme(): Int {
+        return R.style.BottomSheetDialogTheme
+    }
+
+    companion object {
+        private const val ARG_WORD_ID = "word_id"
+
+        fun newInstance(wordId: Long): WordDialogFragment {
+            Log.i(WordDialogFragment::class.java.name, "newInstance")
+
+            val fragment = WordDialogFragment()
+            val args = Bundle()
+            args.putLong(ARG_WORD_ID, wordId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

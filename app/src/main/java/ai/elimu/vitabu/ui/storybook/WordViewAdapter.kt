@@ -1,176 +1,165 @@
-package ai.elimu.vitabu.ui.storybook;
+package ai.elimu.vitabu.ui.storybook
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
+import ai.elimu.model.v2.gson.content.EmojiGson
+import ai.elimu.model.v2.gson.content.WordGson
+import ai.elimu.vitabu.BuildConfig
+import ai.elimu.vitabu.R
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.flexbox.FlexboxLayoutManager
+import java.util.Collections
+import java.util.stream.Collectors
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+internal class WordViewAdapter(
+    private val readingLevelPosition: Int,
+    private val listener: OnItemClickListener
+) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val wordsInOriginalText: MutableList<String?> = ArrayList()
+    private val words: MutableList<WordGson?> = ArrayList()
 
-import com.google.android.flexbox.FlexboxLayoutManager;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import ai.elimu.content_provider.utils.ContentProviderUtil;
-import ai.elimu.model.v2.gson.content.EmojiGson;
-import ai.elimu.model.v2.gson.content.WordGson;
-import ai.elimu.vitabu.BuildConfig;
-import ai.elimu.vitabu.R;
-
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-
-class WordViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    public static final int WORD_TYPE = 0;
-    public static final int NEW_PARAGRAPH_TYPE = 1;
-
-    private final int readingLevelPosition;
-
-    private final OnItemClickListener listener;
-    private final List<String> wordsInOriginalText = new ArrayList<>();
-    private final List<WordGson> words = new ArrayList<>();
-
-    public interface OnItemClickListener {
-        void onItemClick(WordGson wordGson, View view, int position);
+    interface OnItemClickListener {
+        fun onItemClick(wordGson: WordGson?, view: View?, position: Int)
     }
 
-    public WordViewAdapter(int readingLevelPosition, OnItemClickListener listener) {
-        this.readingLevelPosition = readingLevelPosition;
-        this.listener = listener;
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.word_layout, parent, false)
 
-    @NonNull
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.word_layout, parent, false);
-
-        if (viewType == WORD_TYPE) {
-            return new WordViewHolder(view);
+        return if (viewType == WORD_TYPE) {
+            WordViewHolder(view)
         } else {
-            return new EmptyViewHolder(view);
+            EmptyViewHolder(view)
         }
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == WORD_TYPE) {
-            ((WordViewHolder) holder).paintWordLayout(wordsInOriginalText.get(position), words.get(position), readingLevelPosition);
+            (holder as WordViewHolder).paintWordLayout(
+                wordsInOriginalText[position]!!, words[position],
+                readingLevelPosition
+            )
 
-            if (words.get(position) != null) {
-                holder.itemView.setOnClickListener(v ->
-                        listener.onItemClick(words.get(position), v, position)
-                );
+            if (words[position] != null) {
+                holder.itemView.setOnClickListener { v: View? ->
+                    listener.onItemClick(
+                        words[position], v, position
+                    )
+                }
             }
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return wordsInOriginalText.size();
+    override fun getItemCount(): Int {
+        return wordsInOriginalText.size
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (wordsInOriginalText.get(position) == null) {
-            return NEW_PARAGRAPH_TYPE;
+    override fun getItemViewType(position: Int): Int {
+        return if (wordsInOriginalText[position] == null) {
+            NEW_PARAGRAPH_TYPE
         } else {
-            return WORD_TYPE;
+            WORD_TYPE
         }
     }
 
-    public void addParagraph(List<String> wordsInOriginalText, List<WordGson> wordGsons) {
+    fun addParagraph(wordsInOriginalText: List<String?>, wordGsons: List<WordGson?>?) {
         // Words in original plaintext
-        this.wordsInOriginalText.addAll(wordsInOriginalText);
-        this.wordsInOriginalText.add(null);
+        this.wordsInOriginalText.addAll(wordsInOriginalText)
+        this.wordsInOriginalText.add(null)
 
         // Words with GSON representation
         if (wordGsons == null) {
-            this.words.addAll(Collections.<WordGson>nCopies(wordsInOriginalText.size(), null));
+            words.addAll(Collections.nCopies<WordGson?>(wordsInOriginalText.size, null))
         } else {
-            this.words.addAll(wordGsons);
+            words.addAll(wordGsons)
         }
-        this.words.add(null);
+        words.add(null)
 
-        notifyDataSetChanged();
+        notifyDataSetChanged()
     }
 
 
-    public static class EmptyViewHolder extends RecyclerView.ViewHolder {
-
-        public EmptyViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemView.getLayoutParams().width = MATCH_PARENT;
+    class EmptyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        init {
+            itemView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
         }
     }
 
-    
-    public static class WordViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView wordTextView;
-        private final TextView wordEmoji;
-        private final View wordUnderline;
+    class WordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val wordTextView: TextView = itemView.findViewById(R.id.word_text)
+        private val wordEmoji: TextView = itemView.findViewById(R.id.word_emoji)
+        private val wordUnderline: View =
+            itemView.findViewById(R.id.word_underline)
 
-        public WordViewHolder(@NonNull View itemView) {
-            super(itemView);
-            wordTextView = itemView.findViewById(R.id.word_text);
-            wordUnderline = itemView.findViewById(R.id.word_underline);
-            wordEmoji = itemView.findViewById(R.id.word_emoji);
+        fun paintWordLayout(wordText: String, wordGson: WordGson?, readingLevelPosition: Int) {
+            var wordId: Long = -1
+            if (wordGson != null) wordId = wordGson.id
+
+            paintWord(wordId, wordText, readingLevelPosition)
+            paintUnderline(wordGson)
         }
 
-        public void paintWordLayout(String wordText, WordGson wordGson, int readingLevelPosition) {
-            long wordId = -1;
-            if (wordGson != null)
-                wordId = wordGson.getId();
-
-            paintWord(wordId, wordText, readingLevelPosition);
-            paintUnderline(wordGson);
-        }
-
-        private void paintWord(long wordId, String wordText, int readingLevelPosition) {
-            wordTextView.setText(wordText);
-            setTextSizeByLevel(wordTextView, readingLevelPosition);
+        private fun paintWord(wordId: Long, wordText: String, readingLevelPosition: Int) {
+            wordTextView.text = wordText
+            setTextSizeByLevel(wordTextView, readingLevelPosition)
 
             if (wordText.isEmpty()) {
-                itemView.getLayoutParams().width = 0;
+                itemView.layoutParams.width = 0
             }
 
-            if (wordId != -1) {
-                List<EmojiGson> emojiGsons = ContentProviderUtil.INSTANCE.getAllEmojiGsons(wordId, itemView.getContext(), BuildConfig.CONTENT_PROVIDER_APPLICATION_ID);
+            if (wordId != -1L) {
+                val emojiGsons = getAllEmojiGsons(
+                    wordId,
+                    itemView.context,
+                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                )
                 if (!emojiGsons.isEmpty()) {
-                    wordEmoji.setText(emojiGsons.stream().map(EmojiGson::getGlyph).collect(Collectors.joining("")));
-                    setTextSizeByLevel(wordEmoji, readingLevelPosition);
+                    wordEmoji.text =
+                        emojiGsons.stream().map { obj: EmojiGson -> obj.glyph }
+                            .collect(Collectors.joining(""))
+                    setTextSizeByLevel(wordEmoji, readingLevelPosition)
                 }
             }
         }
 
-        private void setTextSizeByLevel(TextView textView, int readingLevelPosition) {
-            int[] fontSize = itemView.getContext().getResources().getIntArray(R.array.chapter_text_font_size);
-            String[] letterSpacing = itemView.getContext().getResources().getStringArray(R.array.chapter_text_letter_spacing);
-            int[] lineSpacing = itemView.getContext().getResources().getIntArray(R.array.chapter_text_line_spacing_recyclerview);
-            int[] wordSpacing = itemView.getContext().getResources().getIntArray(R.array.chapter_text_word_spacing_recyclerview);
+        private fun setTextSizeByLevel(textView: TextView, readingLevelPosition: Int) {
+            val fontSize = itemView.context.resources.getIntArray(R.array.chapter_text_font_size)
+            val letterSpacing =
+                itemView.context.resources.getStringArray(R.array.chapter_text_letter_spacing)
+            val lineSpacing =
+                itemView.context.resources.getIntArray(R.array.chapter_text_line_spacing_recyclerview)
+            val wordSpacing =
+                itemView.context.resources.getIntArray(R.array.chapter_text_word_spacing_recyclerview)
 
-            ((FlexboxLayoutManager.LayoutParams) itemView.getLayoutParams()).bottomMargin = lineSpacing[readingLevelPosition];
+            (itemView.layoutParams as FlexboxLayoutManager.LayoutParams).bottomMargin =
+                lineSpacing[readingLevelPosition]
 
-            textView.setTextSize(fontSize[readingLevelPosition]);
-            textView.setLetterSpacing(Float.parseFloat(letterSpacing[readingLevelPosition]));
-            itemView.setPadding(wordSpacing[readingLevelPosition], 0, wordSpacing[readingLevelPosition], 0);
+            textView.textSize = fontSize[readingLevelPosition].toFloat()
+            textView.letterSpacing = letterSpacing[readingLevelPosition].toFloat()
+            itemView.setPadding(
+                wordSpacing[readingLevelPosition], 0,
+                wordSpacing[readingLevelPosition], 0
+            )
         }
 
         /**
          * Underline clickable words, i.e. words that also have a GSON representation.
          */
-        private void paintUnderline(WordGson wordGson) {
+        private fun paintUnderline(wordGson: WordGson?) {
             if (wordGson == null) {
-                wordUnderline.setVisibility(GONE);
+                wordUnderline.visibility = View.GONE
             } else {
-                wordUnderline.setVisibility(VISIBLE);
+                wordUnderline.visibility = View.VISIBLE
             }
         }
+    }
+
+    companion object {
+        const val WORD_TYPE: Int = 0
+        const val NEW_PARAGRAPH_TYPE: Int = 1
     }
 }
