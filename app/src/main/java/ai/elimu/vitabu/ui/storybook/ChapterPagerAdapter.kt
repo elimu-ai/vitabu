@@ -38,7 +38,7 @@ class ChapterPagerAdapter(
     }
 
     override fun getCount(): Int {
-        return storyBookChapters!!.size
+        return storyBookChapters?.size ?: 0
     }
 
     companion object {
