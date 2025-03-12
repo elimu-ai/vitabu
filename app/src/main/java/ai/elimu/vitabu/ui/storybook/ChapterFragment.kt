@@ -102,7 +102,8 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             val wordViewAdapter =
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
-                    override fun onItemClick(wordGson: WordGson, view: View, position: Int) {
+                    override fun onItemClick(wordGson: WordGson?, view: View?, position: Int) {
+                        wordGson ?: return
                         Log.i(javaClass.name, "onClick")
                         Log.i(javaClass.name, "wordGson.text: \"" + wordGson.text + "\"")
 
