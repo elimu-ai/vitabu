@@ -38,8 +38,9 @@ internal class WordViewAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == WORD_TYPE) {
+            val wordInOriginalText = wordsInOriginalText[position] ?: ""
             (holder as WordViewHolder).paintWordLayout(
-                wordsInOriginalText[position]!!, words[position],
+                wordInOriginalText, words[position],
                 readingLevelPosition
             )
 
