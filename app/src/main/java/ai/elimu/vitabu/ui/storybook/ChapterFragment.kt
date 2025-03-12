@@ -54,7 +54,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         Log.i(javaClass.name, "chapterIndex: $chapterIndex")
 
         // Fetch the StoryBookChapter
-        storyBookChapter = ChapterPagerAdapter.storyBookChapters[chapterIndex]
+        storyBookChapter = ChapterPagerAdapter.storyBookChapters?.get(chapterIndex)
         Log.i(javaClass.name, "storyBookChapter: $storyBookChapter")
 
         // Fetch the Text-to-Speech (TTS) engine which has already been initialized

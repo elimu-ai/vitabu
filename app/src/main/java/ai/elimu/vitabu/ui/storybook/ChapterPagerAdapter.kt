@@ -1,47 +1,47 @@
-package ai.elimu.vitabu.ui.storybook;
+package ai.elimu.vitabu.ui.storybook
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import ai.elimu.model.v2.enums.ReadingLevel
+import ai.elimu.model.v2.gson.content.StoryBookChapterGson
+import ai.elimu.vitabu.ui.storybook.ChapterFragment.Companion.newInstance
+import ai.elimu.vitabu.ui.storybook.CoverFragment.Companion.newInstance
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentStatePagerAdapter
 
-import java.util.List;
+class ChapterPagerAdapter(
+    fm: FragmentManager,
+    storyBookChapters: List<StoryBookChapterGson>?,
+    readingLevel: ReadingLevel,
+    description: String
+) :
+    FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    private val readingLevel: ReadingLevel
 
-import ai.elimu.model.v2.enums.ReadingLevel;
-import ai.elimu.model.v2.gson.content.StoryBookChapterGson;
+    private val description: String
 
-public class ChapterPagerAdapter extends FragmentStatePagerAdapter {
-
-    public static List<StoryBookChapterGson> storyBookChapters;
-
-    private ReadingLevel readingLevel;
-
-    private String description;
-
-    public ChapterPagerAdapter(FragmentManager fm, List<StoryBookChapterGson> storyBookChapters, ReadingLevel readingLevel, String description) {
-        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        ChapterPagerAdapter.storyBookChapters = storyBookChapters;
-        this.readingLevel = readingLevel;
-        this.description = description;
+    init {
+        Companion.storyBookChapters = storyBookChapters
+        this.readingLevel = readingLevel
+        this.description = description
     }
 
-    @Override
-    public Fragment getItem(int position) {
-        if (position == 0) {
-            return CoverFragment.newInstance(readingLevel, description);
+    override fun getItem(position: Int): Fragment {
+        return if (position == 0) {
+            newInstance(readingLevel, description)
         } else {
-            return ChapterFragment.newInstance(position, readingLevel);
+            newInstance(position, readingLevel)
         }
     }
 
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return null;
+    override fun getPageTitle(position: Int): CharSequence? {
+        return null
     }
 
-    @Override
-    public int getCount() {
-        return storyBookChapters.size();
+    override fun getCount(): Int {
+        return storyBookChapters!!.size
+    }
+
+    companion object {
+        var storyBookChapters: List<StoryBookChapterGson>? = null
     }
 }

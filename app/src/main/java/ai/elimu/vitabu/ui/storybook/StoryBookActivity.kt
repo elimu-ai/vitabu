@@ -22,8 +22,8 @@ class StoryBookActivity : AppCompatActivity() {
 
         val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
         Log.i(TAG, "storyBookId: $storyBookId")
-        val readingLevel = intent.getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL) as ReadingLevel?
-        val description = intent.getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION)
+        val readingLevel = intent.getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL) as? ReadingLevel
+        val description = intent.getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION) ?: ""
 
         // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         val storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(
@@ -36,7 +36,7 @@ class StoryBookActivity : AppCompatActivity() {
         val chapterPagerAdapter = ChapterPagerAdapter(
             supportFragmentManager,
             storyBookChapters,
-            readingLevel,
+            readingLevel ?: ReadingLevel.LEVEL1,
             description
         )
         viewPager.adapter = chapterPagerAdapter
