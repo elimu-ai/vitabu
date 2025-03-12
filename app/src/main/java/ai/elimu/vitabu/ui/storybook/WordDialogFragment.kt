@@ -40,11 +40,11 @@ class WordDialogFragment : BottomSheetDialogFragment() {
         val wordId = arguments?.getLong(ARG_WORD_ID) ?: 0L
         Log.i(WordDialogFragment::class.java.name, "wordId: $wordId")
 
-        val wordGson = getWordGson(wordId, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID)
+        val wordGson = getWordGson(wordId, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID) ?: return
         Log.i(WordDialogFragment::class.java.name, "wordGson: $wordGson")
 
         val textView = view.findViewById<TextView>(R.id.wordTextView)
-        textView.text = wordGson!!.text
+        textView.text = wordGson.text
 
         // Append Emojis (if any) below the Word
         val emojiGsons = getAllEmojiGsons(
