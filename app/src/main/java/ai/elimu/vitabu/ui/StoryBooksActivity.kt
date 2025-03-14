@@ -8,6 +8,7 @@ import ai.elimu.model.v2.gson.content.StoryBookGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.databinding.ActivityStorybooksBinding
+import ai.elimu.vitabu.databinding.ActivityStorybooksCoverViewBinding
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity
 import ai.elimu.vitabu.util.SingleClickListener
 import ai.elimu.vitabu.util.readImageBytes
@@ -17,7 +18,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.GridLayout
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -104,11 +104,7 @@ class StoryBooksActivity : AppCompatActivity() {
                     }
                 }
 
-                val storyBookView = LayoutInflater.from(this@StoryBooksActivity).inflate(
-                    R.layout.activity_storybooks_cover_view,
-                    binding.storyBooksGridLayout,
-                    false
-                )
+                val storyBookViewBinding = ActivityStorybooksCoverViewBinding.inflate(layoutInflater, binding.storyBooksGridLayout, false)
 
                 // Fetch Image from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
                 Log.i(TAG,
@@ -120,8 +116,7 @@ class StoryBooksActivity : AppCompatActivity() {
                 )
 
                 if (coverImage != null) {
-                    val coverImageView =
-                        storyBookView.findViewById<ImageView>(R.id.coverImageView)
+                    val coverImageView = storyBookViewBinding.coverImageView
                     CoroutineScope(Dispatchers.IO).launch {
                         readImageBytes(coverImage.id)?.let { bytes ->
                             withContext(Dispatchers.Main) {
@@ -134,12 +129,11 @@ class StoryBooksActivity : AppCompatActivity() {
                     Log.w(TAG, "coverImage is null. Id: " + storyBook.coverImage.id)
                 }
 
-                val coverTitleTextView =
-                    storyBookView.findViewById<TextView>(R.id.coverTitleTextView)
+                val coverTitleTextView = storyBookViewBinding.coverTitleTextView
                 coverTitleTextView.text = storyBook.title
 
                 val finalStoryBook = storyBook
-                storyBookView.setOnClickListener(object : SingleClickListener() {
+                storyBookViewBinding.root.setOnClickListener(object : SingleClickListener() {
                     override fun onSingleClick(v: View?) {
                         Log.i(TAG, "onClick")
 
@@ -172,7 +166,7 @@ class StoryBooksActivity : AppCompatActivity() {
                 })
 
                 withContext(Dispatchers.Main) {
-                    binding.storyBooksGridLayout.addView(storyBookView)
+                    binding.storyBooksGridLayout.addView(storyBookViewBinding.root)
                     if (binding.storyBooksGridLayout.childCount == storyBooks.size) {
                         binding.storybooksProgressBar.visibility = View.GONE
                         binding.storyBooksGridLayout.visibility = View.VISIBLE
