@@ -40,6 +40,7 @@ open class ChapterFragment : Fragment(), AudioListener {
     protected var chapterParagraphs: Array<String?> = arrayOf()
 
     private var chapterRecyclerView: RecyclerView? = null
+    var fabSpeak: FloatingActionButton? = null
 
     private var tts: TextToSpeech? = null
 
@@ -74,7 +75,7 @@ open class ChapterFragment : Fragment(), AudioListener {
 
         val root = inflater.inflate(rootLayout, container, false)
 
-        val fab = root.findViewById<FloatingActionButton>(R.id.fab)
+        fabSpeak = root.findViewById(R.id.fab)
         chapterRecyclerView = root.findViewById(R.id.chapter_text)
 
         // Set chapter image
@@ -155,7 +156,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordGsons)
             }
         } else {
-            fab.visibility = View.GONE
+            fabSpeak?.visibility = View.GONE
         }
 
         return root
@@ -190,13 +191,13 @@ open class ChapterFragment : Fragment(), AudioListener {
         Log.v("tuancoltech", "playingAudio with: " + chapterText.size + " paragraphs ")
         for (paragraph in chapterText) {
             Log.d("tuancoltech", "Speaking paragraph: $paragraph")
-            tts!!.speak(
+            tts?.speak(
                 paragraph?.replace("[-*]".toRegex(), ""),
                 TextToSpeech.QUEUE_ADD,
                 null,
                 "0"
             )
-            tts!!.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
+            tts?.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
         }
     }
 
@@ -267,6 +268,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                     itemView.background =
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
+                fabSpeak?.setImageResource(R.drawable.ic_hearing)
             }
 
             override fun onError(utteranceId: String) {
