@@ -169,8 +169,16 @@ open class ChapterFragment : Fragment(), AudioListener {
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                Log.i(javaClass.name, "onClick")
-                playAudio(chapterText, this@ChapterFragment)
+                val isSpeaking = tts?.isSpeaking ?: false
+                Log.i(javaClass.name, "onClick. tts.isSpeaking: " + isSpeaking)
+
+                if (isSpeaking) {
+                    tts?.stop()
+                    fab.setImageResource(R.drawable.ic_hearing)
+                } else {
+                    playAudio(chapterText, this@ChapterFragment)
+                    fab.setImageResource(R.drawable.ic_stop_media)
+                }
             }
         })
     }
