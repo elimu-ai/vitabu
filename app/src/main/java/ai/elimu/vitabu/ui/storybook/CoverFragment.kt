@@ -139,6 +139,7 @@ class CoverFragment : ChapterFragment() {
                 }
                 audioText = TextUtils.join("", chapterParagraphs)
                 audioTextView = titleTextView
+                fabSpeak?.setImageResource(R.drawable.ic_hearing)
             }
         }
     }
