@@ -43,6 +43,9 @@ open class ChapterFragment : Fragment(), AudioListener {
 
     private var tts: TextToSpeech? = null
 
+    private var fab: FloatingActionButton ?=null
+
+
     @JvmField
     protected var readingLevelPosition: Int = 0
 
@@ -74,7 +77,7 @@ open class ChapterFragment : Fragment(), AudioListener {
 
         val root = inflater.inflate(rootLayout, container, false)
 
-        val fab = root.findViewById<FloatingActionButton>(R.id.fab)
+        fab = root.findViewById<FloatingActionButton>(R.id.fab)
         chapterRecyclerView = root.findViewById(R.id.chapter_text)
 
         // Set chapter image
@@ -155,7 +158,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordGsons)
             }
         } else {
-            fab.visibility = View.GONE
+            fab?.visibility = View.GONE
         }
 
         return root
@@ -170,14 +173,13 @@ open class ChapterFragment : Fragment(), AudioListener {
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 Log.i(javaClass.name, "onClick")
-                playAudio(chapterText, this@ChapterFragment)
             }
         })
     }
 
     fun playAudio(chapterText: Array<String?>, audioListener: AudioListener?) {
         tts!!.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
-
+        fab?.setImageResource(R.drawable.baseline_pause_24)
         Log.i(javaClass.name, "chapterText: \"" + chapterText.contentToString() + "\"")
         Log.v("tuancoltech", "playingAudio with: " + chapterText.size + " paragraphs ")
         for (paragraph in chapterText) {
@@ -188,13 +190,18 @@ open class ChapterFragment : Fragment(), AudioListener {
                 null,
                 "0"
             )
+
             tts!!.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
+
         }
     }
 
     override fun onPause() {
         super.onPause()
         tts!!.stop()
+        activity?.runOnUiThread {
+            fab?.setImageResource(R.drawable.ic_hearing)
+        }
     }
 
     open fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
@@ -252,6 +259,12 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             override fun onDone(utteranceId: String) {
                 Log.i(javaClass.name, "onDone")
+
+                if (!tts!!.isSpeaking) {
+                    activity?.runOnUiThread {
+                        fab?.setImageResource(R.drawable.ic_hearing)
+                    }
+                }
 
                 // Remove highlighting of the last spoken word
                 val itemView = layoutManager!!.findViewByPosition(wordPosition[0])
