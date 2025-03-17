@@ -34,6 +34,9 @@ import kotlinx.coroutines.withContext
 import java.util.Arrays
 
 open class ChapterFragment : Fragment(), AudioListener {
+    
+    private val TAG = "ChapterFragment"
+    
     private var storyBookChapter: StoryBookChapterGson? = null
 
     @JvmField
@@ -48,15 +51,15 @@ open class ChapterFragment : Fragment(), AudioListener {
     protected var readingLevelPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.i(javaClass.name, "onCreate")
+        Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
         val chapterIndex = requireArguments().getInt(ARG_CHAPTER_INDEX)
-        Log.i(javaClass.name, "chapterIndex: $chapterIndex")
+        Log.i(TAG, "chapterIndex: $chapterIndex")
 
         // Fetch the StoryBookChapter
         storyBookChapter = ChapterPagerAdapter.storyBookChapters?.get(chapterIndex)
-        Log.i(javaClass.name, "storyBookChapter: $storyBookChapter")
+        Log.i(TAG, "storyBookChapter: $storyBookChapter")
 
         // Fetch the Text-to-Speech (TTS) engine which has already been initialized
         val baseApplication = requireActivity().application as BaseApplication
@@ -71,7 +74,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.i(javaClass.name, "onCreateView")
+        Log.i(TAG, "onCreateView")
 
         val root = inflater.inflate(rootLayout, container, false)
 
@@ -94,7 +97,7 @@ open class ChapterFragment : Fragment(), AudioListener {
 
         // Set paragraph(s)
         val storyBookParagraphGsons = storyBookChapter!!.storyBookParagraphs
-        Log.i(javaClass.name,
+        Log.i(TAG,
             "storyBookChapter.getStoryBookParagraphs(): $storyBookParagraphGsons")
 
         if (storyBookParagraphGsons != null) {
@@ -105,8 +108,8 @@ open class ChapterFragment : Fragment(), AudioListener {
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
                     override fun onItemClick(wordGson: WordGson?, view: View?, position: Int) {
                         wordGson ?: return
-                        Log.i(javaClass.name, "onClick")
-                        Log.i(javaClass.name, "wordGson.text: \"" + wordGson.text + "\"")
+                        Log.i(TAG, "onClick")
+                        Log.i(TAG, "wordGson.text: \"" + wordGson.text + "\"")
 
                         WordDialogFragment.newInstance(wordGson.id)
                             .show(activity!!.supportFragmentManager, "dialog")
@@ -136,22 +139,22 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             chapterParagraphs = arrayOfNulls(storyBookParagraphGsons.size)
             for (paragraphIndex in storyBookParagraphGsons.indices) {
-                Log.i(javaClass.name,
+                Log.i(TAG,
                     "storyBookParagraphGson.getOriginalText(): \""
                             + storyBookParagraphGsons[paragraphIndex].originalText + "\"")
 
                 val originalText = storyBookParagraphGsons[paragraphIndex].originalText
                 val wordsInOriginalText = originalText.trim { it <= ' ' }.split(" ".toRegex())
                     .dropLastWhile { it.isEmpty() }.toTypedArray()
-                Log.i(javaClass.name, "wordsInOriginalText.length: " + wordsInOriginalText.size)
-                Log.i(javaClass.name,
+                Log.i(TAG, "wordsInOriginalText.length: " + wordsInOriginalText.size)
+                Log.i(TAG,
                     "Arrays.toString(wordsInOriginalText): "
                             + wordsInOriginalText.contentToString())
 
                 chapterParagraphs[paragraphIndex] = originalText
 
                 val wordGsons = storyBookParagraphGsons[paragraphIndex].words
-                Log.i(javaClass.name, "wordGsons: $wordGsons")
+                Log.i(TAG, "wordGsons: $wordGsons")
 
                 wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordGsons)
             }
@@ -171,7 +174,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val isSpeaking = tts?.isSpeaking ?: false
-                Log.i(javaClass.name, "onClick. tts.isSpeaking: " + isSpeaking)
+                Log.i(TAG, "onClick. tts.isSpeaking: " + isSpeaking)
 
                 if (isSpeaking) {
                     tts?.stop()
@@ -187,15 +190,21 @@ open class ChapterFragment : Fragment(), AudioListener {
     fun playAudio(chapterText: Array<String?>, audioListener: AudioListener?) {
         tts!!.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
 
-        Log.i(javaClass.name, "chapterText: \"" + chapterText.contentToString() + "\"")
-        Log.v("tuancoltech", "playingAudio with: " + chapterText.size + " paragraphs ")
-        for (paragraph in chapterText) {
-            Log.d("tuancoltech", "Speaking paragraph: $paragraph")
+        Log.i(TAG, "chapterText: \"" + chapterText.contentToString() + "\"")
+        Log.v(TAG, "playingAudio with: " + chapterText.size + " paragraphs. chapterParagraphs.size: " + chapterParagraphs.size)
+        for ((paragraphIndex, paragraph) in chapterText.withIndex()) {
+            Log.d(TAG, "Speaking paragraph: $paragraph")
+
+            val utteranceId = paragraphIndex.toString()
+            val params = Bundle().apply {
+                putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId)
+            }
+
             tts?.speak(
                 paragraph?.replace("[-*]".toRegex(), ""),
                 TextToSpeech.QUEUE_ADD,
-                null,
-                "0"
+                params,
+                utteranceId
             )
             tts?.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
         }
@@ -216,15 +225,15 @@ open class ChapterFragment : Fragment(), AudioListener {
             var highlightedTextView: View? = null
 
             override fun onStart(utteranceId: String) {
-                Log.i(javaClass.name, "onStart")
+                Log.i(TAG, "onStart")
             }
 
             override fun onRangeStart(utteranceId: String, start: Int, end: Int, frame: Int) {
-                Log.i(javaClass.name, "onRangeStart")
+                Log.i(TAG, "onRangeStart")
                 super.onRangeStart(utteranceId, start, end, frame)
 
                 Log.i(
-                    javaClass.name,
+                    TAG,
                     "utteranceId: $utteranceId, start: $start, end: $end"
                 )
                 var itemView: View?
@@ -260,7 +269,7 @@ open class ChapterFragment : Fragment(), AudioListener {
             }
 
             override fun onDone(utteranceId: String) {
-                Log.i(javaClass.name, "onDone")
+                Log.v(TAG, "Chapter onDone. isSpeaking: " + tts?.isSpeaking + ". utteranceId: " + utteranceId + "\nchapterParagraphs.size: " + chapterParagraphs.size)
 
                 // Remove highlighting of the last spoken word
                 val itemView = layoutManager!!.findViewByPosition(wordPosition[0])
@@ -268,15 +277,20 @@ open class ChapterFragment : Fragment(), AudioListener {
                     itemView.background =
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
-                fabSpeak?.setImageResource(R.drawable.ic_hearing)
+
+                val finalUtteranceId = (chapterParagraphs.size - 1).toString()
+                if (utteranceId == finalUtteranceId) {
+                    fabSpeak?.setImageResource(R.drawable.ic_hearing)
+                }
             }
 
             override fun onError(utteranceId: String) {
-                Log.i(javaClass.name, "onError")
+                Log.i(TAG, "Chapter onError")
             }
 
             override fun onStop(utteranceId: String, interrupted: Boolean) {
                 super.onStop(utteranceId, interrupted)
+                Log.v(TAG, "Chapter onStop")
                 if (highlightedTextView != null) {
                     highlightedTextView!!.background =
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
