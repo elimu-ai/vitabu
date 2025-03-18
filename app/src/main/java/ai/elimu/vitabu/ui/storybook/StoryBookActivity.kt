@@ -9,7 +9,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
