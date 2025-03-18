@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'org.jetbrains.kotlin.android'
+apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdk 35
@@ -54,6 +56,7 @@ dependencies {
     implementation 'com.github.elimu-ai:model:model-2.0.84' // See https://jitpack.io/#elimu-ai/model
     implementation 'com.github.elimu-ai:content-provider:1.2.30@aar' // See https://jitpack.io/#elimu-ai/content-provider
     implementation 'com.github.elimu-ai:analytics:3.1.28@aar' // See https://jitpack.io/#elimu-ai/analytics
+    implementation 'com.github.elimu-ai:common-utils:1.0.1'
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
@@ -64,6 +67,8 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1'
     implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'com.google.dagger:hilt-android:2.55'
+    kapt 'com.google.dagger:hilt-compiler:2.55'
 
     testImplementation 'junit:junit:4.13.2'
 

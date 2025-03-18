@@ -1,11 +1,13 @@
 package ai.elimu.vitabu.ui.storybook
 
 import ai.elimu.analytics.utils.LearningEventUtil
+import ai.elimu.common.utils.data.model.tts.QueueMode
+import ai.elimu.common.utils.viewmodel.TextToSpeechViewModel
+import ai.elimu.common.utils.viewmodel.TextToSpeechViewModelImpl
 import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.model.v2.enums.analytics.LearningEventType
 import ai.elimu.model.v2.gson.content.StoryBookChapterGson
 import ai.elimu.model.v2.gson.content.WordGson
-import ai.elimu.vitabu.BaseApplication
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.util.readImageBytes
@@ -21,18 +23,21 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Arrays
 
+@AndroidEntryPoint
 open class ChapterFragment : Fragment(), AudioListener {
     
     private val TAG = "ChapterFragment"
@@ -45,7 +50,7 @@ open class ChapterFragment : Fragment(), AudioListener {
     private var chapterRecyclerView: RecyclerView? = null
     var fabSpeak: FloatingActionButton? = null
 
-    private var tts: TextToSpeech? = null
+    private lateinit var ttsViewModel: TextToSpeechViewModel
 
     @JvmField
     protected var readingLevelPosition: Int = 0
@@ -54,20 +59,22 @@ open class ChapterFragment : Fragment(), AudioListener {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
+        initViewModels()
+
         val chapterIndex = requireArguments().getInt(ARG_CHAPTER_INDEX)
         Log.i(TAG, "chapterIndex: $chapterIndex")
 
         // Fetch the StoryBookChapter
         storyBookChapter = ChapterPagerAdapter.storyBookChapters?.get(chapterIndex)
         Log.i(TAG, "storyBookChapter: $storyBookChapter")
-
-        // Fetch the Text-to-Speech (TTS) engine which has already been initialized
-        val baseApplication = requireActivity().application as BaseApplication
-        tts = baseApplication.tts
     }
 
     open val rootLayout: Int
         get() = R.layout.fragment_storybook
+
+    private fun initViewModels() {
+        ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -114,12 +121,8 @@ open class ChapterFragment : Fragment(), AudioListener {
                         WordDialogFragment.newInstance(wordGson.id)
                             .show(activity!!.supportFragmentManager, "dialog")
 
-                        tts!!.speak(
-                            wordGson.text,
-                            TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            "word_" + wordGson.id
-                        )
+                        ttsViewModel.speak(text = wordGson.text, queueMode = QueueMode.FLUSH,
+                            utteranceId = "word_" + wordGson.id)
 
                         // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                         LearningEventUtil.reportWordLearningEvent(
@@ -173,11 +176,11 @@ open class ChapterFragment : Fragment(), AudioListener {
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                val isSpeaking = tts?.isSpeaking ?: false
+                val isSpeaking = ttsViewModel.isSpeaking()
                 Log.i(TAG, "onClick. tts.isSpeaking: " + isSpeaking)
 
                 if (isSpeaking) {
-                    tts?.stop()
+                    ttsViewModel.stop()
                     fab.setImageResource(R.drawable.ic_hearing)
                 } else {
                     playAudio(chapterText, this@ChapterFragment)
@@ -188,7 +191,7 @@ open class ChapterFragment : Fragment(), AudioListener {
     }
 
     fun playAudio(chapterText: Array<String?>, audioListener: AudioListener?) {
-        tts!!.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
+        ttsViewModel.setOnUtteranceProgressListener(getUtteranceProgressListener(audioListener))
 
         Log.i(TAG, "chapterText: \"" + chapterText.contentToString() + "\"")
         Log.v(TAG, "playingAudio with: " + chapterText.size + " paragraphs. chapterParagraphs.size: " + chapterParagraphs.size)
@@ -196,26 +199,22 @@ open class ChapterFragment : Fragment(), AudioListener {
             Log.d(TAG, "Speaking paragraph: $paragraph")
 
             val utteranceId = paragraphIndex.toString()
-            val params = Bundle().apply {
-                putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, utteranceId)
-            }
 
-            tts?.speak(
-                paragraph?.replace("[-*]".toRegex(), ""),
-                TextToSpeech.QUEUE_ADD,
-                params,
+            ttsViewModel.speak(
+                paragraph?.replace("[-*]".toRegex(), "") ?: "",
+                QueueMode.ADD,
                 utteranceId
             )
-            tts?.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
+            ttsViewModel.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
         }
     }
 
     override fun onPause() {
         super.onPause()
-        tts!!.stop()
+        ttsViewModel.stop()
     }
 
-    open fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
+    open fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener {
         val wordPosition = intArrayOf(-1)
 
         return object : UtteranceProgressListener() {
@@ -269,7 +268,7 @@ open class ChapterFragment : Fragment(), AudioListener {
             }
 
             override fun onDone(utteranceId: String) {
-                Log.v(TAG, "Chapter onDone. isSpeaking: " + tts?.isSpeaking + ". utteranceId: " + utteranceId + "\nchapterParagraphs.size: " + chapterParagraphs.size)
+                Log.v(TAG, "Chapter onDone. isSpeaking: " + ttsViewModel.isSpeaking() + ". utteranceId: " + utteranceId + "\nchapterParagraphs.size: " + chapterParagraphs.size)
 
                 // Remove highlighting of the last spoken word
                 val itemView = layoutManager!!.findViewByPosition(wordPosition[0])
@@ -290,12 +289,11 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             override fun onStop(utteranceId: String, interrupted: Boolean) {
                 super.onStop(utteranceId, interrupted)
-                Log.v(TAG, "Chapter onStop utteranceId: $utteranceId")
+                Log.v(TAG, "Chapter onStop")
                 if (highlightedTextView != null) {
                     highlightedTextView!!.background =
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
-                fabSpeak?.setImageResource(R.drawable.ic_hearing)
             }
 
             fun scrollToWordIfNotVisible(position: Int) {

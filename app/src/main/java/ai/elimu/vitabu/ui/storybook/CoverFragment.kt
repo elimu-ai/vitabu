@@ -82,7 +82,7 @@ class CoverFragment : ChapterFragment() {
         playAudio(description, null)
     }
 
-    override fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener? {
+    override fun getUtteranceProgressListener(audioListener: AudioListener?): UtteranceProgressListener {
         return object : UtteranceProgressListener() {
             override fun onStart(utteranceId: String) {
                 Log.i(javaClass.name, "onStart")
