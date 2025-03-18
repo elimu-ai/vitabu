@@ -13,7 +13,6 @@ import ai.elimu.vitabu.R
 import ai.elimu.vitabu.util.readImageBytes
 import android.os.Bundle
 import android.os.Environment
-import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.LayoutInflater
@@ -205,7 +204,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 QueueMode.ADD,
                 utteranceId
             )
-            ttsViewModel.playSilentUtterance(PARAGRAPH_PAUSE, TextToSpeech.QUEUE_ADD, null)
+            ttsViewModel.playSilentUtterance(PARAGRAPH_PAUSE, QueueMode.ADD.mode, null)
         }
     }
 
