@@ -50,6 +50,8 @@ internal class WordViewAdapter(
                         words[position], v, position
                     )
                 }
+            } else {
+                holder.itemView.setOnClickListener(null)
             }
         }
     }
