@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import java.util.Collections
 
 class CoverFragment : ChapterFragment() {
@@ -100,15 +101,16 @@ class CoverFragment : ChapterFragment() {
                 if (start >= 0) {
                     // Highlight the word being spoken
                     val spannable: Spannable = SpannableString(audioText)
+                    val context = audioTextView?.context ?: return
                     val backgroundColorSpan =
-                        BackgroundColorSpan(resources.getColor(R.color.colorAccent))
+                        BackgroundColorSpan(ContextCompat.getColor(context, R.color.colorAccent))
                     spannable.setSpan(
                         backgroundColorSpan,
                         start,
                         end,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    audioTextView!!.text = spannable
+                    audioTextView?.text = spannable
                 }
             }
 
