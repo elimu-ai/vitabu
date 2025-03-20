@@ -5,6 +5,7 @@ import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -24,9 +25,13 @@ class StoryBookActivity : AppCompatActivity() {
 
         val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
         Log.i(TAG, "storyBookId: $storyBookId")
-        val readingLevel = intent.getSerializableExtra(EXTRA_KEY_STORYBOOK_LEVEL) as? ReadingLevel
+        val readingLevel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(EXTRA_KEY_STORYBOOK_LEVEL, ReadingLevel::class.java)
+        } else {
+            intent.getParcelableExtra(EXTRA_KEY_STORYBOOK_LEVEL)
+        }
         val description = intent.getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION) ?: ""
-
+        
         // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
         val storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(
             storyBookId,

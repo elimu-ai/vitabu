@@ -322,8 +322,6 @@ open class ChapterFragment : Fragment(), AudioListener {
                 BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
                 "/files/"
 
-        val PICTURES_PATH: String = FILES_PATH + Environment.DIRECTORY_PICTURES + "/"
-
         private const val PARAGRAPH_PAUSE: Long = 1000
 
         @JvmStatic
