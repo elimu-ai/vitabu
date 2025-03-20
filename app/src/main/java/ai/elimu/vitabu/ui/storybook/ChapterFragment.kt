@@ -288,11 +288,12 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             override fun onStop(utteranceId: String, interrupted: Boolean) {
                 super.onStop(utteranceId, interrupted)
-                Log.v(TAG, "Chapter onStop")
+                Log.v(TAG, "Chapter onStop utteranceId: $utteranceId")
                 if (highlightedTextView != null) {
                     highlightedTextView!!.background =
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
+                fabSpeak?.setImageResource(R.drawable.ic_hearing)
             }
 
             fun scrollToWordIfNotVisible(position: Int) {
