@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("ai.elimu.vitabu", appContext.getPackageName());
+        assertEquals("ai.elimu.vitabu.debug", appContext.getPackageName());
     }
 }
