@@ -1,6 +1,8 @@
 package ai.elimu.vitabu.ui
 
 import ai.elimu.analytics.utils.LearningEventUtil
+import ai.elimu.common.utils.ui.setLightStatusBar
+import ai.elimu.common.utils.ui.setStatusBarColorCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.model.v2.enums.analytics.LearningEventType
@@ -46,6 +48,10 @@ class StoryBooksActivity : AppCompatActivity() {
             BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
         )
         Log.i(TAG, "storyBooks.size(): " + storyBooks.size)
+        window.apply {
+            setLightStatusBar()
+            setStatusBarColorCompat(R.color.colorPrimaryDark)
+        }
     }
 
     override fun onStart() {
