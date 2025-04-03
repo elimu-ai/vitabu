@@ -16,7 +16,7 @@ androidXEspresso = "3.4.0"
 coreKtx = "1.15.0"
 kotlinGradlePlugin = "2.1.0"
 kotlinCoroutines = "1.10.1"
-agp = "8.5.2"
+agp = "8.8.2"
 grgit = "5.0.0"
 
 [libraries]
