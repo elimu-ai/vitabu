@@ -1,7 +1,6 @@
 package ai.elimu.vitabu.ui.storybook
 
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
-import ai.elimu.model.v2.gson.content.EmojiGson
 import ai.elimu.model.v2.gson.content.WordGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
@@ -12,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import java.util.Collections
-import java.util.stream.Collectors
 
 internal class WordViewAdapter(
     private val readingLevelPosition: Int,
@@ -120,10 +118,8 @@ internal class WordViewAdapter(
                     itemView.context,
                     BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
                 )
-                if (!emojiGsons.isEmpty()) {
-                    wordEmoji.text =
-                        emojiGsons.stream().map { obj: EmojiGson -> obj.glyph }
-                            .collect(Collectors.joining(""))
+                if (emojiGsons.isNotEmpty()) {
+                    wordEmoji.text = emojiGsons.random().glyph
                     setTextSizeByLevel(wordEmoji, readingLevelPosition)
                 }
             }
