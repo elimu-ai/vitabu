@@ -115,7 +115,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                     override fun onItemClick(wordGson: WordGson?, view: View?, position: Int) {
                         wordGson ?: return
                         Log.i(TAG, "onClick")
-                        Log.i(TAG, "wordGson.text: \"" + wordGson.text + "\"")
+                        Log.i(TAG, "wordGson.text: ${wordGson.text}")
 
                         WordDialogFragment.newInstance(wordGson.id)
                             .show(activity!!.supportFragmentManager, "dialog")
