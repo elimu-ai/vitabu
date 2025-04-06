@@ -64,7 +64,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         Log.i(TAG, "chapterIndex: $chapterIndex")
 
         // Fetch the StoryBookChapter
-        storyBookChapter = ChapterPagerAdapter.storyBookChapters?.get(chapterIndex)
+        storyBookChapter = ChapterPagerAdapter.storyBookChapters.getOrNull(chapterIndex)
         Log.i(TAG, "storyBookChapter: $storyBookChapter")
     }
 
