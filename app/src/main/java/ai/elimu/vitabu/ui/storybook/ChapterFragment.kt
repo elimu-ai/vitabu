@@ -12,7 +12,6 @@ import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.util.readImageBytes
 import android.os.Bundle
-import android.os.Environment
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.LayoutInflater
@@ -317,11 +316,6 @@ open class ChapterFragment : Fragment(), AudioListener {
     companion object {
         const val ARG_CHAPTER_INDEX: String = "chapter_index"
         const val ARG_READING_LEVEL: String = "reading_level"
-
-        private val FILES_PATH: String = Environment.getExternalStorageDirectory().toString() +
-                "/Android/data/" +
-                BuildConfig.CONTENT_PROVIDER_APPLICATION_ID +
-                "/files/"
 
         private const val PARAGRAPH_PAUSE: Long = 1000
 
