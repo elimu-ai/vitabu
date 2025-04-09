@@ -10,7 +10,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 
 class ChapterPagerAdapter(
     fm: FragmentManager,
-    storyBookChapters: List<StoryBookChapterGson>?,
+    storyBookChapters: List<StoryBookChapterGson>,
     readingLevel: ReadingLevel,
     description: String
 ) :
@@ -38,10 +38,10 @@ class ChapterPagerAdapter(
     }
 
     override fun getCount(): Int {
-        return storyBookChapters?.size ?: 0
+        return storyBookChapters.size
     }
 
     companion object {
-        var storyBookChapters: List<StoryBookChapterGson>? = null
+        var storyBookChapters: List<StoryBookChapterGson> = listOf()
     }
 }
