@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
@@ -55,6 +56,17 @@ class WordDialogFragment : BottomSheetDialogFragment() {
             for (emojiGson in emojiGsons) {
                 textView.text = textView.text.toString() + emojiGson.glyph
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.let {
+            val bottomSheet = it.findViewById<View>(
+                com.google.android.material.R.id.design_bottom_sheet
+            ) ?: return
+            val behavior = BottomSheetBehavior.from(bottomSheet)
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
 
