@@ -293,6 +293,17 @@ open class ChapterFragment : Fragment(), AudioListener {
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
                 fabSpeak?.setImageResource(R.drawable.ic_hearing)
+                ttsViewModel.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                    }
+
+                    override fun onError(utteranceId: String?) {
+                    }
+
+                })
             }
 
             fun scrollToWordIfNotVisible(position: Int) {
