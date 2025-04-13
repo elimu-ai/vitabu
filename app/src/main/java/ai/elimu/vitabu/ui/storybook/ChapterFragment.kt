@@ -248,7 +248,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 itemView = layoutManager!!.findViewByPosition(wordPosition[0])
                 if (chapterRecyclerView!!.adapter!!.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
                     wordPosition[0]++
-                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.length == 0) {
+                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
                     wordPosition[0]++
                 }
 
