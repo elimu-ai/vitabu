@@ -54,7 +54,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation libs.elimu.model // See https://jitpack.io/#elimu-ai/model
-    implementation libs.elimu.provider // See https://jitpack.io/#elimu-ai/content-provider
+    implementation libs.elimu.content.provider // See https://jitpack.io/#elimu-ai/content-provider
     implementation libs.elimu.analytics // See https://jitpack.io/#elimu-ai/analytics
     implementation libs.elimu.common.utils
 
