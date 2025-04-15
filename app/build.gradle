@@ -3,6 +3,7 @@ apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'maven-publish'
 
 android {
     compileSdk 35
@@ -11,9 +12,8 @@ android {
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 35
-        versionCode 1001008
-        versionName '1.1.8-SNAPSHOT'
-        setProperty("archivesBaseName", "${applicationId}-${versionCode}")
+        versionCode 1001009
+        versionName '1.1.9-SNAPSHOT'
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -53,10 +53,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.elimu.model // See https://jitpack.io/#elimu-ai/model
-    implementation libs.elimu.content.provider // See https://jitpack.io/#elimu-ai/content-provider
-    implementation libs.elimu.analytics // See https://jitpack.io/#elimu-ai/analytics
-    implementation libs.elimu.common.utils
+    implementation libs.elimu.model // https://jitpack.io/#elimu-ai/model
+    implementation libs.elimu.content.provider // https://jitpack.io/#elimu-ai/content-provider
+    implementation libs.elimu.analytics // https://jitpack.io/#elimu-ai/analytics
+    implementation libs.elimu.common.utils // https://jitpack.io/#elimu-ai/common-utils
 
     implementation libs.androidx.appcompat
     implementation libs.material
@@ -74,6 +74,17 @@ dependencies {
 
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso
+}
+
+publishing {
+    publications {
+        apk(MavenPublication) {
+            artifact("${buildDir}/outputs/apk/release/app-release-unsigned.apk")
+        }
+    }
+}
+tasks.named("publishApkPublicationToMavenLocal") {
+    mustRunAfter(":app:assembleRelease")
 }
 
 task ensureCleanRepo {

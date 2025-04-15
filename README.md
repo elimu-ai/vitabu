@@ -1,5 +1,7 @@
 # Vitabu 📚
 
+[![Release](https://jitpack.io/v/elimu-ai/vitabu.svg)](https://jitpack.io/#elimu-ai/vitabu)
+
 Android application for reading storybooks and expanding word vocabulary.
 
 Corresponding [EGRA skill](https://github.com/elimu-ai/model/blob/main/src/main/java/ai/elimu/model/v2/enums/content/LiteracySkill.java): `FAMILIAR_WORD_READING`
@@ -27,7 +29,7 @@ Compile APK:
 Install APK:
 
 ```
-adb install app/build/outputs/apk/debug/ai.elimu.vitabu-<versionCode>-debug.apk
+adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
 Perform a release:
@@ -48,7 +50,7 @@ If you want to make changes to the elimu.ai Content Provider's utility library, 
   <img src="https://github.com/elimu-ai/webapp/blob/main/src/main/webapp/static/img/logo-text-256x78.png" />
 </p>
 <p align="center">
-  elimu.ai - Free open-source learning software for out-of-school children ✨🚀
+  elimu.ai - Free open-source learning software for out-of-school children 🚀✨
 </p>
 <p align="center">
   <a href="https://elimu.ai">Website 🌐</a>
