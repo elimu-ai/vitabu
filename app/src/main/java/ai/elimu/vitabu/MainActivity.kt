@@ -1,6 +1,5 @@
 package ai.elimu.vitabu
 
-import ai.elimu.common.utils.checkIfAppstoreIsInstalled
 import ai.elimu.common.utils.isPackageInstalled
 import ai.elimu.vitabu.databinding.ActivityMainBinding
 import ai.elimu.vitabu.ui.StoryBooksActivity
@@ -25,8 +24,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         Log.i(TAG, "onStart")
         super.onStart()
-
-        if (!checkIfAppstoreIsInstalled(BuildConfig.APPSTORE_APPLICATION_ID)) return
 
         if (isPackageInstalled(
                 packageName = BuildConfig.CONTENT_PROVIDER_APPLICATION_ID,
