@@ -1,5 +1,5 @@
 [versions]
-elimuModel = "model-2.0.88"
+elimuModel = "model-2.0.97"
 elimuAnalytics = "3.1.30"
 elimuContentProvider = "1.2.38"
 elimuCommonutils = "1.0.7"
