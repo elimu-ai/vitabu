@@ -14,6 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Collections
 
 class CoverFragment : ChapterFragment() {
@@ -110,7 +113,9 @@ class CoverFragment : ChapterFragment() {
                         end,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    audioTextView?.text = spannable
+                    CoroutineScope(Dispatchers.Main).launch {
+                        audioTextView?.text = spannable
+                    }
                 }
             }
 
