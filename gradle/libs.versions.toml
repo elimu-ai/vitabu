@@ -7,7 +7,7 @@ material = "1.5.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
 glide = "4.16.0"
-hilt = "2.55"
+hilt = "2.56.1"
 
 constraintLayout = "2.2.1"
 appCompat = "1.4.1"
