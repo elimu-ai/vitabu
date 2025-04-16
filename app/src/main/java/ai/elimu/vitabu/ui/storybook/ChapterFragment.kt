@@ -248,7 +248,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 itemView = layoutManager!!.findViewByPosition(wordPosition[0])
                 if (chapterRecyclerView!!.adapter!!.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
                     wordPosition[0]++
-                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.length == 0) {
+                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
                     wordPosition[0]++
                 }
 
@@ -293,6 +293,17 @@ open class ChapterFragment : Fragment(), AudioListener {
                         ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                 }
                 fabSpeak?.setImageResource(R.drawable.ic_hearing)
+                ttsViewModel.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(utteranceId: String?) {
+                    }
+
+                    override fun onDone(utteranceId: String?) {
+                    }
+
+                    override fun onError(utteranceId: String?) {
+                    }
+
+                })
             }
 
             fun scrollToWordIfNotVisible(position: Int) {
