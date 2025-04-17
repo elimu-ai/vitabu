@@ -233,36 +233,38 @@ open class ChapterFragment : Fragment(), AudioListener {
                     TAG,
                     "utteranceId: $utteranceId, start: $start, end: $end"
                 )
-                var itemView: View?
 
-                // Highlight the word being spoken
-                if (wordPosition[0] > -1) {
-                    itemView = layoutManager?.findViewByPosition(wordPosition[0])
-                    CoroutineScope(Dispatchers.Main).launch {
+                CoroutineScope(Dispatchers.Main).launch {
+                    var itemView: View?
+
+                    // Highlight the word being spoken
+                    if (wordPosition[0] > -1) {
+                        itemView = layoutManager?.findViewByPosition(wordPosition[0])
                         itemView?.background =
                             ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                     }
-                }
 
-                wordPosition[0]++
-                itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                if (chapterRecyclerView!!.adapter!!.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
                     wordPosition[0]++
-                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
-                    wordPosition[0]++
-                }
+                    itemView = layoutManager!!.findViewByPosition(wordPosition[0])
+                    if (chapterRecyclerView!!.adapter!!.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
+                        wordPosition[0]++
+                    } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
+                        wordPosition[0]++
+                    }
 
-                scrollToWordIfNotVisible(wordPosition[0])
-                itemView = layoutManager.findViewByPosition(wordPosition[0])
-                if (itemView != null) {
-                    itemView.setBackgroundColor(
-                        ContextCompat.getColor(
-                            context!!,
-                            R.color.colorAccent
+                    scrollToWordIfNotVisible(wordPosition[0])
+                    itemView = layoutManager.findViewByPosition(wordPosition[0])
+                    if (itemView != null) {
+                        itemView.setBackgroundColor(
+                            ContextCompat.getColor(
+                                context!!,
+                                R.color.colorAccent
+                            )
                         )
-                    )
-                    highlightedTextView = itemView
+                        highlightedTextView = itemView
+                    }
                 }
+
             }
 
             override fun onDone(utteranceId: String) {
