@@ -237,9 +237,9 @@ open class ChapterFragment : Fragment(), AudioListener {
 
                 // Highlight the word being spoken
                 if (wordPosition[0] > -1) {
-                    itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                    if (itemView != null) {
-                        itemView.background =
+                    itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                    CoroutineScope(Dispatchers.Main).launch {
+                        itemView?.background =
                             ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
                     }
                 }
