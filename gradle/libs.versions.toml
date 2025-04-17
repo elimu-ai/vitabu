@@ -2,7 +2,7 @@
 elimuModel = "model-2.0.97"
 elimuAnalytics = "3.1.30"
 elimuContentProvider = "1.2.38"
-elimuCommonutils = "1.0.7"
+elimuCommonUtils = "1.0.7"
 material = "1.5.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
@@ -23,7 +23,7 @@ grgit = "5.3.0"
 elimu-model = { group = "com.github.elimu-ai", name = "model", version.ref = "elimuModel" }
 elimu-analytics = { group = "com.github.elimu-ai", name = "analytics", version.ref = "elimuAnalytics" }
 elimu-content-provider = { group = "com.github.elimu-ai", name = "content-provider", version.ref = "elimuContentProvider" }
-elimu-common-utils = { group = "com.github.elimu-ai", name = "common-utils", version.ref = "elimuCommonutils" }
+elimu-common-utils = { group = "com.github.elimu-ai", name = "common-utils", version.ref = "elimuCommonUtils" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
