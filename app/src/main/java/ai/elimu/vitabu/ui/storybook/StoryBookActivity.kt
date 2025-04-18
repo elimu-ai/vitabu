@@ -4,24 +4,25 @@ import ai.elimu.common.utils.getParcelableCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.vitabu.BuildConfig
-import ai.elimu.vitabu.R
+import ai.elimu.vitabu.databinding.ActivityStorybookBinding
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
+    private lateinit var binding: ActivityStorybookBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_storybook)
+        binding = ActivityStorybookBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
         Log.i(TAG, "storyBookId: $storyBookId")
@@ -36,18 +37,16 @@ class StoryBookActivity : AppCompatActivity() {
             applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
         )
 
-        val viewPager = findViewById<ViewPager>(R.id.view_pager)
-
         val chapterPagerAdapter = ChapterPagerAdapter(
             supportFragmentManager,
             storyBookChapters,
             readingLevel ?: ReadingLevel.LEVEL1,
             description
         )
-        viewPager.adapter = chapterPagerAdapter
+        binding.viewPager.adapter = chapterPagerAdapter
 
         val zoomOutPageTransformer = ZoomOutPageTransformer()
-        viewPager.setPageTransformer(true, zoomOutPageTransformer)
+        binding.viewPager.setPageTransformer(true, zoomOutPageTransformer)
     }
 
     companion object {
