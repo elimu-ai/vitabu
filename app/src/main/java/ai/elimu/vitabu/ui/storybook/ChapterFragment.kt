@@ -87,8 +87,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         chapterRecyclerView = root.findViewById(R.id.chapter_text)
 
         // Set chapter image
-        val chapterImage = storyBookChapter!!.image
-        if (chapterImage != null) {
+        storyBookChapter?.image?.let { chapterImage ->
             val imageView = root.findViewById<ImageView>(R.id.chapter_image)
             CoroutineScope(Dispatchers.IO).launch {
                 val context = context ?: return@launch
@@ -101,7 +100,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         }
 
         // Set paragraph(s)
-        val storyBookParagraphGsons = storyBookChapter!!.storyBookParagraphs
+        val storyBookParagraphGsons = storyBookChapter?.storyBookParagraphs
         Log.i(TAG,
             "storyBookChapter.getStoryBookParagraphs(): $storyBookParagraphGsons")
 
@@ -116,8 +115,10 @@ open class ChapterFragment : Fragment(), AudioListener {
                         Log.i(TAG, "onClick")
                         Log.i(TAG, "wordGson.text: ${wordGson.text}")
 
-                        WordDialogFragment.newInstance(wordGson.id)
-                            .show(activity!!.supportFragmentManager, "dialog")
+                        activity?.supportFragmentManager?.let { fragmentManager ->
+                            WordDialogFragment.newInstance(wordGson.id)
+                                .show(fragmentManager, "dialog")
+                        }
 
                         ttsViewModel.speak(text = wordGson.text, queueMode = QueueMode.FLUSH,
                             utteranceId = "word_" + wordGson.id)
@@ -134,8 +135,8 @@ open class ChapterFragment : Fragment(), AudioListener {
                 val layoutManager = FlexboxLayoutManager(context)
                 layoutManager.flexDirection = FlexDirection.ROW
                 layoutManager.justifyContent = JustifyContent.CENTER
-                chapterRecyclerView!!.layoutManager = layoutManager
-                chapterRecyclerView!!.adapter = wordViewAdapter
+                chapterRecyclerView?.layoutManager = layoutManager
+                chapterRecyclerView?.adapter = wordViewAdapter
             }
 
             chapterParagraphs = arrayOfNulls(storyBookParagraphGsons.size)
@@ -217,7 +218,7 @@ open class ChapterFragment : Fragment(), AudioListener {
 
         return object : UtteranceProgressListener() {
             val layoutManager: FlexboxLayoutManager? =
-                chapterRecyclerView!!.layoutManager as FlexboxLayoutManager?
+                chapterRecyclerView?.layoutManager as? FlexboxLayoutManager
 
             var highlightedTextView: View? = null
 
@@ -233,46 +234,47 @@ open class ChapterFragment : Fragment(), AudioListener {
                     TAG,
                     "utteranceId: $utteranceId, start: $start, end: $end"
                 )
-                var itemView: View?
 
-                // Highlight the word being spoken
-                if (wordPosition[0] > -1) {
-                    itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                    if (itemView != null) {
-                        itemView.background =
-                            ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
+                CoroutineScope(Dispatchers.Main).launch {
+                    var itemView: View?
+
+                    // Highlight the word being spoken
+                    if (wordPosition[0] > -1) {
+                        itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                        context?.let { ctx ->
+                            itemView?.background =
+                                ContextCompat.getDrawable(ctx, R.drawable.bg_word_selector)
+                        }
+
                     }
-                }
 
-                wordPosition[0]++
-                itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                if (chapterRecyclerView!!.adapter!!.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
                     wordPosition[0]++
-                } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
-                    wordPosition[0]++
-                }
+                    itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                    if (chapterRecyclerView?.adapter?.getItemViewType(wordPosition[0]) == WordViewAdapter.NEW_PARAGRAPH_TYPE) {
+                        wordPosition[0]++
+                    } else if (itemView != null && (itemView.findViewById<View>(R.id.word_text) as TextView).text.isEmpty()) {
+                        wordPosition[0]++
+                    }
 
-                scrollToWordIfNotVisible(wordPosition[0])
-                itemView = layoutManager.findViewByPosition(wordPosition[0])
-                if (itemView != null) {
-                    itemView.setBackgroundColor(
-                        ContextCompat.getColor(
-                            context!!,
-                            R.color.colorAccent
-                        )
-                    )
+                    scrollToWordIfNotVisible(wordPosition[0])
+                    itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                    context?.let { ctx ->
+                        itemView?.setBackgroundColor(ContextCompat.getColor(ctx, R.color.colorAccent))
+                    }
+
                     highlightedTextView = itemView
                 }
+
             }
 
             override fun onDone(utteranceId: String) {
                 Log.v(TAG, "Chapter onDone. isSpeaking: " + ttsViewModel.isSpeaking() + ". utteranceId: " + utteranceId + "\nchapterParagraphs.size: " + chapterParagraphs.size)
 
                 // Remove highlighting of the last spoken word
-                val itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                if (itemView != null) {
-                    itemView.background =
-                        ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
+                val itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                context?.let { ctx ->
+                    itemView?.background =
+                        ContextCompat.getDrawable(ctx, R.drawable.bg_word_selector)
                 }
 
                 val finalUtteranceId = (chapterParagraphs.size - 1).toString()
@@ -288,10 +290,11 @@ open class ChapterFragment : Fragment(), AudioListener {
             override fun onStop(utteranceId: String, interrupted: Boolean) {
                 super.onStop(utteranceId, interrupted)
                 Log.v(TAG, "Chapter onStop utteranceId: $utteranceId")
-                if (highlightedTextView != null) {
-                    highlightedTextView!!.background =
-                        ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
+                context?.let { ctx ->
+                    highlightedTextView?.background =
+                        ContextCompat.getDrawable(ctx, R.drawable.bg_word_selector)
                 }
+
                 fabSpeak?.setImageResource(R.drawable.ic_hearing)
                 ttsViewModel.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                     override fun onStart(utteranceId: String?) {
@@ -307,12 +310,14 @@ open class ChapterFragment : Fragment(), AudioListener {
             }
 
             fun scrollToWordIfNotVisible(position: Int) {
-                val firstWordVisible = layoutManager!!.findFirstCompletelyVisibleItemPosition()
-                val lastWordVisible = layoutManager.findLastCompletelyVisibleItemPosition()
+                val firstWordVisible = layoutManager?.findFirstCompletelyVisibleItemPosition()
+                    ?: RecyclerView.NO_POSITION
+                val lastWordVisible = layoutManager?.findLastCompletelyVisibleItemPosition()
+                    ?: RecyclerView.NO_POSITION
 
                 if ((position < firstWordVisible) || (position > lastWordVisible)) {
-                    activity!!.runOnUiThread {
-                        layoutManager.scrollToPosition(
+                    activity?.runOnUiThread {
+                        layoutManager?.scrollToPosition(
                             position
                         )
                     }
