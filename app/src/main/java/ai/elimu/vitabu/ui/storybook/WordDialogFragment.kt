@@ -1,5 +1,6 @@
 package ai.elimu.vitabu.ui.storybook
 
+import ai.elimu.common.utils.ui.BaseBottomSheetDialogFragment
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
 import ai.elimu.content_provider.utils.ContentProviderUtil.getWordGson
 import ai.elimu.vitabu.BuildConfig
@@ -10,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
  *
@@ -22,7 +21,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  * WordDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
 </pre> *
  */
-class WordDialogFragment : BottomSheetDialogFragment() {
+class WordDialogFragment : BaseBottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,17 +55,6 @@ class WordDialogFragment : BottomSheetDialogFragment() {
             for (emojiGson in emojiGsons) {
                 textView.text = textView.text.toString() + emojiGson.glyph
             }
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        dialog?.let {
-            val bottomSheet = it.findViewById<View>(
-                com.google.android.material.R.id.design_bottom_sheet
-            ) ?: return
-            val behavior = BottomSheetBehavior.from(bottomSheet)
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
         }
     }
 
