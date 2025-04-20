@@ -268,16 +268,18 @@ open class ChapterFragment : Fragment(), AudioListener {
             override fun onDone(utteranceId: String) {
                 Log.v(TAG, "Chapter onDone. isSpeaking: " + ttsViewModel.isSpeaking() + ". utteranceId: " + utteranceId + "\nchapterParagraphs.size: " + chapterParagraphs.size)
 
-                // Remove highlighting of the last spoken word
-                val itemView = layoutManager!!.findViewByPosition(wordPosition[0])
-                if (itemView != null) {
-                    itemView.background =
-                        ContextCompat.getDrawable(context!!, R.drawable.bg_word_selector)
-                }
+                CoroutineScope(Dispatchers.Main).launch {
+                    // Remove highlighting of the last spoken word
+                    val itemView = layoutManager?.findViewByPosition(wordPosition[0])
+                    context?.let { ctx ->
+                        itemView?.background =
+                            ContextCompat.getDrawable(ctx, R.drawable.bg_word_selector)
+                    }
 
-                val finalUtteranceId = (chapterParagraphs.size - 1).toString()
-                if (utteranceId == finalUtteranceId) {
-                    fabSpeak?.setImageResource(R.drawable.ic_hearing)
+                    val finalUtteranceId = (chapterParagraphs.size - 1).toString()
+                    if (utteranceId == finalUtteranceId) {
+                        fabSpeak?.setImageResource(R.drawable.ic_hearing)
+                    }
                 }
             }
 
