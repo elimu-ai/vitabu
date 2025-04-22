@@ -252,7 +252,6 @@ open class ChapterFragment : Fragment(), AudioListener {
                     wordPosition[0]++
                 }
 
-                scrollToWordIfNotVisible(wordPosition[0])
                 itemView = layoutManager.findViewByPosition(wordPosition[0])
                 if (itemView != null) {
                     itemView.setBackgroundColor(
@@ -304,19 +303,6 @@ open class ChapterFragment : Fragment(), AudioListener {
                     }
 
                 })
-            }
-
-            fun scrollToWordIfNotVisible(position: Int) {
-                val firstWordVisible = layoutManager!!.findFirstCompletelyVisibleItemPosition()
-                val lastWordVisible = layoutManager.findLastCompletelyVisibleItemPosition()
-
-                if ((position < firstWordVisible) || (position > lastWordVisible)) {
-                    activity!!.runOnUiThread {
-                        layoutManager.scrollToPosition(
-                            position
-                        )
-                    }
-                }
             }
         }
     }
