@@ -53,10 +53,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.elimu.model // https://jitpack.io/#elimu-ai/model
-    implementation libs.elimu.content.provider // https://jitpack.io/#elimu-ai/content-provider
-    implementation libs.elimu.analytics // https://jitpack.io/#elimu-ai/analytics
-    implementation libs.elimu.common.utils // https://jitpack.io/#elimu-ai/common-utils
+    implementation libs.elimu.model // https://jitpack.io/#ai.elimu/model
+    implementation libs.elimu.content.provider // https://jitpack.io/#ai.elimu/content-provider
+    implementation libs.elimu.analytics // https://jitpack.io/#ai.elimu/analytics
+    implementation libs.elimu.common.utils // https://jitpack.io/#ai.elimu/common-utils
 
     implementation libs.androidx.appcompat
     implementation libs.material

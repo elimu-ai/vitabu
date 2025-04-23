@@ -1,6 +1,6 @@
 # Vitabu 📚
 
-[![Release](https://jitpack.io/v/elimu-ai/vitabu.svg)](https://jitpack.io/#elimu-ai/vitabu)
+[![Release](https://jitpack.io/v/ai.elimu/vitabu.svg)](https://jitpack.io/#ai.elimu/vitabu)
 
 Android application for reading storybooks and expanding word vocabulary.
 
