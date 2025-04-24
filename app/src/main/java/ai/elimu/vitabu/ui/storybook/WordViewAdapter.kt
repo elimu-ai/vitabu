@@ -59,7 +59,7 @@ internal class WordViewAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (wordsInOriginalText[position] == null) {
+        return if (wordsInOriginalText.getOrNull(position) == null) {
             NEW_PARAGRAPH_TYPE
         } else {
             WORD_TYPE
