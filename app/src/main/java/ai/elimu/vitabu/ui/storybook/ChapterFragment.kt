@@ -122,11 +122,13 @@ open class ChapterFragment : Fragment(), AudioListener {
                         ttsViewModel.speak(text = wordGson.text, queueMode = QueueMode.FLUSH,
                             utteranceId = "word_" + wordGson.id)
 
-                        // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                        LearningEventUtil.reportWordLearningEvent(
-                            wordGson, LearningEventType.WORD_PRESSED,
-                            context, BuildConfig.ANALYTICS_APPLICATION_ID
-                        )
+                        context?.let { context ->
+                            // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                            LearningEventUtil.reportWordLearningEvent(
+                                wordGson, LearningEventType.WORD_PRESSED,
+                                context, BuildConfig.ANALYTICS_APPLICATION_ID
+                            )
+                        }
                     }
                 })
 
