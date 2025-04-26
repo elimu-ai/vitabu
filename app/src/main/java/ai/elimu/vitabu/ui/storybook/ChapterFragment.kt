@@ -33,7 +33,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Arrays
 
 @AndroidEntryPoint
 open class ChapterFragment : Fragment(), AudioListener {
@@ -107,7 +106,7 @@ open class ChapterFragment : Fragment(), AudioListener {
 
         if (storyBookParagraphGsons != null) {
             val readingLevel = requireArguments()[ARG_READING_LEVEL] as ReadingLevel?
-            readingLevelPosition = if ((readingLevel == null)) 0 else readingLevel.ordinal
+            readingLevelPosition = readingLevel?.ordinal ?: 0
 
             val wordViewAdapter =
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
@@ -159,7 +158,7 @@ open class ChapterFragment : Fragment(), AudioListener {
                 val wordGsons = storyBookParagraphGsons[paragraphIndex].words
                 Log.i(TAG, "wordGsons: $wordGsons")
 
-                wordViewAdapter.addParagraph(Arrays.asList(*wordsInOriginalText), wordGsons)
+                wordViewAdapter.addParagraph(listOf(*wordsInOriginalText), wordGsons)
             }
         } else {
             fabSpeak?.visibility = View.GONE
