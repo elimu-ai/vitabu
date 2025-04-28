@@ -9,7 +9,6 @@ buildscript {
     }
     dependencies {
         classpath libs.android.gradle.plugin
-        classpath libs.grgit
         classpath libs.kotlin.gradle.plugin
         classpath libs.hilt.android.plugin
         // NOTE: Do not place your application dependencies here; they belong

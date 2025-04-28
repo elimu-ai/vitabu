@@ -1,5 +1,7 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
 apply plugin: 'com.android.application'
-apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'kotlin-kapt'
@@ -87,127 +89,66 @@ tasks.named("publishApkPublicationToMavenLocal") {
     mustRunAfter(":app:assembleRelease")
 }
 
-task ensureCleanRepo {
+task removeSnapshot {
     doLast {
-        if (!grgit.repository.jgit.status().call().clean) {
-            throw new GradleException('Git status is not clean, please stash your changes!')
-        }
+        println("removeSnapshot")
+
+        def file = file("build.gradle")
+        def originalFileContent = file.getText()
+
+        Pattern pattern = Pattern.compile("versionName \"\\d+\\.\\d+\\.\\d+-SNAPSHOT\"")
+        Matcher matcher = pattern.matcher(originalFileContent)
+        matcher.find()
+        println("match: ${matcher.group()}")
+
+        def newVersionName = matcher.group().replace("-SNAPSHOT", "")
+        println("newVersionName: ${newVersionName}")
+
+        def newFileContent = originalFileContent.replaceFirst("versionName \"\\d+\\.\\d+\\.\\d+-SNAPSHOT\"", newVersionName)
+        file.write(newFileContent)
     }
 }
-task releaseClean(dependsOn: ensureCleanRepo) {
+task getVersionName {
     doLast {
-        def clean = true
-        def applicationId = android.defaultConfig.applicationId
-
-        String headCommitMessage = grgit.head().shortMessage
-        while (headCommitMessage.contains("[gradle-release-task]")) {
-            clean = false
-            println "Found git commit: $headCommitMessage"
-            if (headCommitMessage.indexOf("$applicationId-") > -1) {
-                def tagName = headCommitMessage.split("$applicationId-")[1]
-                println "Removing the git tag: $tagName"
-                try {
-                    grgit.tag.remove {
-                        names = [tagName]
-                    }
-                } catch (Exception e) {
-                    println "Error while removing git tag:\n $e"
-                }
-            }
-            println "Resetting the git commit permanently!"
-            grgit.reset(commit: "HEAD~1", mode: "hard")
-            headCommitMessage = grgit.head().shortMessage
-
-        }
-        if (clean){
-            println "Repository is already clean"
-        }
-        println "Done!"
+        println android.defaultConfig.versionName
     }
 }
-
-// Task parameters:
-//    bumpVersion -> if available will specify new versionName directly and ignores the `bumpType` parameter.
-//    bumpType[major|minor|patch] -> will specify how the version bumping occurs.
-task releasePrepare(dependsOn: ensureCleanRepo) {
+task bumpVersion {
     doLast {
-        def applicationId = android.defaultConfig.applicationId
-        def versionName = android.defaultConfig.versionName
+        println("bumpVersion")
 
-        if (versionName.indexOf("-") > -1) {
-            versionName = versionName.split("-")[0]
-        }
+        def currentVersionCode = android.defaultConfig.versionCode
+        println("currentVersionCode: ${currentVersionCode}")
 
-        // Prepare the release commit with the specific tag.
-        String buildText = buildFile.getText()
-        buildText = buildText.replaceFirst(/versionName(\s+.*)/, "versionName '$versionName'")
-        buildFile.setText(buildText) //replace the build file's text
-        grgit.add(patterns: ['app/build.gradle'])
-        grgit.commit(message: "[gradle-release-task] prepare release $applicationId-$versionName")
-        try {
-            grgit.tag.add {
-                name = versionName
-                message = "Release of $versionName"
-            }
-        } catch (Exception e) {
-            throw new GradleException("Failed to tag the repo, error:\n $e")
-        }
+        def newVersionCode = currentVersionCode + 1
+        println("newVersionCode: ${newVersionCode}")
 
+        def newVersionName = newVersionCode.toString().substring(0, 1).toInteger() + "." + newVersionCode.toString().substring(1, 4).toInteger() + "." + newVersionCode.toString().substring(4, 7).toInteger()
+        println("newVersionName: ${newVersionName}")
 
-        // Set new version name from input parameters.
-        def newVersionName
-        if (project.properties.containsKey("bumpVersion")) {
-            newVersionName = project.properties["bumpVersion"]
-            println "Bumping the version directly (bumpVersion=$newVersionName)"
-        } else if (project.properties.containsKey("bumpType")) {
-            def (major, minor, patch) = versionName.tokenize('.')
-            switch (bumpType) {
-                case "major":
-                    major = major.toInteger() + 1
-                    minor = 0
-                    patch = 0
-                    break
-                case "minor":
-                    minor = minor.toInteger() + 1
-                    break
-                case "patch":
-                    patch = patch.toInteger() + 1
-                    break
-            }
-            newVersionName = "$major.$minor.$patch"
-        } else {
-            throw new GradleException('Either bumpType or bumpVersion parameters should be provided')
-        }
-
-        // Prepare for next development iteration.
-        def versionCode = android.defaultConfig.versionCode
-        def newVersionCode = versionCode + 1
-        println "Bumping versionName from $versionName to $newVersionName"
-        println "Bumping versionCode from $versionCode to $newVersionCode"
-        buildText = buildFile.getText()
-        buildText = buildText.replaceFirst(/versionName(\s+.*)/, "versionName '$newVersionName-SNAPSHOT'")
-        buildText = buildText.replaceFirst(/versionCode(\s+.*)/, "versionCode $newVersionCode")
-        buildFile.setText(buildText) //replace the build file's text
-        grgit.add(patterns: ['app/build.gradle'])
-        grgit.commit(message: "[gradle-release-task] prepare for next development iteration")
-        println "Done!"
+        def file = file("build.gradle")
+        def originalFileContent = file.getText()
+        def newFileContent = originalFileContent.replaceFirst("versionCode \\d+", "versionCode ${newVersionCode}")
+        newFileContent = newFileContent.replaceFirst("versionName \"\\d+\\.\\d+\\.\\d+\"", "versionName \"${newVersionName}\"")
+        file.write(newFileContent)
     }
-
 }
-
-task releasePerform(dependsOn: ensureCleanRepo) {
+task addSnapshot {
     doLast {
-        boolean force = false
-        if (project.properties.containsKey("force")) {
-            force = project.properties["force"]
-        }
-        println "Pushing the newest commits to the remote repository (force: $force)"
-        try {
-            grgit.push(force: force, tags: true)
-        } catch (Exception e) {
-            throw new GradleException("Failed to push to the repo,\n" +
-                    " you can try using -Pforce=true parameter to force the push, error: \n$e")
-        }
-        println "Done!"
+        println("addSnapshot")
+
+        def file = file("build.gradle")
+        def originalFileContent = file.getText()
+
+        Pattern pattern = Pattern.compile("versionName \"\\d+\\.\\d+\\.\\d+\"")
+        Matcher matcher = pattern.matcher(originalFileContent)
+        matcher.find()
+        println("match: ${matcher.group()}")
+
+        def newVersionName = "${matcher.group().substring(12, matcher.group().length() - 1)}-SNAPSHOT\""
+        println("newVersionName: ${newVersionName}")
+
+        def newFileContent = originalFileContent.replaceFirst("versionName \"\\d+\\.\\d+\\.\\d+\"", "versionName ${newVersionName}")
+        file.write(newFileContent)
     }
 }
