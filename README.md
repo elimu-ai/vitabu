@@ -32,14 +32,6 @@ Install APK:
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Perform a release:
-
-```
-./gradlew releaseClean
-./gradlew releasePrepare -PbumpType=patch
-./gradlew releasePerform
-```
-
 ### Content Provider Utils 📦
 
 If you want to make changes to the elimu.ai Content Provider's utility library, see testing instructions at https://github.com/elimu-ai/content-provider/blob/main/README.md#utils-snapshot
