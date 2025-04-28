@@ -17,7 +17,6 @@ coreKtx = "1.16.0"
 kotlinGradlePlugin = "2.1.20"
 kotlinCoroutines = "1.10.2"
 agp = "8.8.2"
-grgit = "5.3.0"
 
 [libraries]
 elimu-model = { group = "ai.elimu", name = "model", version.ref = "elimuModel" }
@@ -39,7 +38,6 @@ androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp"}
-grgit = { group = "org.ajoberstar.grgit", name = "grgit-gradle", version.ref = "grgit"}
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin"}
 
 [plugins]
