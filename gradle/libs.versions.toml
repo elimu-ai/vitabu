@@ -1,8 +1,5 @@
 [versions]
-elimuModel = "model-2.0.103"
-elimuAnalytics = "3.1.37"
-elimuContentProvider = "1.2.54"
-elimuCommonUtils = "1.0.12"
+elimuContentProvider = "1.3.0"
 material = "1.12.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
@@ -10,19 +7,14 @@ glide = "4.16.0"
 hilt = "2.56.2"
 
 constraintLayout = "2.2.1"
-appCompat = "1.7.0"
 androidXJunit = "1.2.1"
 androidXEspresso = "3.6.1"
-coreKtx = "1.16.0"
 kotlinGradlePlugin = "2.1.20"
 kotlinCoroutines = "1.10.2"
 agp = "8.8.2"
 
 [libraries]
-elimu-model = { group = "ai.elimu", name = "model", version.ref = "elimuModel" }
-elimu-analytics = { group = "ai.elimu", name = "analytics", version.ref = "elimuAnalytics" }
 elimu-content-provider = { group = "ai.elimu", name = "content-provider", version.ref = "elimuContentProvider" }
-elimu-common-utils = { group = "ai.elimu", name = "common-utils", version.ref = "elimuCommonUtils" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
@@ -30,13 +22,11 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-android-plugin = { group = "com.google.dagger", name = "hilt-android-gradle-plugin", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
 androidx-constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp"}
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin"}
 

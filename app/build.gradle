@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 26
         targetSdkVersion 35
-        versionCode 1001016
-        versionName "1.1.16-SNAPSHOT"
+        versionCode 1002000
+        versionName "1.2.0-SNAPSHOT"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -55,12 +55,8 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation libs.elimu.model // https://jitpack.io/#ai.elimu/model
     implementation libs.elimu.content.provider // https://jitpack.io/#ai.elimu/content-provider
-    implementation libs.elimu.analytics // https://jitpack.io/#ai.elimu/analytics
-    implementation libs.elimu.common.utils // https://jitpack.io/#ai.elimu/common-utils
 
-    implementation libs.androidx.appcompat
     implementation libs.material
     implementation libs.androidx.constraint.layout
     implementation libs.flexbox
@@ -68,7 +64,6 @@ dependencies {
     implementation libs.glide
 
     implementation libs.kotlin.coroutines
-    implementation libs.androidx.core.ktx
     implementation libs.hilt.android
     kapt libs.hilt.compiler
 
