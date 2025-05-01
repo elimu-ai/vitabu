@@ -1,6 +1,6 @@
 package ai.elimu.vitabu
 
-import ai.elimu.common.utils.isPackageInstalled
+import ai.elimu.common.utils.ensurePackageInstalledOrPrompt
 import ai.elimu.vitabu.databinding.ActivityMainBinding
 import ai.elimu.vitabu.ui.StoryBooksActivity
 import android.content.Intent
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "onStart")
         super.onStart()
 
-        if (isPackageInstalled(
+        if (ensurePackageInstalledOrPrompt(
                 packageName = BuildConfig.CONTENT_PROVIDER_APPLICATION_ID,
                 launchPackage = BuildConfig.APPSTORE_APPLICATION_ID,
                 launchClass = "ai.elimu.appstore.MainActivity",
