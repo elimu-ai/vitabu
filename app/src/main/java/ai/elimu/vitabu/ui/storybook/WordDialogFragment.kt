@@ -51,9 +51,10 @@ class WordDialogFragment : BaseBottomSheetDialogFragment() {
             wordGson.id, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
         )
         if (emojiGsons.isNotEmpty()) {
-            textView.text = textView.text.toString() + "\n"
+            textView.text = getString(R.string.word_dialog_text, textView.text)
             for (emojiGson in emojiGsons) {
-                textView.text = textView.text.toString() + emojiGson.glyph
+                textView.text =
+                    getString(R.string.word_dialog_text_with_emoji, textView.text, emojiGson.glyph)
             }
         }
     }
