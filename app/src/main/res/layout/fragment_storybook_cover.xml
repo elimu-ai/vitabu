@@ -17,6 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        android:contentDescription="@string/content_desc_chapter_image"
         android:src="@color/colorAccent" />
 
     <ScrollView
@@ -75,5 +76,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/content_desc_hear"
         app:srcCompat="@drawable/ic_hearing" />
 </androidx.constraintlayout.widget.ConstraintLayout>

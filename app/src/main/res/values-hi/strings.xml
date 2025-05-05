@@ -3,4 +3,6 @@
     <string name="level">LEVEL %d</string>
     <string name="content_provider_needed">यह ऐप बिना elimu.ai Content Provider के काम नहीं करेगा।</string>
     <string name="install">इंस्टॉल करें</string>
+    <string name="content_desc_chapter_image">अध्याय छवि</string>
+    <string name="content_desc_hear">सुनो</string>
 </resources>

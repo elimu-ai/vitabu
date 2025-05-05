@@ -3,4 +3,6 @@
     <string name="level">LEVEL %d</string>
     <string name="content_provider_needed">This app will not work without the elimu.ai Content Provider</string>
     <string name="install">Install</string>
+    <string name="content_desc_chapter_image">Chapter Image</string>
+    <string name="content_desc_hear">Hear</string>
 </resources>
