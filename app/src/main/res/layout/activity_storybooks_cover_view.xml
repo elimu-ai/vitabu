@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:src="@color/colorAccent"
-            android:contentDescription="Grace in Space" />
+            tools:contentDescription="Grace in Space" />
 
         <TextView
             android:id="@+id/coverTitleTextView"
