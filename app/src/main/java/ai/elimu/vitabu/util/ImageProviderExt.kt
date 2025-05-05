@@ -3,16 +3,16 @@ package ai.elimu.vitabu.util
 import ai.elimu.vitabu.BuildConfig
 import android.content.ContentUris
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.annotation.WorkerThread
 import java.io.ByteArrayOutputStream
 import java.io.IOException
+import androidx.core.net.toUri
 
 @WorkerThread
 suspend fun Context.readImageBytes(fileId: Long): ByteArray? {
-    val uri = Uri.parse("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-            + ".provider.image_provider/images/")
+    val uri = ("content://" + BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+            + ".provider.image_provider/images/").toUri()
 
     val imageUri = ContentUris.withAppendedId(uri, fileId)
 
