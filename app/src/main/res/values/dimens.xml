@@ -5,8 +5,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
     
-    <dimen name="underline_thickness">3dp</dimen>
-
     <array name="cover_title_font_size">
         <item>36</item>
         <item>34</item>
