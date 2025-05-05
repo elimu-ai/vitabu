@@ -84,7 +84,7 @@ tasks.named("publishApkPublicationToMavenLocal") {
     mustRunAfter(":app:assembleRelease")
 }
 
-task removeSnapshot {
+tasks.register('removeSnapshot') {
     doLast {
         println("removeSnapshot")
 
@@ -103,12 +103,12 @@ task removeSnapshot {
         file.write(newFileContent)
     }
 }
-task getVersionName {
+tasks.register('getVersionName') {
     doLast {
         println android.defaultConfig.versionName
     }
 }
-task bumpVersion {
+tasks.register('bumpVersion') {
     doLast {
         println("bumpVersion")
 
@@ -128,7 +128,7 @@ task bumpVersion {
         file.write(newFileContent)
     }
 }
-task addSnapshot {
+tasks.register('addSnapshot') {
     doLast {
         println("addSnapshot")
 
