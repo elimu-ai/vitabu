@@ -29,7 +29,7 @@
             android:layout_alignParentBottom="true"
             android:background="#33000000"
             android:textColor="#FFFFFF"
-            android:text="Grace in Space"
+            tools:text="Grace in Space"
             android:padding="8dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:ellipsize="end"
