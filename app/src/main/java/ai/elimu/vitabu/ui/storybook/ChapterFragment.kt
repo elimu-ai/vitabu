@@ -173,20 +173,18 @@ open class ChapterFragment : Fragment(), AudioListener {
         // Add button for initializing Text-to-Speech (TTS)
         val chapterText = chapterParagraphs
         val fab = view.findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(view: View) {
-                val isSpeaking = ttsViewModel.isSpeaking()
-                Log.i(TAG, "onClick. tts.isSpeaking: $isSpeaking")
+        fab.setOnClickListener {
+            val isSpeaking = ttsViewModel.isSpeaking()
+            Log.i(TAG, "onClick. tts.isSpeaking: $isSpeaking")
 
-                if (isSpeaking) {
-                    ttsViewModel.stop()
-                    fab.setImageResource(R.drawable.ic_hearing)
-                } else {
-                    playAudio(chapterText, this@ChapterFragment)
-                    fab.setImageResource(R.drawable.ic_stop_media)
-                }
+            if (isSpeaking) {
+                ttsViewModel.stop()
+                fab.setImageResource(R.drawable.ic_hearing)
+            } else {
+                playAudio(chapterText, this@ChapterFragment)
+                fab.setImageResource(R.drawable.ic_stop_media)
             }
-        })
+        }
     }
 
     fun playAudio(chapterText: Array<String?>, audioListener: AudioListener?) {
