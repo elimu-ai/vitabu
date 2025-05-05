@@ -176,7 +176,7 @@ open class ChapterFragment : Fragment(), AudioListener {
         fab.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 val isSpeaking = ttsViewModel.isSpeaking()
-                Log.i(TAG, "onClick. tts.isSpeaking: " + isSpeaking)
+                Log.i(TAG, "onClick. tts.isSpeaking: $isSpeaking")
 
                 if (isSpeaking) {
                     ttsViewModel.stop()
