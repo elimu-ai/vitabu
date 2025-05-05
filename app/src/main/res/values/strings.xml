@@ -5,4 +5,6 @@
     <string name="install">Install</string>
     <string name="content_desc_chapter_image">Chapter Image</string>
     <string name="content_desc_hear">Hear</string>
+    <string name="word_dialog_text" translatable="false">%1$s\n</string>
+    <string name="word_dialog_text_with_emoji" translatable="false">%1$s%2$s</string>
 </resources>
