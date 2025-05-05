@@ -3,4 +3,6 @@
     <string name="level">LEVEL %d</string>
     <string name="content_provider_needed">Hindi gagana ang app na ito kung walang elimu.ai Content Provider.</string>
     <string name="install">I-install</string>
+    <string name="content_desc_chapter_image">Larawan ng Kabanata</string>
+    <string name="content_desc_hear">Pakinggan</string>
 </resources>

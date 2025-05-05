@@ -3,4 +3,6 @@
     <string name="level">ระดับ %d</string>
     <string name="content_provider_needed">แอปนี้จะไม่ทำงานหากไม่มี elimu.ai Content Provider</string>
     <string name="install">ติดตั้ง</string>
+    <string name="content_desc_chapter_image">ภาพบท</string>
+    <string name="content_desc_hear">ได้ยิน</string>
 </resources>
