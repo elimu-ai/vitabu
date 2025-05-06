@@ -34,6 +34,14 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 
 If you want to make changes to the elimu.ai Content Provider's utility library, see testing instructions at https://github.com/elimu-ai/content-provider/blob/main/README.md#utils-snapshot
 
+### Release 📦
+
+To perform a release, follow these steps:
+
+1. Merge your PR into the `main` branch
+1. Wait for the ["Gradle Release"](https://github.com/elimu-ai/vitabu/actions/workflows/gradle-release.yml) workflow to complete
+1. Ensure that the new release version appears at https://github.com/elimu-ai/vitabu/releases
+
 ---
 
 <p align="center">
