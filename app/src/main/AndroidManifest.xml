@@ -5,9 +5,6 @@
     <!-- elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider/blob/master/app/src/main/AndroidManifest.xml) -->
     <uses-permission android:name="${contentProviderApplicationId}.provider.READ" />
 
-    <!-- TODO: remove this request for permission once the Content Provider app can provide image files directly -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <queries>
         <provider android:authorities="${contentProviderApplicationId}.provider.storybook_provider" />
         <intent>
