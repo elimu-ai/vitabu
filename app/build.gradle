@@ -1,11 +1,14 @@
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-apply plugin: 'com.android.application'
-apply plugin: 'org.jetbrains.kotlin.android'
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'maven-publish'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
+    id 'maven-publish'
+    id "org.jetbrains.kotlin.plugin.compose" version "2.1.21"
+}
 
 android {
     compileSdk 35

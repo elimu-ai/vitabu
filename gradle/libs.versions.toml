@@ -12,6 +12,7 @@ androidXEspresso = "3.6.1"
 kotlinGradlePlugin = "2.1.21"
 kotlinCoroutines = "1.10.2"
 agp = "8.8.2"
+kotlinx-metadata-jvm = "0.6.0"
 
 # Jetpack Compose
 composeUi = "1.5.4"
@@ -32,6 +33,7 @@ kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutine
 androidx-constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
+kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm" }
 
 # Jetpack Compose
 compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
@@ -47,3 +49,4 @@ android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", ve
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin"}
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinGradlePlugin" }

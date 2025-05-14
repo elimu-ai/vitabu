@@ -54,13 +54,13 @@ fun VitabuTheme(content: @Composable () -> Unit) {
 
 @Composable
 fun MainScreen(onPackageCheck: (Boolean) -> Unit) {
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
     
     // Empty Box as container - the UI is minimal since this is just a launcher activity
     Box(modifier = Modifier.fillMaxSize()) {
         // Check for required package when the composable is first launched
         LaunchedEffect(key1 = Unit) {
-            val hasPackage = ensurePackageInstalledOrPrompt(
+            val hasPackage = context.ensurePackageInstalledOrPrompt(
                 packageName = BuildConfig.CONTENT_PROVIDER_APPLICATION_ID,
                 launchPackage = BuildConfig.APPSTORE_APPLICATION_ID,
                 launchClass = "ai.elimu.appstore.MainActivity",

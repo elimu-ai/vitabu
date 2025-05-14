@@ -16,6 +16,11 @@ buildscript {
     }
 }
 
+plugins {
+    // Existing plugins
+    alias(libs.plugins.compose.compiler)
+}
+
 allprojects {
     repositories {
         google()
