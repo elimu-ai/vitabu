@@ -1,5 +1,3 @@
-[![](https://jitpack.io/v/ai.elimu/vitabu.svg)](https://jitpack.io/#ai.elimu/vitabu)
-
 # Vitabu 📚
 
 Android application for reading storybooks and expanding word vocabulary.
