@@ -14,6 +14,9 @@ import ai.elimu.vitabu.databinding.ActivityStorybooksCoverViewBinding
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity
 import ai.elimu.vitabu.util.SingleClickListener
 import ai.elimu.vitabu.util.readImageBytes
+import ai.elimu.vitabu.viewmodel.LoadStoryBooksUiState
+import ai.elimu.vitabu.viewmodel.StoryBookViewModel
+import ai.elimu.vitabu.viewmodel.StoryBookViewModelImpl
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,15 +25,21 @@ import android.view.View
 import android.widget.GridLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+@AndroidEntryPoint
 class StoryBooksActivity : AppCompatActivity() {
 
-    private var storyBooks: List<StoryBookGson> = mutableListOf()
+    private lateinit var storyBookViewModel: StoryBookViewModel
 
     private val TAG: String = StoryBooksActivity::class.java.name
     private lateinit var binding: ActivityStorybooksBinding
@@ -42,12 +51,10 @@ class StoryBooksActivity : AppCompatActivity() {
         binding = ActivityStorybooksBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initViewModels()
+
         // Fetch StoryBooks from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        storyBooks = ContentProviderUtil.getAllStoryBookGsons(
-            applicationContext,
-            BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        )
-        Log.i(TAG, "storyBooks.size(): " + storyBooks.size)
+        initData()
         window.apply {
             setLightStatusBar()
             setStatusBarColorCompat(R.color.colorPrimaryDark)
@@ -62,7 +69,34 @@ class StoryBooksActivity : AppCompatActivity() {
         binding.storybooksProgressBar.visibility = View.VISIBLE
         binding.storyBooksGridLayout.visibility = View.GONE
         binding.storyBooksGridLayout.removeAllViews()
+    }
 
+    private fun initViewModels() {
+        storyBookViewModel = ViewModelProvider(this)[StoryBookViewModelImpl::class.java]
+    }
+
+    private fun initData() {
+        storyBookViewModel.getAllStoryBooks()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                storyBookViewModel.uiState.collect { uiState ->
+                    Log.d(TAG, "uiState collected uiState: $uiState")
+                    when (uiState) {
+                        is LoadStoryBooksUiState.Loading ->
+                            binding.storybooksProgressBar.visibility = View.VISIBLE
+
+                        is LoadStoryBooksUiState.Success -> {
+                            binding.storybooksProgressBar.visibility = View.GONE
+                            showStoryBooks(uiState.storyBooks)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showStoryBooks(storyBooks: List<StoryBookGson>) {
         CoroutineScope(Dispatchers.IO).launch {
             var storyBook: StoryBookGson
             var readingLevel: ReadingLevel?
