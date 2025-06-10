@@ -5,6 +5,7 @@ import ai.elimu.common.utils.getParcelableCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
 import ai.elimu.model.v2.enums.analytics.LearningEventType
+import ai.elimu.model.v2.gson.content.StoryBookGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.databinding.ActivityStorybookBinding
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
@@ -19,7 +20,8 @@ class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
     private lateinit var binding: ActivityStorybookBinding
-    private var hasReportedCompletion = false
+    private var shouldReportCompletion = false
+    private var completedStoryBook: StoryBookGson? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -61,17 +63,13 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                if (position == storyBookChapters.size - 1 && !hasReportedCompletion) {
-                    val storyBookGson = ContentProviderUtil.getStoryBookGson(
+                if (position == storyBookChapters.size - 1 && !shouldReportCompletion) {
+                    completedStoryBook = ContentProviderUtil.getStoryBookGson(
                         storyBookId,
                         applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
                     ) ?: return
 
-                    LearningEventUtil.reportStoryBookLearningEvent(
-                        storyBookGson, LearningEventType.STORYBOOK_COMPLETED,
-                        applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
-                    )
-                    hasReportedCompletion = true
+                    shouldReportCompletion = true
                 }
             }
 
@@ -79,6 +77,18 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+        completedStoryBook?.let { storyBook ->
+            if (shouldReportCompletion) {
+                LearningEventUtil.reportStoryBookLearningEvent(
+                    storyBook, LearningEventType.STORYBOOK_COMPLETED,
+                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                )
+            }
+        }
     }
 
     companion object {
