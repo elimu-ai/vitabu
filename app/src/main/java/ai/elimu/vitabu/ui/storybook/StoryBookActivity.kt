@@ -1,14 +1,17 @@
 package ai.elimu.vitabu.ui.storybook
 
+import ai.elimu.analytics.utils.LearningEventUtil
 import ai.elimu.common.utils.getParcelableCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
+import ai.elimu.model.v2.enums.analytics.LearningEventType
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.databinding.ActivityStorybookBinding
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -47,6 +50,33 @@ class StoryBookActivity : AppCompatActivity() {
 
         val zoomOutPageTransformer = ZoomOutPageTransformer()
         binding.viewPager.setPageTransformer(true, zoomOutPageTransformer)
+        binding.viewPager.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                if (position == storyBookChapters.size - 1) {
+                    val storyBookGson = ContentProviderUtil.getStoryBookGson(
+                        storyBookId,
+                        applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                    ) ?: return
+
+                    LearningEventUtil.reportStoryBookLearningEvent(
+                        storyBookGson, LearningEventType.STORYBOOK_COMPLETED,
+                        applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                    )
+                }
+            }
+
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+        })
     }
 
     companion object {
