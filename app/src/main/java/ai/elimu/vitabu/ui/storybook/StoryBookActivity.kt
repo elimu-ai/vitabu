@@ -19,6 +19,7 @@ class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
     private lateinit var binding: ActivityStorybookBinding
+    private var hasReportedCompletion = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -60,7 +61,7 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                if (position == storyBookChapters.size - 1) {
+                if (position == storyBookChapters.size - 1 && !hasReportedCompletion) {
                     val storyBookGson = ContentProviderUtil.getStoryBookGson(
                         storyBookId,
                         applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
@@ -70,6 +71,7 @@ class StoryBookActivity : AppCompatActivity() {
                         storyBookGson, LearningEventType.STORYBOOK_COMPLETED,
                         applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
                     )
+                    hasReportedCompletion = true
                 }
             }
 
