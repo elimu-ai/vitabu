@@ -19,7 +19,6 @@ class BookCompletedActivity : AppCompatActivity() {
 
     private val TAG = "BookCompletedActivity"
     private lateinit var binding: ActivityBookCompletedBinding
-    private var hasReportedCompletion = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -31,8 +30,6 @@ class BookCompletedActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        if (hasReportedCompletion) return
 
         CoroutineScope(Dispatchers.IO).launch {
             val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
@@ -46,7 +43,6 @@ class BookCompletedActivity : AppCompatActivity() {
                     completedStoryBook, LearningEventType.STORYBOOK_COMPLETED,
                     applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
                 )
-                hasReportedCompletion = true
 
                 binding.btnStar.postDelayed({
                     binding.btnStar.callOnClick()
@@ -54,7 +50,6 @@ class BookCompletedActivity : AppCompatActivity() {
 
                 delay(2000L)
                 finish()
-
             }
         }
     }
