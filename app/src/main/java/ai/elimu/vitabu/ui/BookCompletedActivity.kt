@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -50,6 +51,10 @@ class BookCompletedActivity : AppCompatActivity() {
                 binding.btnStar.postDelayed({
                     binding.btnStar.callOnClick()
                 }, 500L)
+
+                delay(2000L)
+                finish()
+
             }
         }
     }
