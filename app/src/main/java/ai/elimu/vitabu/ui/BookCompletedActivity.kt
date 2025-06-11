@@ -9,11 +9,16 @@ import ai.elimu.vitabu.ui.storybook.StoryBookActivity.Companion.EXTRA_KEY_STORYB
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BookCompletedActivity : AppCompatActivity() {
 
     private val TAG = "BookCompletedActivity"
     private lateinit var binding: ActivityBookCompletedBinding
+    private var hasReportedCompletion = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate")
@@ -26,19 +31,26 @@ class BookCompletedActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
-        val completedStoryBook = ContentProviderUtil.getStoryBookGson(
-            storyBookId,
-            applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        ) ?: return
+        if (hasReportedCompletion) return
 
-        LearningEventUtil.reportStoryBookLearningEvent(
-            completedStoryBook, LearningEventType.STORYBOOK_COMPLETED,
-            applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
-        )
+        CoroutineScope(Dispatchers.IO).launch {
+            val storyBookId = intent.getLongExtra(EXTRA_KEY_STORYBOOK_ID, 0)
+            val completedStoryBook = ContentProviderUtil.getStoryBookGson(
+                storyBookId,
+                applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+            ) ?: return@launch
 
-        binding.btnStar.postDelayed({
-            binding.btnStar.callOnClick()
-        }, 500L)
+            withContext(Dispatchers.Main) {
+                LearningEventUtil.reportStoryBookLearningEvent(
+                    completedStoryBook, LearningEventType.STORYBOOK_COMPLETED,
+                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                )
+                hasReportedCompletion = true
+
+                binding.btnStar.postDelayed({
+                    binding.btnStar.callOnClick()
+                }, 500L)
+            }
+        }
     }
 }
