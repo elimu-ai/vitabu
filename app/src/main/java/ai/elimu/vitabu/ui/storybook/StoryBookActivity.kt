@@ -1,14 +1,14 @@
 package ai.elimu.vitabu.ui.storybook
 
-import ai.elimu.analytics.utils.LearningEventUtil
 import ai.elimu.common.utils.getParcelableCompat
 import ai.elimu.content_provider.utils.ContentProviderUtil
 import ai.elimu.model.v2.enums.ReadingLevel
-import ai.elimu.model.v2.enums.analytics.LearningEventType
-import ai.elimu.model.v2.gson.content.StoryBookGson
+import ai.elimu.model.v2.gson.content.StoryBookChapterGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.databinding.ActivityStorybookBinding
+import ai.elimu.vitabu.ui.BookCompletedActivity
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -20,8 +20,6 @@ class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
     private lateinit var binding: ActivityStorybookBinding
-    private var shouldReportCompletion = false
-    private var completedStoryBook: StoryBookGson? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -41,7 +39,12 @@ class StoryBookActivity : AppCompatActivity() {
         val storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(
             storyBookId,
             applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        )
+        ).toMutableList().apply {
+
+            // Add an empty page at the end of this book for the purpose of
+            // analytics tracking
+            add(StoryBookChapterGson())
+        }.toList()
 
         val chapterPagerAdapter = ChapterPagerAdapter(
             supportFragmentManager,
@@ -63,13 +66,13 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                if (position == storyBookChapters.size - 1 && !shouldReportCompletion) {
-                    completedStoryBook = ContentProviderUtil.getStoryBookGson(
-                        storyBookId,
-                        applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-                    ) ?: return
-
-                    shouldReportCompletion = true
+                if (position == storyBookChapters.size - 1) {
+                    startActivity(Intent(this@StoryBookActivity, BookCompletedActivity::class.java)
+                        .apply {
+                            putExtra(EXTRA_KEY_STORYBOOK_ID, storyBookId)
+                        }
+                    )
+                    finish()
                 }
             }
 
@@ -77,18 +80,6 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    override fun onStop() {
-        super.onStop()
-        completedStoryBook?.let { storyBook ->
-            if (shouldReportCompletion) {
-                LearningEventUtil.reportStoryBookLearningEvent(
-                    storyBook, LearningEventType.STORYBOOK_COMPLETED,
-                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
-                )
-            }
-        }
     }
 
     companion object {

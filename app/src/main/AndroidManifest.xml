@@ -33,8 +33,10 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.StoryBooksActivity" />
         <activity
-            android:name=".ui.StoryBooksActivity" />
+            android:name=".ui.BookCompletedActivity"
+            android:theme="@style/AppTheme.NoTitle.Fullscreen" />
 
         <activity
             android:name=".ui.storybook.StoryBookActivity"
