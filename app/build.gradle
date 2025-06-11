@@ -65,6 +65,10 @@ dependencies {
 
     implementation libs.kotlin.coroutines
     implementation libs.hilt.android
+    implementation (libs.shine.button) {
+        exclude group: 'com.daasuu', module: 'EasingInterpolator'
+    }
+    implementation libs.easing.interpolator
     kapt libs.hilt.compiler
 
     testImplementation libs.junit

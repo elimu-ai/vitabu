@@ -9,4 +9,5 @@
     <color name="green_accent_transparent">#AAA9E6CA</color>
     <color name="green_lighten_1">#66BB6A</color>
     <color name="green">#4CAF50</color>
+    <color name="amber">#FFC107</color>
 </resources>

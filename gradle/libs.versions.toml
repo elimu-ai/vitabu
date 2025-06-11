@@ -5,6 +5,8 @@ junit = "4.13.2"
 flexbox = "3.0.0"
 glide = "4.16.0"
 hilt = "2.56.2"
+shineButton = "1.0.0"
+easingInterpolator = "v1.3.2"
 
 constraintLayout = "2.2.1"
 androidXJunit = "1.2.1"
@@ -23,6 +25,8 @@ hilt-android-plugin = { group = "com.google.dagger", name = "hilt-android-gradle
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinCoroutines" }
 androidx-constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
+shine-button = { group = "com.sackcentury", name = "shinebutton", version.ref = "shineButton" }
+easing-interpolator = { group = "com.github.MasayukiSuda", name = "EasingInterpolator", version.ref = "easingInterpolator" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
 
