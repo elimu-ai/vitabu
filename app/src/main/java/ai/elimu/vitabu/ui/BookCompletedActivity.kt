@@ -40,8 +40,10 @@ class BookCompletedActivity : AppCompatActivity() {
 
             withContext(Dispatchers.Main) {
                 LearningEventUtil.reportStoryBookLearningEvent(
-                    completedStoryBook, LearningEventType.STORYBOOK_COMPLETED,
-                    applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                    storyBookGson = completedStoryBook,
+                    learningEventType = LearningEventType.STORYBOOK_COMPLETED,
+                    context = applicationContext,
+                    analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                 )
 
                 binding.btnStar.postDelayed({
