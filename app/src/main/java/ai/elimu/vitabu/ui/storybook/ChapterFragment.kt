@@ -125,8 +125,10 @@ open class ChapterFragment : Fragment(), AudioListener {
                         context?.let { context ->
                             // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                             LearningEventUtil.reportWordLearningEvent(
-                                wordGson, LearningEventType.WORD_PRESSED,
-                                context, BuildConfig.ANALYTICS_APPLICATION_ID
+                                wordGson = wordGson,
+                                learningEventType = LearningEventType.WORD_PRESSED,
+                                context = context,
+                                analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                             )
                         }
                     }

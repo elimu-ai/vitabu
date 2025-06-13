@@ -150,8 +150,10 @@ class StoryBooksActivity : AppCompatActivity() {
 
                         // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                         LearningEventUtil.reportStoryBookLearningEvent(
-                            finalStoryBook, LearningEventType.STORYBOOK_OPENED,
-                            applicationContext, BuildConfig.ANALYTICS_APPLICATION_ID
+                            storyBookGson = finalStoryBook,
+                            learningEventType = LearningEventType.STORYBOOK_OPENED,
+                            context = applicationContext,
+                            analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                         )
 
                         val intent = Intent(applicationContext, StoryBookActivity::class.java)
