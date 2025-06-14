@@ -21,7 +21,7 @@ internal class WordViewAdapter(
     private val words: MutableList<WordGson?> = ArrayList()
 
     interface OnItemClickListener {
-        fun onItemClick(wordGson: WordGson?, view: View?, position: Int)
+        fun onItemClick(wordGson: WordGson?, text: String, view: View?, position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -42,14 +42,10 @@ internal class WordViewAdapter(
                 readingLevelPosition
             )
 
-            if (words[position] != null) {
-                holder.itemView.setOnClickListener { v: View? ->
-                    listener.onItemClick(
-                        words[position], v, position
-                    )
-                }
-            } else {
-                holder.itemView.setOnClickListener(null)
+            holder.itemView.setOnClickListener { v: View? ->
+                listener.onItemClick(
+                    words[position], text = wordsInOriginalText[position] ?: "", v, position
+                )
             }
         }
     }
