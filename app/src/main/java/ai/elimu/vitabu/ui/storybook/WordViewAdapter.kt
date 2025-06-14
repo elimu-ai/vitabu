@@ -42,9 +42,9 @@ internal class WordViewAdapter(
                 readingLevelPosition
             )
 
-            holder.itemView.setOnClickListener { v: View? ->
+            holder.itemView.setOnClickListener { view: View? ->
                 listener.onItemClick(
-                    words[position], wordText = wordsInOriginalText[position] ?: "", v, position
+                    words[position], wordText = wordsInOriginalText[position] ?: "", view, position
                 )
             }
         }
