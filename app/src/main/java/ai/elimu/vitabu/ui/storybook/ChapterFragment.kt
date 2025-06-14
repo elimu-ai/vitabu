@@ -112,12 +112,12 @@ open class ChapterFragment : Fragment(), AudioListener {
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
                     override fun onItemClick(
                         wordGson: WordGson?,
-                        text: String,
+                        wordText: String,
                         view: View?,
                         position: Int
                     ) {
-                        Log.i(TAG, "onClick wordGson: $wordGson. text: $text")
-                        var spokenText = text
+                        Log.i(TAG, "onClick wordGson: $wordGson. text: $wordText")
+                        var spokenText = wordText
                         var utteranceId = UUID.randomUUID().toString()
                         wordGson?.let {
                             spokenText = wordGson.text
