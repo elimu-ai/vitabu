@@ -33,6 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 @AndroidEntryPoint
 open class ChapterFragment : Fragment(), AudioListener {
@@ -109,28 +110,39 @@ open class ChapterFragment : Fragment(), AudioListener {
 
             val wordViewAdapter =
                 WordViewAdapter(readingLevelPosition, object : WordViewAdapter.OnItemClickListener {
-                    override fun onItemClick(wordGson: WordGson?, view: View?, position: Int) {
-                        wordGson ?: return
-                        Log.i(TAG, "onClick")
-                        Log.i(TAG, "wordGson.text: ${wordGson.text}")
+                    override fun onItemClick(
+                        wordGson: WordGson?,
+                        text: String,
+                        view: View?,
+                        position: Int
+                    ) {
+                        Log.i(TAG, "onClick wordGson: $wordGson. text: $text")
+                        var spokenText = text
+                        var utteranceId = UUID.randomUUID().toString()
+                        wordGson?.let {
+                            spokenText = wordGson.text
+                            utteranceId = "word_" + wordGson.id
+                            Log.i(TAG, "wordGson.text: ${wordGson.text}")
 
-                        activity?.supportFragmentManager?.let { fragmentManager ->
-                            WordDialogFragment.newInstance(wordGson.id)
-                                .show(fragmentManager, "dialog")
+                            activity?.supportFragmentManager?.let { fragmentManager ->
+                                WordDialogFragment.newInstance(wordGson.id)
+                                    .show(fragmentManager, "dialog")
+                            }
+
+                            context?.let { context ->
+                                // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
+                                LearningEventUtil.reportWordLearningEvent(
+                                    wordGson = wordGson,
+                                    learningEventType = LearningEventType.WORD_PRESSED,
+                                    context = context,
+                                    analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
+                                )
+                            }
                         }
 
-                        ttsViewModel.speak(text = wordGson.text, queueMode = QueueMode.FLUSH,
-                            utteranceId = "word_" + wordGson.id)
+                        ttsViewModel.speak(text = spokenText, queueMode = QueueMode.FLUSH,
+                            utteranceId = utteranceId)
 
-                        context?.let { context ->
-                            // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
-                            LearningEventUtil.reportWordLearningEvent(
-                                wordGson = wordGson,
-                                learningEventType = LearningEventType.WORD_PRESSED,
-                                context = context,
-                                analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
-                            )
-                        }
                     }
                 })
 
