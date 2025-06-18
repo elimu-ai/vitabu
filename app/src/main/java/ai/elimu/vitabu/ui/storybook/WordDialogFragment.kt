@@ -1,8 +1,11 @@
 package ai.elimu.vitabu.ui.storybook
 
+import ai.elimu.analytics.utils.research.ExperimentAssignmentHelper
 import ai.elimu.common.utils.ui.BaseBottomSheetDialogFragment
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
 import ai.elimu.content_provider.utils.ContentProviderUtil.getWordGson
+import ai.elimu.model.v2.enums.analytics.research.ExperimentGroup
+import ai.elimu.model.v2.enums.analytics.research.ResearchExperiment
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import android.os.Bundle
@@ -46,15 +49,24 @@ class WordDialogFragment : BaseBottomSheetDialogFragment() {
         val textView = view.findViewById<TextView>(R.id.wordTextView)
         textView.text = wordGson.text
 
-        // Append Emojis (if any) below the Word
-        val emojiGsons = getAllEmojiGsons(
-            wordGson.id, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        )
-        if (emojiGsons.isNotEmpty()) {
-            textView.text = getString(R.string.word_dialog_text, textView.text)
-            for (emojiGson in emojiGsons) {
-                textView.text =
-                    getString(R.string.word_dialog_text_with_emoji, textView.text, emojiGson.glyph)
+        if (
+            (ResearchExperiment.EXP_0_WORD_EMOJIS == ExperimentAssignmentHelper.CURRENT_EXPERIMENT) &&
+            (ExperimentGroup.TREATMENT == ExperimentAssignmentHelper.getExperimentGroup(context))
+        ) {
+            // Append Emojis (if any) below the Word
+            val emojiGsons = getAllEmojiGsons(
+                wordGson.id, context, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+            )
+            if (emojiGsons.isNotEmpty()) {
+                textView.text = getString(R.string.word_dialog_text, textView.text)
+                for (emojiGson in emojiGsons) {
+                    textView.text =
+                        getString(
+                            R.string.word_dialog_text_with_emoji,
+                            textView.text,
+                            emojiGson.glyph
+                        )
+                }
             }
         }
     }

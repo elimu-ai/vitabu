@@ -1,6 +1,9 @@
 package ai.elimu.vitabu.ui.storybook
 
+import ai.elimu.analytics.utils.research.ExperimentAssignmentHelper
 import ai.elimu.content_provider.utils.ContentProviderUtil.getAllEmojiGsons
+import ai.elimu.model.v2.enums.analytics.research.ExperimentGroup
+import ai.elimu.model.v2.enums.analytics.research.ResearchExperiment
 import ai.elimu.model.v2.gson.content.WordGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
@@ -108,15 +111,20 @@ internal class WordViewAdapter(
                 itemView.layoutParams.width = 0
             }
 
-            if (wordId != -1L) {
-                val emojiGsons = getAllEmojiGsons(
-                    wordId,
-                    itemView.context,
-                    BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-                )
-                if (emojiGsons.isNotEmpty()) {
-                    wordEmoji.text = emojiGsons.random().glyph
-                    setTextSizeByLevel(wordEmoji, readingLevelPosition)
+            if (
+                (ResearchExperiment.EXP_0_WORD_EMOJIS == ExperimentAssignmentHelper.CURRENT_EXPERIMENT) &&
+                (ExperimentGroup.TREATMENT == ExperimentAssignmentHelper.getExperimentGroup(itemView.context))
+            ) {
+                if (wordId != -1L) {
+                    val emojiGsons = getAllEmojiGsons(
+                        wordId,
+                        itemView.context,
+                        BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                    )
+                    if (emojiGsons.isNotEmpty()) {
+                        wordEmoji.text = emojiGsons.random().glyph
+                        setTextSizeByLevel(wordEmoji, readingLevelPosition)
+                    }
                 }
             }
         }
