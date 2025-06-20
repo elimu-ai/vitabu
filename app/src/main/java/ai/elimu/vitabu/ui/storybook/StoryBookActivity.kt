@@ -76,7 +76,7 @@ class StoryBookActivity : AppCompatActivity() {
                         .apply {
                             putExtra(EXTRA_KEY_STORYBOOK_ID, storyBookId)
                             putIntegerArrayListExtra(
-                                EXTRA_KEY_TIME_SPENT, timeSpent.values.toCollection(ArrayList())
+                                EXTRA_KEY_TIME_SPENT, timeSpent.toSortedMap().values.toCollection(ArrayList())
                             )
                         }
                     )
