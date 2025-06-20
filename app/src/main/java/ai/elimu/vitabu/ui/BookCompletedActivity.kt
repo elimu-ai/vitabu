@@ -6,6 +6,7 @@ import ai.elimu.model.v2.enums.analytics.LearningEventType
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.databinding.ActivityBookCompletedBinding
 import ai.elimu.vitabu.ui.storybook.StoryBookActivity.Companion.EXTRA_KEY_STORYBOOK_ID
+import ai.elimu.vitabu.ui.storybook.StoryBookActivity.Companion.EXTRA_KEY_TIME_SPENT
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class BookCompletedActivity : AppCompatActivity() {
 
@@ -38,11 +40,18 @@ class BookCompletedActivity : AppCompatActivity() {
                 applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
             ) ?: return@launch
 
+            val additionalData = JSONObject().apply {
+                put("seconds_spent_per_chapter",
+                    intent.getIntegerArrayListExtra(EXTRA_KEY_TIME_SPENT)
+                )
+            }
+
             withContext(Dispatchers.Main) {
                 LearningEventUtil.reportStoryBookLearningEvent(
                     storyBookGson = completedStoryBook,
                     learningEventType = LearningEventType.STORYBOOK_COMPLETED,
                     context = applicationContext,
+                    additionalData = additionalData,
                     analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                 )
 
