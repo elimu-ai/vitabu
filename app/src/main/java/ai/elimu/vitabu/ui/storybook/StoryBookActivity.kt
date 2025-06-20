@@ -69,14 +69,16 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                val timeSpentOnPage = ((SystemClock.elapsedRealtime() - startReadingTime) / 1000).toInt()
+                if (position > 1) {
+                    val timeSpentOnPage = ((SystemClock.elapsedRealtime() - startReadingTime) / 1000).toInt()
 
-                // Check if this page has been read. If it's the first time being read, just record
-                // the time.
-                // Otherwise, if we find a record of time spent on this page, and new time spent is
-                // smaller than recorded one, the page is likely being skipped, so we should ignore it
-                if (timeSpentOnPage > timeSpent.getOrDefault(position, -1)) {
-                    timeSpent[position] = timeSpentOnPage
+                    // Check if this page has been read. If it's the first time being read, just record
+                    // the time.
+                    // Otherwise, if we find a record of time spent on this page, and new time spent is
+                    // smaller than recorded one, the page is likely being skipped, so we should ignore it
+                    if (timeSpentOnPage > timeSpent.getOrDefault(position, -1)) {
+                        timeSpent[position] = timeSpentOnPage
+                    }
                 }
 
                 startReadingTime = SystemClock.elapsedRealtime()
