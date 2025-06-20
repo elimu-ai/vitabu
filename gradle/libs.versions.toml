@@ -14,6 +14,14 @@ androidXEspresso = "3.6.1"
 kotlinGradlePlugin = "2.1.21"
 kotlinCoroutines = "1.10.2"
 agp = "8.8.2"
+kotlinx-metadata-jvm = "0.6.0"
+
+# Jetpack Compose
+composeUi = "1.5.4"
+composeMaterial3 = "1.1.2"
+composeActivity = "1.8.2"
+composeLifecycle = "2.7.0"
+composeCompiler = "1.5.3"
 
 [libraries]
 elimu-content-provider = { group = "ai.elimu", name = "content-provider", version.ref = "elimuContentProvider" }
@@ -29,9 +37,20 @@ shine-button = { group = "com.sackcentury", name = "shinebutton", version.ref = 
 easing-interpolator = { group = "com.github.MasayukiSuda", name = "EasingInterpolator", version.ref = "easingInterpolator" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
+kotlinx-metadata-jvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadata-jvm" }
+
+# Jetpack Compose
+compose-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "composeUi" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "composeUi" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "composeUi" }
+compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4", version.ref = "composeUi" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "composeMaterial3" }
+compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "composeActivity" }
+compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "composeLifecycle" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp"}
 kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin"}
 
 [plugins]
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlinGradlePlugin" }

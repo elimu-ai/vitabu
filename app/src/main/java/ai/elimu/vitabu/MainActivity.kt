@@ -1,40 +1,73 @@
 package ai.elimu.vitabu
 
 import ai.elimu.common.utils.ensurePackageInstalledOrPrompt
-import ai.elimu.vitabu.databinding.ActivityMainBinding
 import ai.elimu.vitabu.ui.StoryBooksActivity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
 
     private val TAG = MainActivity::class.java.simpleName
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContent {
+            VitabuTheme {
+                MainScreen(
+                    onPackageCheck = { hasPackage ->
+                        if (hasPackage) {
+                            val intent = Intent(this, StoryBooksActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                )
+            }
+        }
     }
+}
 
-    override fun onStart() {
-        Log.i(TAG, "onStart")
-        super.onStart()
+@Composable
+fun VitabuTheme(content: @Composable () -> Unit) {
+    MaterialTheme {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            content()
+        }
+    }
+}
 
-        if (ensurePackageInstalledOrPrompt(
+@Composable
+fun MainScreen(onPackageCheck: (Boolean) -> Unit) {
+    val context = LocalContext.current.applicationContext
+    
+    // Empty Box as container - the UI is minimal since this is just a launcher activity
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Check for required package when the composable is first launched
+        LaunchedEffect(key1 = Unit) {
+            val hasPackage = context.ensurePackageInstalledOrPrompt(
                 packageName = BuildConfig.CONTENT_PROVIDER_APPLICATION_ID,
                 launchPackage = BuildConfig.APPSTORE_APPLICATION_ID,
                 launchClass = "ai.elimu.appstore.MainActivity",
-                dialogMessage = resources.getString(R.string.content_provider_needed),
-                buttonText = getString(R.string.install))) {
-
-            val intent = Intent(this, StoryBooksActivity::class.java)
-            startActivity(intent)
-            finish()
+                dialogMessage = context.resources.getString(R.string.content_provider_needed),
+                buttonText = context.getString(R.string.install)
+            )
+            onPackageCheck(hasPackage)
         }
     }
 }
