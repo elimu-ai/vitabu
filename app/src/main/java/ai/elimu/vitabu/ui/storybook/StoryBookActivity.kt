@@ -10,6 +10,7 @@ import ai.elimu.vitabu.ui.BookCompletedActivity
 import ai.elimu.vitabu.ui.viewpager.ZoomOutPageTransformer
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -20,6 +21,8 @@ class StoryBookActivity : AppCompatActivity() {
 
     private val TAG = javaClass.name
     private lateinit var binding: ActivityStorybookBinding
+    private var startReadingTime = SystemClock.elapsedRealtime()
+    private val timeSpent by lazy { mutableMapOf<Int, Int>() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.i(TAG, "onCreate")
@@ -66,10 +69,15 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
+                timeSpent[position] = ((SystemClock.elapsedRealtime() - startReadingTime) / 1000).toInt()
+                startReadingTime = SystemClock.elapsedRealtime()
                 if (position == storyBookChapters.size - 1) {
                     startActivity(Intent(this@StoryBookActivity, BookCompletedActivity::class.java)
                         .apply {
                             putExtra(EXTRA_KEY_STORYBOOK_ID, storyBookId)
+                            putIntegerArrayListExtra(
+                                EXTRA_KEY_TIME_SPENT, timeSpent.values.toCollection(ArrayList())
+                            )
                         }
                     )
                     finish()
@@ -86,5 +94,6 @@ class StoryBookActivity : AppCompatActivity() {
         const val EXTRA_KEY_STORYBOOK_ID: String = "EXTRA_KEY_STORYBOOK_ID"
         const val EXTRA_KEY_STORYBOOK_LEVEL: String = "EXTRA_KEY_STORYBOOK_LEVEL"
         const val EXTRA_KEY_STORYBOOK_DESCRIPTION: String = "EXTRA_KEY_STORYBOOK_DESCRIPTION"
+        const val EXTRA_KEY_TIME_SPENT = "extra_key_time_spent"
     }
 }
