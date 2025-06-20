@@ -69,7 +69,11 @@ class StoryBookActivity : AppCompatActivity() {
             }
 
             override fun onPageSelected(position: Int) {
-                timeSpent[position] = ((SystemClock.elapsedRealtime() - startReadingTime) / 1000).toInt()
+                val timeSpentOnPage = ((SystemClock.elapsedRealtime() - startReadingTime) / 1000).toInt()
+                if (timeSpentOnPage > timeSpent.getOrDefault(position, -1)) {
+                    timeSpent[position] = timeSpentOnPage
+                }
+
                 startReadingTime = SystemClock.elapsedRealtime()
                 if (position == storyBookChapters.size - 1) {
                     startActivity(Intent(this@StoryBookActivity, BookCompletedActivity::class.java)
