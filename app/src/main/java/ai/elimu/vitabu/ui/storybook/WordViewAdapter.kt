@@ -46,9 +46,12 @@ internal class WordViewAdapter(
             )
 
             holder.itemView.setOnClickListener { view: View? ->
-                listener.onItemClick(
-                    words[position], wordText = wordsInOriginalText[position] ?: "", view, position
-                )
+                val pos = holder.bindingAdapterPosition
+                if (pos != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(
+                        words[pos], wordText = wordsInOriginalText[pos] ?: "", view, pos
+                    )
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ shineButton = "1.0.0"
 easingInterpolator = "v1.3.2"
 
 constraintLayout = "2.2.1"
+recyclerView = "1.4.0"
 androidXJunit = "1.2.1"
 androidXEspresso = "3.6.1"
 kotlinGradlePlugin = "2.1.21"
@@ -29,6 +30,7 @@ shine-button = { group = "com.sackcentury", name = "shinebutton", version.ref = 
 easing-interpolator = { group = "com.github.MasayukiSuda", name = "EasingInterpolator", version.ref = "easingInterpolator" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidXJunit" }
 androidx-espresso = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidXEspresso" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerView" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp"}
