@@ -59,6 +59,7 @@ dependencies {
 
     implementation libs.material
     implementation libs.androidx.constraint.layout
+    implementation libs.androidx.recyclerview
     implementation libs.flexbox
 
     implementation libs.glide
