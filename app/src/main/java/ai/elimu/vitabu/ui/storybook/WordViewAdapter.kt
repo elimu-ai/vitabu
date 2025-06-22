@@ -129,6 +129,8 @@ internal class WordViewAdapter(
                         setTextSizeByLevel(wordEmoji, readingLevelPosition)
                     }
                 }
+            } else {
+                wordEmoji.text = ""
             }
         }
 
