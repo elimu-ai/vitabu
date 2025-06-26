@@ -11,6 +11,7 @@ import ai.elimu.model.v2.gson.content.WordGson
 import ai.elimu.vitabu.BuildConfig
 import ai.elimu.vitabu.R
 import ai.elimu.vitabu.util.readImageBytes
+import ai.elimu.vitabu.util.toSpeechRate
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
@@ -73,6 +74,8 @@ open class ChapterFragment : Fragment(), AudioListener {
 
     private fun initViewModels() {
         ttsViewModel = ViewModelProvider(this)[TextToSpeechViewModelImpl::class.java]
+        val readingLevel = requireArguments()[ARG_READING_LEVEL] as ReadingLevel?
+        ttsViewModel.setSpeechRate(readingLevel.toSpeechRate())
     }
 
     override fun onCreateView(
