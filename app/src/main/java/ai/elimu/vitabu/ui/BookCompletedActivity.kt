@@ -40,18 +40,14 @@ class BookCompletedActivity : AppCompatActivity() {
                 applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
             ) ?: return@launch
 
-            val additionalData = JSONObject().apply {
-                put("seconds_spent_per_chapter",
-                    intent.getIntegerArrayListExtra(EXTRA_KEY_TIME_SPENT)
-                )
-            }
-
             withContext(Dispatchers.Main) {
                 LearningEventUtil.reportStoryBookLearningEvent(
                     storyBookGson = completedStoryBook,
-                    learningEventType = LearningEventType.STORYBOOK_COMPLETED,
                     context = applicationContext,
-                    additionalData = additionalData,
+                    additionalData = JSONObject().apply {
+                        put("eventType", LearningEventType.STORYBOOK_COMPLETED)
+                        put("seconds_spent_per_chapter", intent.getIntegerArrayListExtra(EXTRA_KEY_TIME_SPENT))
+                    },
                     analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                 )
 

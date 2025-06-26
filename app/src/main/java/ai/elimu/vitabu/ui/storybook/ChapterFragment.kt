@@ -33,6 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -133,7 +134,9 @@ open class ChapterFragment : Fragment(), AudioListener {
                                 // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                                 LearningEventUtil.reportWordLearningEvent(
                                     wordGson = wordGson,
-                                    learningEventType = LearningEventType.WORD_PRESSED,
+                                    additionalData = JSONObject().apply {
+                                        put("eventType", LearningEventType.WORD_PRESSED)
+                                    },
                                     context = context,
                                     analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                                 )

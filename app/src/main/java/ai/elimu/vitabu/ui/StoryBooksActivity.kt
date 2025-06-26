@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class StoryBooksActivity : AppCompatActivity() {
 
@@ -151,7 +152,9 @@ class StoryBooksActivity : AppCompatActivity() {
                         // Report learning event to the Analytics application (https://github.com/elimu-ai/analytics)
                         LearningEventUtil.reportStoryBookLearningEvent(
                             storyBookGson = finalStoryBook,
-                            learningEventType = LearningEventType.STORYBOOK_OPENED,
+                            additionalData = JSONObject().apply {
+                                put("eventType", LearningEventType.STORYBOOK_OPENED)
+                            },
                             context = applicationContext,
                             analyticsApplicationId = BuildConfig.ANALYTICS_APPLICATION_ID
                         )
