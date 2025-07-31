@@ -10,7 +10,7 @@ easingInterpolator = "v1.3.2"
 
 constraintLayout = "2.2.1"
 recyclerView = "1.4.0"
-androidXJunit = "1.2.1"
+androidXJunit = "1.3.0"
 androidXEspresso = "3.6.1"
 kotlinGradlePlugin = "2.2.0"
 kotlinCoroutines = "1.10.2"
