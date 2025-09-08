@@ -1,5 +1,5 @@
 [versions]
-elimuContentProvider = "1.4.51"
+elimuContentProvider = "1.4.52"
 material = "1.13.0"
 junit = "4.13.2"
 flexbox = "3.0.0"
