@@ -121,7 +121,7 @@ jobs:
         run: mv ${{steps.sign_app.outputs.signedReleaseFile}} app/build/outputs/apk/release/ai.elimu.vitabu-${{ needs.create_git_tag.outputs.tagName }}.apk
 
       - name: Upload the signed APK file to GitHub release
-        uses: softprops/action-gh-release@v2.3.3
+        uses: softprops/action-gh-release@v2.4.0
         with:
           tag_name: '${{ needs.create_git_tag.outputs.tagName }}'
           files: app/build/outputs/apk/release/ai.elimu.vitabu-${{ needs.create_git_tag.outputs.tagName }}.apk
