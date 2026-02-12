@@ -12,9 +12,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class StoryBookActivity : AppCompatActivity() {
@@ -37,25 +42,32 @@ class StoryBookActivity : AppCompatActivity() {
             EXTRA_KEY_STORYBOOK_LEVEL, ReadingLevel::class.java
         )
         val description = intent.getStringExtra(EXTRA_KEY_STORYBOOK_DESCRIPTION) ?: ""
-        
-        // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-        val storyBookChapters = ContentProviderUtil.getStoryBookChapterGsons(
-            storyBookId,
-            applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-        ).toMutableList().apply {
+        var storyBookChapters: List<StoryBookChapterGson> = emptyList()
 
-            // Add an empty page at the end of this book for the purpose of
-            // analytics tracking
-            add(StoryBookChapterGson())
-        }.toList()
+        binding.loadingProgressBar.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            storyBookChapters = withContext(Dispatchers.IO) {
+                // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
+                ContentProviderUtil.getStoryBookChapterGsons(
+                    storyBookId,
+                    applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                ).toMutableList().apply {
 
-        val chapterPagerAdapter = ChapterPagerAdapter(
-            supportFragmentManager,
-            storyBookChapters,
-            readingLevel ?: ReadingLevel.LEVEL1,
-            description
-        )
-        binding.viewPager.adapter = chapterPagerAdapter
+                    // Add an empty page at the end of this book for the purpose of
+                    // analytics tracking
+                    add(StoryBookChapterGson())
+                }.toList()
+            }
+
+            val chapterPagerAdapter = ChapterPagerAdapter(
+                supportFragmentManager,
+                storyBookChapters,
+                readingLevel ?: ReadingLevel.LEVEL1,
+                description
+            )
+            binding.viewPager.adapter = chapterPagerAdapter
+            binding.loadingProgressBar.visibility = View.GONE
+        }
 
         val zoomOutPageTransformer = ZoomOutPageTransformer()
         binding.viewPager.setPageTransformer(true, zoomOutPageTransformer)
@@ -82,6 +94,9 @@ class StoryBookActivity : AppCompatActivity() {
                 }
 
                 startReadingTime = SystemClock.elapsedRealtime()
+                if (storyBookChapters.isEmpty()) {
+                    return
+                }
                 if (position == storyBookChapters.size - 1) {
                     startActivity(Intent(this@StoryBookActivity, BookCompletedActivity::class.java)
                         .apply {
