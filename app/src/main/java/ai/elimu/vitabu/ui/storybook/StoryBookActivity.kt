@@ -46,27 +46,32 @@ class StoryBookActivity : AppCompatActivity() {
 
         binding.loadingProgressBar.visibility = View.VISIBLE
         lifecycleScope.launch {
-            storyBookChapters = withContext(Dispatchers.IO) {
-                // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
-                ContentProviderUtil.getStoryBookChapterGsons(
-                    storyBookId,
-                    applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
-                ).toMutableList().apply {
+            try {
+                storyBookChapters = withContext(Dispatchers.IO) {
+                    // Fetch StoryBookChapters from the elimu.ai Content Provider (see https://github.com/elimu-ai/content-provider)
+                    ContentProviderUtil.getStoryBookChapterGsons(
+                        storyBookId,
+                        applicationContext, BuildConfig.CONTENT_PROVIDER_APPLICATION_ID
+                    ).toMutableList().apply {
 
-                    // Add an empty page at the end of this book for the purpose of
-                    // analytics tracking
-                    add(StoryBookChapterGson())
-                }.toList()
+                        // Add an empty page at the end of this book for the purpose of
+                        // analytics tracking
+                        add(StoryBookChapterGson())
+                    }.toList()
+                }
+
+                val chapterPagerAdapter = ChapterPagerAdapter(
+                    supportFragmentManager,
+                    storyBookChapters,
+                    readingLevel ?: ReadingLevel.LEVEL1,
+                    description
+                )
+                binding.viewPager.adapter = chapterPagerAdapter
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load storybook chapters", e)
+            } finally {
+                binding.loadingProgressBar.visibility = View.GONE
             }
-
-            val chapterPagerAdapter = ChapterPagerAdapter(
-                supportFragmentManager,
-                storyBookChapters,
-                readingLevel ?: ReadingLevel.LEVEL1,
-                description
-            )
-            binding.viewPager.adapter = chapterPagerAdapter
-            binding.loadingProgressBar.visibility = View.GONE
         }
 
         val zoomOutPageTransformer = ZoomOutPageTransformer()
