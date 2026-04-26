@@ -9,7 +9,7 @@ jobs:
   create_git_tag:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -88,7 +88,7 @@ jobs:
         run: echo "tagName ${{ needs.create_git_tag.outputs.tagName }}"
 
       - name: Checkout refs/tags/${{ needs.create_git_tag.outputs.tagName }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: refs/tags/${{ needs.create_git_tag.outputs.tagName }}
 
@@ -142,8 +142,7 @@ jobs:
     needs: [ create_git_tag, release_apk ]
     strategy:
       matrix:
-        #language_code: [ eng, hin, tgl, tha, vie ]
-        language_code: [ eng, tgl, tha, vie ]
+        language_code: [ eng, hin, tgl, tha, vie ]
     runs-on: ubuntu-latest
     steps:
       - name: Get the Git Tag name from previous job
@@ -153,7 +152,7 @@ jobs:
         run: echo "apkFileUrl ${{ needs.release_apk.outputs.apkFileUrl }}"
 
       - name: Send HTTP request to `${{ matrix.language_code }}.elimu.ai`
-        uses: fjogeleit/http-request-action@v1
+        uses: fjogeleit/http-request-action@v2
         with:
           url: http://${{ matrix.language_code }}.elimu.ai/rest/v2/applications/ai.elimu.vitabu/application-versions/${{ needs.create_git_tag.outputs.tagName }}
           method: PUT
