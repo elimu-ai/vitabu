@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 29
         targetSdkVersion 36
-        versionCode 1002095
-        versionName "1.2.95-SNAPSHOT"
+        versionCode 1002102
+        versionName "1.2.102-SNAPSHOT"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -41,14 +41,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 
     buildFeatures {
         buildConfig = true
         viewBinding true
-    }
-
-    kotlinOptions {
-        jvmTarget = '17'
     }
 }
 
